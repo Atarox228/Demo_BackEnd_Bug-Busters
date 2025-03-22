@@ -2,16 +2,23 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
 
+    private final JDBCEspirituDAO jDBCEspirituDao;
+
+    public EspirituServiceImpl(){
+        this.jDBCEspirituDao = new JDBCEspirituDAO();
+    }
+
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        // TODO completar
-        return null;
+
+        return jDBCEspirituDao.crear(espiritu);
     }
 
     @Override

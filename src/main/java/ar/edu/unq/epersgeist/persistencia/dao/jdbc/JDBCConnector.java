@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.function.Function;
 
+import static java.util.logging.Level.*;
+import static java.util.logging.Logger.getLogger;
+
 public class JDBCConnector {
 
     private static JDBCConnector INSTANCE = null;
