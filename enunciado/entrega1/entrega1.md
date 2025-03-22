@@ -31,7 +31,7 @@ Tras la huida del espíritu, todos recuperamos la consciencia y tomamos la decis
 
 Tras un breve debate, decidimos tener un módulo que nos permita identificar los distintos tipos de espíritus provenientes de aquel mundo desconocido, junto con sus diversas características:
 - Su tipo.
-- Su nivel de conexión, que sabemos que por defecto es 0 y puede llegar **hasta** 100.
+- Su nivel de conexión, que sabemos que por defecto (y minimo) es 0 y puede llegar **hasta** 100.
 - Su nombre.
 
 También sabemos que los espíritus pueden aumentar su nivel de conexión al momento en que conectan con un médium, es decir, con un ritualista como nosotros.
