@@ -6,6 +6,7 @@ import java.util.Set;
 
 public class Medium implements Serializable {
 //lala
+    //lolo
     private String nombre;
     private Integer manaMax;
     private Integer mana;
