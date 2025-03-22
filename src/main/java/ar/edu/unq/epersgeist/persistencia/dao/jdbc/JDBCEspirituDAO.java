@@ -27,15 +27,10 @@ public record JDBCEspirituDAO() implements EspirituDAO {
         return recuperarEspirituPorNombre(espiritu.getNombre());
     }
 
-    public Espiritu recuperar(Long idDelEspiritu) {
-        // TODO completar
-        return null;
-    }
-
     public Espiritu recuperarEspirituPorNombre(String nombre) {
         return JDBCConnector.getInstance().execute( conn -> {
             try {
-                var ps = conn.prepareStatement("SELECT tipo, nivelConexion FROM espiritu WHERE nombre = ?");
+                var ps = conn.prepareStatement("SELECT id, tipo, nivelConexion FROM espiritu WHERE nombre = ?");
                 ps.setString(1, nombre);
                 var resultSet = ps.executeQuery();
                 Espiritu espiritu = null;
@@ -44,6 +39,7 @@ public record JDBCEspirituDAO() implements EspirituDAO {
                         throw new RuntimeException(String.format("Existe mas de un personaje con el nombre %s", nombre));
                     }
                     espiritu = new Espiritu(
+                            resultSet.getLong("id"),
                             resultSet.getString("tipo"),
                             resultSet.getInt("nivelConexion"),
                             nombre
@@ -55,6 +51,13 @@ public record JDBCEspirituDAO() implements EspirituDAO {
             }
         });
     }
+
+    public Espiritu recuperar(Long idDelEspiritu) {
+        // TODO completar
+        return null;
+    }
+
+
 
     public List<Espiritu> recuperarTodos() {
         // TODO completar

@@ -1,7 +1,7 @@
 CREATE TABLE espiritu (
 
                         id SERIAL PRIMARY KEY ,
-                        tipo String NOT NULL,
-                        nombre String NOT NULL UNIQUE,
-                        nivelConexion Int NOT NULL,
-)
+                        tipo Varchar(255) NOT NULL,
+                        nombre VARCHAR(255) NOT NULL UNIQUE,
+                        nivelConexion Int NOT NULL
+);
