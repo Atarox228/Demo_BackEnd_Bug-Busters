@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Medium implements Serializable {
-
+//lala
     private String nombre;
     private Integer manaMax;
     private Integer mana;
