@@ -87,7 +87,7 @@ public class JDBCConnector {
              var resultSet = statement.executeQuery(checkDbQuery);
              if (!resultSet.next()) {
                  statement.executeUpdate("CREATE DATABASE " + databaseName);
-                 getLogger("JDBCConnector").info("Base de datos creada: " + databaseName);
+                 //getLogger("JDBCConnector").info("Base de datos creada: " + databaseName);
              }
          } catch (SQLException e) {
              throw new RuntimeException("Error al verificar/crear la base de datos", e);

@@ -23,29 +23,31 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        // TODO completar
-        return null;
+        return jDBCEspirituDao.recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        // TODO completar
-        return null;
+
+        return jDBCEspirituDao.recuperarTodos();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        // TODO completar
+        jDBCEspirituDao.actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        // TODO completar
+        jDBCEspirituDao.eliminar(espirituId);
     }
 
     @Override
     public Medium conectar(Long espirituId, Medium medium) {
-        // TODO completar
-        return null;
+        Espiritu espi = this.recuperar(espirituId);
+        medium.conectarseAEspiritu(espi);
+        this.actualizar(espi);
+        return medium;
     }
+
 }

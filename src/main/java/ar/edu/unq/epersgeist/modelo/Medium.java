@@ -19,7 +19,19 @@ public class Medium implements Serializable {
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
-        // TODO completar
+
+        espiritu.aumentarConexion(this);
+        espiritus.add(espiritu);
+
+    }
+
+    public boolean tieneConNombre_(String nombre){
+        for (Espiritu esp : espiritus) {
+            if (esp.getNombre().equals(nombre)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getNombre() {

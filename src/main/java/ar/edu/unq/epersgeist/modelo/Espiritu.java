@@ -11,7 +11,13 @@ public class Espiritu implements Serializable {
 
     public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
         this.tipo = tipo;
-        this.nivelDeConexion = nivelDeConexion;
+        // esto es para setear el valor default en caso de que no pongan valor
+        // o pongan un valor no acorde al rango establecido
+        if(nivelDeConexion>=0 && nivelDeConexion<=100){
+            this.nivelDeConexion = nivelDeConexion;
+        } else {
+            this.nivelDeConexion = 0;
+        }
         this.nombre = nombre;
     }
 
@@ -22,10 +28,17 @@ public class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
-    public Medium aumentarConexion(Medium medium) {
-        // TODO completar
-        return null;
+    public void aumentarConexion(Medium medium) {
+
+        if (!medium.tieneConNombre_(this.nombre)) {
+            int maxNivelConexion = 100;
+            int nuevoNivelConexion = this.nivelDeConexion+10;
+            int minimo = Math.min(nuevoNivelConexion, maxNivelConexion);
+            nivelDeConexion = minimo;
+        }
     }
+
+
 
     public Long getId() {
         return id;
@@ -42,4 +55,5 @@ public class Espiritu implements Serializable {
     public String getNombre() {
         return nombre;
     }
+
 }

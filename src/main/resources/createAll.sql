@@ -1,4 +1,4 @@
-CREATE TABLE espiritu (
+CREATE TABLE IF NOT EXISTS espiritu (
 
                         id SERIAL PRIMARY KEY ,
                         tipo Varchar(255) NOT NULL,
