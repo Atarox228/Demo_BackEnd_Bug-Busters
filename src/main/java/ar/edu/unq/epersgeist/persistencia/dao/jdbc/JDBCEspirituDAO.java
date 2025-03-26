@@ -11,13 +11,11 @@ import java.util.*;
 
 public record JDBCEspirituDAO() implements EspirituDAO {
 
-
     public Espiritu crear(Espiritu espiritu) {
         JDBCConnector.getInstance().execute(conn  -> {
             try {
                 var ps = conn.prepareStatement("INSERT INTO espiritu (tipo, nivelConexion, nombre) VALUES (?,?,?)");
                 ps.setString(1, espiritu.getTipo());
-
                 ps.setInt(2, espiritu.getNivelDeConexion());
                 ps.setString(3, espiritu.getNombre());
                 return ps.execute();

@@ -31,7 +31,6 @@ public class EspirituServiceTest {
         Casper = new Espiritu("Poltergeist", 0, "Casper");
         Oni = new Espiritu("Oni", 95, "Otakemaru");
         Jinn = new Espiritu("Jinn", 100, "Marids");
-
     }
 
 
@@ -39,7 +38,6 @@ public class EspirituServiceTest {
     void crearEspiritu(){
         Espiritu espirituActualizado = espirituService.crear(Casper);
         assertNotEquals(espirituActualizado.getId(), null);
-
     }
 
     @Test
@@ -49,7 +47,6 @@ public class EspirituServiceTest {
             espirituService.crear(Casper);
         });
         assertTrue(exception.getMessage().contains("Ya existe un espiritu con el mismo nombre"));
-
     }
 
     @Test
@@ -60,7 +57,6 @@ public class EspirituServiceTest {
         //Al ser Nombres unicos, si compruebo que tienen el mismo nombre se podria decir que son
         //el ¨mismo¨ objeto
         assertEquals(espirituDelCielo.getNombre(),espirituRecuperado.getNombre());
-
     }
 
     @Test
@@ -71,9 +67,7 @@ public class EspirituServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             espirituService.recuperar(idEspN);
         });
-
         assertTrue(exception.getMessage().contains("No se encontro el espiritu"));
-
     }
 
 
@@ -86,7 +80,6 @@ public class EspirituServiceTest {
         long idEsp2 = espiritu2.getId();
         //Si existiera casper en la base de datos, no podria crear otro
         assertNotNull(idEsp2);
-
     }
 
     @Test
@@ -97,7 +90,6 @@ public class EspirituServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             espirituService.recuperar(espirituActualizado.getId());
         });
-
         assertTrue(exception.getMessage().contains("No se encontro el espiritu"));
     }
 
@@ -118,15 +110,12 @@ public class EspirituServiceTest {
         nombresEsperados.add("Casper");
         nombresEsperados.add("Marids");
         nombresEsperados.add("Otakemaru");
-
         assertEquals(nombresEsperados, nombresObtenidos);
-
     }
 
     @Test
     void recuperarTodosSinEspiritus(){
         List<Espiritu>espiritus = espirituService.recuperarTodos();
-
         assertArrayEquals(espiritus.toArray(),new ArrayList<>().toArray());
     }
 
@@ -137,16 +126,13 @@ public class EspirituServiceTest {
         espirituService.conectar(esp1.getId(),marta);
         Espiritu espirituActualizado = espirituService.recuperar(esp1.getId());
         assertEquals(10,espirituActualizado.getNivelDeConexion());
-
     }
 
     @Test
     void actualizarEspirituNoExistente(){
-
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             espirituService.actualizar(Oni);
         });
-
         assertTrue(exception.getMessage().contains("Espiritu sin id asignada"));
     }
 
@@ -160,7 +146,6 @@ public class EspirituServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             espirituService.recuperar(esp1.getId());
         });
-
         assertTrue(exception.getMessage().contains("No se encontro el espiritu"));
     }
 
@@ -171,7 +156,6 @@ public class EspirituServiceTest {
         espirituService.conectar(espiritu.getId(), lizzie);
         Espiritu espirituActualizado = espirituService.recuperar(espiritu.getId());
         assertEquals(espirituActualizado.getNivelDeConexion(), espiritu.getNivelDeConexion()+10);
-
     }
 
     @Test
@@ -183,7 +167,6 @@ public class EspirituServiceTest {
         espirituService.conectar(espiritu.getId(), sosa);
         Espiritu espirituActualizado = espirituService.recuperar(espiritu.getId());
         assertEquals(espirituActualizado.getNivelDeConexion(), elcoso+10);
-
     }
 
     @Test
@@ -193,7 +176,6 @@ public class EspirituServiceTest {
         espirituService.conectar(espiritu.getId(), micho);
         Espiritu espirituActualizado = espirituService.recuperar(espiritu.getId());
         assertEquals(espirituActualizado.getNivelDeConexion(), 100);
-
     }
 
     @AfterEach
@@ -203,5 +185,4 @@ public class EspirituServiceTest {
             espirituService.eliminar(espiritu.getId());
         }
     }
-
 }

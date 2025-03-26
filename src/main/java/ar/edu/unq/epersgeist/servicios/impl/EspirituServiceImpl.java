@@ -17,7 +17,6 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-
         return jDBCEspirituDao.crear(espiritu);
     }
 

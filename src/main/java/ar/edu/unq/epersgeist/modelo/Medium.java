@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Medium implements Serializable {
-//lala
-    //lolo
+
     private String nombre;
     private Integer manaMax;
     private Integer mana;
@@ -19,19 +18,12 @@ public class Medium implements Serializable {
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
-
         espiritu.aumentarConexion(this);
         espiritus.add(espiritu);
-
     }
 
-    public boolean tieneConNombre_(String nombre){
-        for (Espiritu esp : espiritus) {
-            if (esp.getNombre().equals(nombre)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean tieneConNombre_(String nombre) {
+        return espiritus.stream().anyMatch(esp -> esp.getNombre().equals(nombre));
     }
 
     public String getNombre() {
