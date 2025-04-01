@@ -41,12 +41,12 @@ public class EspirituServiceImpl implements EspirituService {
         jDBCEspirituDao.eliminar(espirituId);
     }
 
-    @Override
-    public Medium conectar(Long espirituId, Medium medium) {
-        Espiritu espi = this.recuperar(espirituId);
-        medium.conectarseAEspiritu(espi);
-        this.actualizar(espi);
-        return medium;
-    }
+//    @Override
+//    public Medium conectar(Long espirituId, Medium medium) {
+//        Espiritu espi = this.recuperar(espirituId);
+//        medium.conectarseAEspiritu(espi);
+//        this.actualizar(espi);
+//        return medium;
+//    }
 
 }
