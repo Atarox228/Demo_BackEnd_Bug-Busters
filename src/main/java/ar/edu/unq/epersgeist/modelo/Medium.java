@@ -1,15 +1,27 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+@Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
+@Entity
 public class Medium implements Serializable {
-//lala
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nombre;
     private Integer manaMax;
     private Integer mana;
-    private Set<Espiritu> espiritus = new HashSet<>();
+    //private Set<Espiritu> espiritus = new HashSet<>();
+
+    //@ManyToOne
+    //private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
@@ -17,23 +29,12 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
-    public void conectarseAEspiritu(Espiritu espiritu) {
-        // TODO completar
+    // COMPLETAR
+    public boolean tieneConNombre_(String nombre) {
+        return false;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Integer getManaMax() {
-        return manaMax;
-    }
-
-    public Integer getMana() {
-        return mana;
-    }
-
-    public Set<Espiritu> getEspiritus() {
-        return espiritus;
+    // COMPLETAR
+    public void conectarseAEspiritu(Espiritu espi) {
     }
 }
