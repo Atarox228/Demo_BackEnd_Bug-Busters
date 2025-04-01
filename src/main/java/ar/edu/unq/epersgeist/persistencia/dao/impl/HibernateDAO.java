@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
-import ar.edu.unq.epersgeist.servicios.runner.*;
+
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 
 public class HibernateDAO<T> {
@@ -24,8 +25,11 @@ public class HibernateDAO<T> {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.remove(entity);
     }
+
     public void eliminarTodo() {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.createQuery("delete from " + entityType.getSimpleName()).executeUpdate();
     }
+
+
 }
