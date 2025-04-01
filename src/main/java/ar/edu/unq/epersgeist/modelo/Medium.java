@@ -28,4 +28,13 @@ public class Medium implements Serializable {
         this.manaMax = manaMax;
         this.mana = mana;
     }
+
+    // COMPLETAR
+    public boolean tieneConNombre_(String nombre) {
+        return false;
+    }
+
+    // COMPLETAR
+    public void conectarseAEspiritu(Espiritu espi) {
+    }
 }

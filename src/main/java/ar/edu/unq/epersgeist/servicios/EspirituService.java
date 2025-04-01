@@ -6,10 +6,11 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import java.util.List;
 
 public interface EspirituService {
-    Espiritu crear(Espiritu espiritu);
+    void crear(Espiritu espiritu);
     Espiritu recuperar(Long espirituId);
     List<Espiritu> recuperarTodos();
+    void eliminar(Espiritu espiritu);
+    void eliminarTodo();
     void actualizar(Espiritu espiritu);
-    void eliminar(Long espirituId);
-//    Medium conectar(Long espirituId, Medium medium);
+    Medium conectar(Long espirituId, Medium medium);
 }
