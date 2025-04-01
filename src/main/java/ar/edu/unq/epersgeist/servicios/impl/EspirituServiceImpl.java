@@ -11,8 +11,8 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final JDBCEspirituDAO jDBCEspirituDao;
 
-    public EspirituServiceImpl(){
-        this.jDBCEspirituDao = new JDBCEspirituDAO();
+    public EspirituServiceImpl(JDBCEspirituDAO jDBCEspirituDAO){
+        this.jDBCEspirituDao = jDBCEspirituDAO;
     }
 
     @Override

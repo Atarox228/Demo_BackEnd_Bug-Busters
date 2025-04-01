@@ -81,7 +81,7 @@ public record JDBCEspirituDAO() implements EspirituDAO {
     public List<Espiritu> recuperarTodos() {
         return JDBCConnector.getInstance().execute(conn -> {
             try {
-                var ps = conn.prepareStatement("SELECT * FROM espiritu");
+                var ps = conn.prepareStatement("SELECT * FROM espiritu ORDER BY nombre ASC");
                 var resultSet = ps.executeQuery();
                 Espiritu espiritu = null;
                 List<Espiritu> espiritus = new ArrayList<>();
@@ -95,7 +95,6 @@ public record JDBCEspirituDAO() implements EspirituDAO {
                     );
                     espiritus.add(espiritu);
                 }
-                espiritus.sort(Comparator.comparing(Espiritu::getNombre));
                 return espiritus;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
