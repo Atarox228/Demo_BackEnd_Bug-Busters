@@ -2,8 +2,7 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCConnector;
-import ar.edu.unq.epersgeist.persistencia.dao.jdbc.exception.RecuperarException;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -21,43 +20,95 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceTest {
 
-//    private EspirituService espirituService = new EspirituServiceImpl();
-//    private Espiritu Casper;
-//    private Espiritu Jinn;
-//    private Espiritu Oni;
-//
-//    @BeforeEach
-//    void setUp(){
-//        Casper = new Espiritu("Poltergeist", 0, "Casper");
-//        Oni = new Espiritu("Oni", 95, "Otakemaru");
-//        Jinn = new Espiritu("Jinn", 100, "Marids");
+    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+    private Espiritu Casper;
+    private Espiritu Jinn;
+    private Espiritu Oni;
+
+    @BeforeEach
+    void setUp(){
+        Casper = new Espiritu("Poltergeist", 0, "Casper");
+        Oni = new Espiritu("Oni", 95, "Otakemaru");
+        Jinn = new Espiritu("Jinn", 100, "Marids");
+    }
+
+
+    @Test
+    void guardarEspiritu(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        assertNotNull(Casper.getId());
+        assertNotNull(Oni.getId());
+        assertNotNull(Jinn.getId());
+        System.out.println("El id es: " + Casper.getId());
+        System.out.println("El id es: " + Oni.getId());
+        System.out.println("El id es: " + Jinn.getId());
+    }
+
+
+    @Test
+    void actualizarEspiritu(){
+        espirituService.crear(Casper);
+        Espiritu sinActualizar = espirituService.recuperar(Casper.getId());
+        Casper.setNombre("Lala");
+        System.out.println("El nombre ahora es: " + Casper.getNombre());
+        espirituService.actualizar(Casper);
+        Espiritu actualizado = espirituService.recuperar(Casper.getId());
+        assertEquals(sinActualizar.getId(), Casper.getId());
+        assertEquals(sinActualizar.getNombre(), "Casper");
+        assertEquals(actualizado.getNombre(), "Lala");
+    }
+
+
+    @Test
+    void recuperarEspiritu(){
+        espirituService.crear(Casper);
+        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
+        assertEquals(espirituRecuperado.getNombre(), "Casper");
+        assertEquals(espirituRecuperado.getTipo(), "Poltergeist");
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
+    }
+
+    @Test
+    void recuperarTodosLosEspiritus(){
+        //Se deben obtener alfabeticamente
+        espirituService.crear(Oni);
+        espirituService.crear(Casper);
+        espirituService.crear(Jinn);
+        List<Espiritu> espiritus = espirituService.recuperarTodos();
+        assertEquals(espiritus.size(), 3);
+        assertEquals(espiritus.get(0).getNombre(), "Casper");
+        assertEquals(espiritus.get(1).getNombre(), "Marids");
+        assertEquals(espiritus.get(2).getNombre(), "Otakemaru");
+    }
+
+    @Test
+    void eliminarEspiritu(){
+        espirituService.crear(Casper);
+        Long espirituId = Casper.getId();
+        assertNotNull(espirituService.recuperar(espirituId));
+        espirituService.eliminar(Casper);
+        assertNull(espirituService.recuperar(espirituId));
+    }
+
+    @AfterEach
+    void cleanup() {
+        espirituService.eliminarTodo();
+    }
+
+    //    @Test
+//    void guardarEspirituYaExistenteEnDB(){
+//        espirituService.guardar(Casper);
+//        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
+//        Casper.setNombre("Lala");
+//        espirituService.guardar(Casper);
+//        assertEquals(espirituRecuperado.getId(), Casper.getId());
+//        assertEquals(espirituRecuperado.getNombre(), "Casper");
+//        assertEquals(espirituService.recuperar(Casper.getId()).getNombre(), "Lala");
 //    }
-//
-//
-//    @Test
-//    void crearEspiritu(){
-//        Espiritu espirituActualizado = espirituService.crear(Casper);
-//        assertNotEquals(espirituActualizado.getId(), null);
-//    }
-//
-//    @Test
-//    void crearDosEspiritusIguales(){
-//        Espiritu esp1 = espirituService.crear(Casper);
-//        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-//            espirituService.crear(Casper);
-//        });
-//        assertTrue(exception.getMessage().contains("Ya existe un espiritu con el mismo nombre"));
-//    }
-//
-//    @Test
-//    void recuperarEspiritu(){
-//        Espiritu espirituDelCielo = espirituService.crear(Casper);
-//        Espiritu espirituRecuperado = espirituService.recuperar(espirituDelCielo.getId());
-//
-//        //Al ser Nombres unicos, si compruebo que tienen el mismo nombre se podria decir que son
-//        //el ¨mismo¨ objeto
-//        assertEquals(espirituDelCielo.getNombre(),espirituRecuperado.getNombre());
-//    }
+
+
 //
 //    @Test
 //    void recuperarEspirituEliminado(){
@@ -185,4 +236,5 @@ public class EspirituServiceTest {
 //            espirituService.eliminar(espiritu.getId());
 //        }
 //    }
+
 }
