@@ -10,5 +10,6 @@ public interface MediumService {
     Medium recuperar(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
-    //void actualizar(Medium medium);
+    void actualizar(Medium medium);
+    void eliminarTodo();
 }

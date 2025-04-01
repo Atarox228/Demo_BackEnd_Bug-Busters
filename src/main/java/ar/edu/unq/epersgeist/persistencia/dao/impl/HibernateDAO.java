@@ -25,6 +25,7 @@ public class HibernateDAO<T> {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.remove(entity);
     }
+
     public void eliminarTodo() {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.createQuery("delete from " + entityType.getSimpleName()).executeUpdate();

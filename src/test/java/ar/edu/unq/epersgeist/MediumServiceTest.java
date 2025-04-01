@@ -66,10 +66,22 @@ public class MediumServiceTest {
         assertNull(mediumService.recuperar(mediumId));
     }
 
+    @Test
+    void actualizarEspiritu(){
+        mediumService.guardar(medium);
+        Medium sinActualizar = mediumService.recuperar(medium.getId());
+        medium.setNombre("Juan");
+        System.out.println("El nombre ahora es: " + medium.getNombre());
+        mediumService.actualizar(medium);
+        Medium actualizado = mediumService.recuperar(medium.getId());
+        assertEquals(sinActualizar.getId(), medium.getId());
+        assertEquals(sinActualizar.getNombre(), "Lizzie");
+        assertEquals(actualizado.getNombre(), "Juan");
+    }
+
     @AfterEach
     void tearDown() {
-        mediumService.eliminar(medium);
-        mediumService.eliminar(medium2);
+        mediumService.eliminarTodo();
     }
 }
 

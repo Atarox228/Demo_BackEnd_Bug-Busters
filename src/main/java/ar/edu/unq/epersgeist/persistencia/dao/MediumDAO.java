@@ -8,7 +8,8 @@ public interface MediumDAO {
 
     void guardar(Medium medium);
     Medium recuperar(Long id);
+    void actualizar(Medium medium);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
-    //void actualizar(Medium medium);
+    void eliminarTodo();
 }

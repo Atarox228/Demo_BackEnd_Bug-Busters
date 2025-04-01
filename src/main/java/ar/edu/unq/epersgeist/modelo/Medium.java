@@ -30,14 +30,4 @@ public class Medium implements Serializable {
     }
 
 
-    //public void conectarseAEspiritu(Espiritu espiritu) {
-    //    espiritu.aumentarConexion(this);
-    //    espiritus.add(espiritu);
-    //}
-
-    //public boolean tieneConNombre_(String nombre) {
-    //    return espiritus.stream().anyMatch(esp -> esp.getNombre().equals(nombre));
-    //}
-
-
 }

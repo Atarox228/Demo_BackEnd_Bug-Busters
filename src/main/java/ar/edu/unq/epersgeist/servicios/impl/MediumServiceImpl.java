@@ -42,4 +42,19 @@ public class MediumServiceImpl implements MediumService {
         });
     }
 
+    @Override
+    public void actualizar(Medium medium) {
+        HibernateTransactionRunner.runTrx(() -> {
+            dao.actualizar(medium);
+            return null;
+        });
+    }
+
+    public void eliminarTodo(){
+        HibernateTransactionRunner.runTrx(() -> {
+            dao.eliminarTodo();
+            return null;
+        });
+    }
+
 }
