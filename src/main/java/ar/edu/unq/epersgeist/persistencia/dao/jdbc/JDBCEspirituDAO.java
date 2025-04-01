@@ -1,3 +1,4 @@
+/*
 package ar.edu.unq.epersgeist.persistencia.dao.jdbc;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
@@ -150,4 +151,4 @@ public record JDBCEspirituDAO() implements EspirituDAO {
             throw new RuntimeException(e);
         }
     }
-}
+}*/

@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.dao.jdbc;
+/*package ar.edu.unq.epersgeist.persistencia.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,9 @@ import java.util.function.Function;
 
 import static java.util.logging.Level.*;
 import static java.util.logging.Logger.getLogger;
+*/
 
+/*
 public class JDBCConnector {
 
     private static JDBCConnector INSTANCE = null;
@@ -19,10 +21,10 @@ public class JDBCConnector {
             return INSTANCE;
         }
         return INSTANCE;
-    }
+    }*/
     /**
      * Ejecuta un bloque de codigo contra una conexion.
-     */
+     */ /*
     public <T> T execute(Function<Connection, T> bloque) {
         final var connection = openConnection();
         T result = null;
@@ -48,14 +50,14 @@ public class JDBCConnector {
         } finally {
             closeConnection(connection);
         }
-    }
+    }*/
 
 
     /**
      * Establece una conexion a la url especificada
      *
      * @return la conexion establecida
-     */
+     *//*
     private Connection openConnection() {
         final var env = System.getenv();
         final var user = env.getOrDefault("DB_USER", "postgres");
@@ -76,8 +78,8 @@ public class JDBCConnector {
         } catch (SQLException e) {
             throw new RuntimeException("No se puede establecer una conexion. Revisar si el servidor PostgreSQL esta corriendo.", e);
         }
-    }
-
+    }*/
+/*
     private void createDatabaseIfNotExists(String databaseName, String user, String password, String host, String port) {
          String url = String.format("jdbc:postgresql://%s:%s/postgres", host, port);
          try (var connection = DriverManager.getConnection(url, user, password);
@@ -93,12 +95,12 @@ public class JDBCConnector {
              throw new RuntimeException("Error al verificar/crear la base de datos", e);
          }
      }
-
+*/
     /**
      * Cierra una conexion con la base de datos (libera los recursos utilizados por la misma)
      *
      * @param connection - la conexion a cerrar.
-     */
+     */ /*
     private void closeConnection(Connection connection) {
         try {
             connection.close();
@@ -106,4 +108,4 @@ public class JDBCConnector {
             throw new RuntimeException("Error al cerrar la conexion", e);
         }
     }
-}
+}*/

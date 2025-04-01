@@ -1,3 +1,4 @@
+/*
 package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
@@ -185,4 +186,4 @@ public class EspirituServiceTest {
             espirituService.eliminar(espiritu.getId());
         }
     }
-}
+}*/

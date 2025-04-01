@@ -15,7 +15,6 @@ public class HibernateMediumDAO extends HibernateDAO<Medium> implements MediumDA
         super(Medium.class);
     }
 
-
     public Collection<Medium> recuperarTodos() {
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "select m from Medium m order by m.nombre asc";

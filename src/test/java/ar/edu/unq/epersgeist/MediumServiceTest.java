@@ -6,6 +6,8 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -18,14 +20,56 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(Lifecycle.PER_CLASS)
 public class MediumServiceTest {
 
+    private MediumService mediumService;
+    private Medium medium;
+    private Medium medium2;
 
-    @Test
-    void GuardarMedium(){
-        MediumService MediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        Medium medium = new Medium("Lizzie",150,100);
-        MediumService.guardar(medium);
-        assertNotNull(medium.getId());
-        MediumService.eliminar(medium);
+    @BeforeEach
+    void setUp() {
+        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        this.medium = new Medium("Lizzie",150,100);
+        this.medium2 = new Medium("Lorraine", 200, 50);
     }
 
+    @Test
+    void testGuardarMedium() {
+        mediumService.guardar(medium);
+        assertNotNull(medium.getId());
+    }
+
+    @Test
+    void testRecuperarMedium() {
+        mediumService.guardar(medium);
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId());
+        assertNotNull(mediumRecuperado);
+        assertEquals(medium.getId(), mediumRecuperado.getId());
+    }
+
+    @Test
+    void testRecuperarTodos() {
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+        Collection<Medium> mediums = mediumService.recuperarTodos();
+        assertEquals(2, mediums.size());
+        List<String> nombres = mediums.stream().map(Medium::getNombre).toList();
+        assertEquals(List.of("Lizzie", "Lorraine"), nombres);
+    }
+
+    @Test
+    void testEliminarMedium() {
+        MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        Medium medium = new Medium("Lizzie", 150, 100);
+        mediumService.guardar(medium);
+        Long mediumId = medium.getId();
+        assertNotNull(mediumService.recuperar(mediumId));
+        mediumService.eliminar(medium);
+        assertNull(mediumService.recuperar(mediumId));
+    }
+
+    @AfterEach
+    void tearDown() {
+        mediumService.eliminar(medium);
+        mediumService.eliminar(medium2);
+    }
 }
+
