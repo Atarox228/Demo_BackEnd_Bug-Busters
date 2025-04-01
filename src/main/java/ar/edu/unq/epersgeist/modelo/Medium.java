@@ -28,6 +28,4 @@ public class Medium implements Serializable {
         this.manaMax = manaMax;
         this.mana = mana;
     }
-
-
 }

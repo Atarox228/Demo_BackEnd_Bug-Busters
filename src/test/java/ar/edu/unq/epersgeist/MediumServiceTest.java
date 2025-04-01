@@ -67,6 +67,19 @@ public class MediumServiceTest {
     }
 
     @Test
+    void testEliminarTodosLosMediums() {
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+        Long mediumId = medium.getId();
+        Long mediumId2 = medium2.getId();
+        assertNotNull(mediumService.recuperar(mediumId));
+        assertNotNull(mediumService.recuperar(mediumId2));
+        mediumService.eliminarTodo();
+        assertNull(mediumService.recuperar(mediumId));
+        assertNull(mediumService.recuperar(mediumId2));
+    }
+
+    @Test
     void actualizarEspiritu(){
         mediumService.guardar(medium);
         Medium sinActualizar = mediumService.recuperar(medium.getId());
