@@ -17,12 +17,8 @@ public class HibernateDAO<T> {
     }
 
     public void guardar(T entity) {
-        try {
-            Session session = HibernateTransactionRunner.getCurrentSession();
-            session.save(entity);
-        } catch (ConstraintViolationException e) {
-                new EntidadYaRegistradaException(entity);
-            }
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        session.save(entity);
     }
 
 
@@ -33,12 +29,8 @@ public class HibernateDAO<T> {
     }
 
     public void eliminar(T entity) {
-        try {
-            Session session = HibernateTransactionRunner.getCurrentSession();
-            session.remove(entity);
-        } catch (OptimisticLockException e) {
-            new EntidadYaEliminadaException(entity);
-        }
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        session.remove(entity);
     }
     public void eliminarTodo() {
         Session session = HibernateTransactionRunner.getCurrentSession();
