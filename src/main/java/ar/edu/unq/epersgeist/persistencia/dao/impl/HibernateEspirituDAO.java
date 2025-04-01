@@ -27,7 +27,6 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         query.executeUpdate();
     }
 
-
     public List<Espiritu> recuperarTodos(){
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "from Espiritu e order by e.nombre asc";

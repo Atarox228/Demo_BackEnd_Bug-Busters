@@ -35,9 +35,9 @@ public class EspirituServiceTest {
 
     @Test
     void guardarEspiritu(){
-        espirituService.guardar(Casper);
-        espirituService.guardar(Oni);
-        espirituService.guardar(Jinn);
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
         assertNotNull(Casper.getId());
         assertNotNull(Oni.getId());
         assertNotNull(Jinn.getId());
@@ -46,20 +46,10 @@ public class EspirituServiceTest {
         System.out.println("El id es: " + Jinn.getId());
     }
 
-//    @Test
-//    void guardarEspirituYaExistenteEnDB(){
-//        espirituService.guardar(Casper);
-//        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
-//        Casper.setNombre("Lala");
-//        espirituService.guardar(Casper);
-//        assertEquals(espirituRecuperado.getId(), Casper.getId());
-//        assertEquals(espirituRecuperado.getNombre(), "Casper");
-//        assertEquals(espirituService.recuperar(Casper.getId()).getNombre(), "Lala");
-//    }
 
     @Test
     void actualizarEspiritu(){
-        espirituService.guardar(Casper);
+        espirituService.crear(Casper);
         Espiritu sinActualizar = espirituService.recuperar(Casper.getId());
         Casper.setNombre("Lala");
         System.out.println("El nombre ahora es: " + Casper.getNombre());
@@ -73,7 +63,7 @@ public class EspirituServiceTest {
 
     @Test
     void recuperarEspiritu(){
-        espirituService.guardar(Casper);
+        espirituService.crear(Casper);
         Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
         assertEquals(espirituRecuperado.getNombre(), "Casper");
         assertEquals(espirituRecuperado.getTipo(), "Poltergeist");
@@ -83,9 +73,9 @@ public class EspirituServiceTest {
     @Test
     void recuperarTodosLosEspiritus(){
         //Se deben obtener alfabeticamente
-        espirituService.guardar(Oni);
-        espirituService.guardar(Casper);
-        espirituService.guardar(Jinn);
+        espirituService.crear(Oni);
+        espirituService.crear(Casper);
+        espirituService.crear(Jinn);
         List<Espiritu> espiritus = espirituService.recuperarTodos();
         assertEquals(espiritus.size(), 3);
         assertEquals(espiritus.get(0).getNombre(), "Casper");
@@ -95,15 +85,28 @@ public class EspirituServiceTest {
 
     @Test
     void eliminarEspiritu(){
-        espirituService.guardar(Casper);
+        espirituService.crear(Casper);
         Long espirituId = Casper.getId();
         assertNotNull(espirituService.recuperar(espirituId));
         espirituService.eliminar(Casper);
         assertNull(espirituService.recuperar(espirituId));
     }
 
+    @AfterEach
+    void cleanup() {
+        espirituService.eliminarTodo();
+    }
 
-
+    //    @Test
+//    void guardarEspirituYaExistenteEnDB(){
+//        espirituService.guardar(Casper);
+//        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
+//        Casper.setNombre("Lala");
+//        espirituService.guardar(Casper);
+//        assertEquals(espirituRecuperado.getId(), Casper.getId());
+//        assertEquals(espirituRecuperado.getNombre(), "Casper");
+//        assertEquals(espirituService.recuperar(Casper.getId()).getNombre(), "Lala");
+//    }
 
 
 //
@@ -233,4 +236,5 @@ public class EspirituServiceTest {
 //            espirituService.eliminar(espiritu.getId());
 //        }
 //    }
+
 }

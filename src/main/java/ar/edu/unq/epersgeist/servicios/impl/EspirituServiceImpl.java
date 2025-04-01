@@ -17,7 +17,7 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public void guardar(Espiritu espiritu) {
+    public void crear(Espiritu espiritu) {
         HibernateTransactionRunner.runTrx(() -> {
             espirituDAO.guardar(espiritu);
             return null;
@@ -56,6 +56,13 @@ public class EspirituServiceImpl implements EspirituService {
         medium.conectarseAEspiritu(espi);
         this.actualizar(espi);
         return medium;
+    }
+
+    public void eliminarTodo(){
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDAO.eliminarTodo();
+            return null;
+        });
     }
 
 }
