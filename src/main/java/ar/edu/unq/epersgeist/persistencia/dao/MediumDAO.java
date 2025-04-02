@@ -12,4 +12,5 @@ public interface MediumDAO {
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void eliminarTodo();
+
 }

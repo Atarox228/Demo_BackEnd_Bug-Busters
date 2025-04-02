@@ -15,18 +15,6 @@ public class HibernateMediumDAO extends HibernateDAO<Medium> implements MediumDA
         super(Medium.class);
     }
 
-    public void actualizar(Medium medium) {
-        Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "UPDATE Medium m SET m.nombre = :medNombre, m.manaMax = :medManaMax, m.mana = :medMana WHERE m.id = :medId";
-        Query<Medium> query = session.createQuery(hql);
-        query.setParameter("medNombre", medium.getNombre());
-        query.setParameter("medManaMax", medium.getManaMax());
-        query.setParameter("medMana", medium.getMana());
-        query.setParameter("medId", medium.getId());
-        query.executeUpdate();
-    }
-
-
     public Collection<Medium> recuperarTodos() {
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "select m from Medium m order by m.nombre asc";
