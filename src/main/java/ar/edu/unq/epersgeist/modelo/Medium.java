@@ -29,6 +29,7 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
+
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
         this.nombre = nombre;
         this.manaMax = manaMax;
@@ -51,8 +52,18 @@ public class Medium implements Serializable {
         espiritu.setMedium(this);
     }
 
+
     public boolean puedeConectarse( Espiritu espiritu){
         return this.getUbicacion().getNombre() == espiritu.getUbicacion().getNombre() && espiritu.estaLibre();
     }
 
+
+    public void descansar() {
+        this.aumentarMana(15);
+        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+    }
+
+    public void aumentarMana(Integer mana) {
+        this.setMana(Math.min(this.getMana() + 15, manaMax));
+    }
 }
