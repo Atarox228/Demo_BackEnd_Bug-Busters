@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -80,7 +81,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void actualizarEspiritu(){
+    void testActualizarMedium(){
         mediumService.guardar(medium);
         Medium sinActualizar = mediumService.recuperar(medium.getId());
         medium.setNombre("Juan");
@@ -90,6 +91,17 @@ public class MediumServiceTest {
         assertEquals(sinActualizar.getId(), medium.getId());
         assertEquals(sinActualizar.getNombre(), "Lizzie");
         assertEquals(actualizado.getNombre(), "Juan");
+    }
+
+    @Test
+    void testDescansarMedium(){
+        mediumService.guardar(medium);
+        Long mediumId = medium.getId();
+        Medium sinDescansar = mediumService.recuperar(mediumId);
+        mediumService.descansar(mediumId);
+        Medium descansado = mediumService.recuperar(mediumId);
+        assertEquals(sinDescansar.getId(), descansado.getId());
+        assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
     @AfterEach

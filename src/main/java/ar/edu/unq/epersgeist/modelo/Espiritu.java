@@ -41,13 +41,11 @@ public class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
-    public void aumentarConexion(Medium medium) {
-        if (!medium.tieneConNombre_(this.nombre)) {
-            int maxNivelConexion = 100;
-            int nuevoNivelConexion = this.nivelConexion+10;
-            int minimo = Math.min(nuevoNivelConexion, maxNivelConexion);
-            nivelConexion = minimo;
-        }
+    public void aumentarConexion(Integer conexion) {
+        int maxNivelConexion = 100;
+        int nuevoNivelConexion = this.nivelConexion + conexion;
+        int minimo = Math.min(nuevoNivelConexion, maxNivelConexion);
+        nivelConexion = minimo;
     }
 
     public Long getId() {
