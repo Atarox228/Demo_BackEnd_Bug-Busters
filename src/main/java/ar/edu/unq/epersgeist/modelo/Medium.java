@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,14 +20,21 @@ public class Medium implements Serializable {
     private Integer manaMax;
     private Integer mana;
     private Set<Espiritu> espiritus = new HashSet<>();
-
-    //@ManyToOne
-    //private Ubicacion ubicacion;
+    @ManyToOne
+    private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
+    }
+
+
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
+        this.nombre = nombre;
+        this.manaMax = manaMax;
+        this.mana = mana;
+        this.ubicacion = ubicacion;
     }
 
     // COMPLETAR
@@ -35,8 +43,20 @@ public class Medium implements Serializable {
     }
 
     // COMPLETAR
-    public void conectarseAEspiritu(Espiritu espi) {
+    public void conectarseAEspiritu(Espiritu espiritu) {
+        if(!puedeConectarse(espiritu)){
+            throw new NoSePuedenConectarException(this,espiritu);
+        }
+        espiritu.aumentarConexion(this.getMana() * 20 / 100);
+        espiritus.add(espiritu);
+        espiritu.setMedium(this);
     }
+
+
+    public boolean puedeConectarse( Espiritu espiritu){
+        return this.getUbicacion().getNombre() == espiritu.getUbicacion().getNombre() && espiritu.estaLibre();
+    }
+
 
     public void descansar() {
         this.aumentarMana(15);
