@@ -19,7 +19,11 @@ public class Medium implements Serializable {
     private String nombre;
     private Integer manaMax;
     private Integer mana;
-    private Set<Espiritu> espiritus = new HashSet<>();
+    private Set<Espiritu> espiritusAngelicales = new HashSet<>();
+    private Set<Espiritu> espiritusDemoniacos = new HashSet<>();
+
+
+
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -48,7 +52,12 @@ public class Medium implements Serializable {
             throw new NoSePuedenConectarException(this,espiritu);
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
-        espiritus.add(espiritu);
+        if (espiritu.getTipo() == "Angelical"){
+            espiritusAngelicales.add(espiritu);
+        } else {
+            espiritusDemoniacos.add(espiritu);
+        }
+
         espiritu.setMedium(this);
     }
 
@@ -60,7 +69,8 @@ public class Medium implements Serializable {
 
     public void descansar() {
         this.aumentarMana(15);
-        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        espiritusAngelicales.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        espiritusDemoniacos.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
     }
 
     public void aumentarMana(Integer mana) {

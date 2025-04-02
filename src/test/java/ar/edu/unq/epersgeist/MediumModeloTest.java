@@ -27,12 +27,13 @@ public class MediumModeloTest {
     private Medium medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
-
+    private Espiritu Lilith;
 
 
     @BeforeEach
     void setUp(){
         Casper = new Espiritu("Angelical", 0, "Casper");
+        Lilith = new Espiritu("Demoniaco", 0, "lilith");
         Jorge = new Espiritu("Humano", 20, "Jorge");
 
         medium = new Medium("lala", 100, 50);
@@ -66,15 +67,28 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConectarseConEspiritu(){
+    void ConexionConEspirituAngelicalExitosa(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);
-        assertTrue(medium.getEspiritus().contains(Casper));
+        assertTrue(medium.getEspiritusAngelicales().contains(Casper));
         //assertFalse(Casper.estaLibre());
         assertNotNull(Casper.getMedium());
         assertEquals(Casper.getNivelDeConexion(), medium.getMana() * 20 / 100);
-    };
+    }
+
+    @Test
+    void ConexionConEspirituDemoniacoExitosa(){
+        medium.setUbicacion(Bernal);
+        Lilith.setUbicacion(Bernal);
+        medium.conectarseAEspiritu(Lilith);
+        assertTrue(medium.getEspiritusDemoniacos().contains(Lilith));
+        //assertFalse(Lilith.estaLibre());
+        assertNotNull(Lilith.getMedium());
+        assertEquals(Lilith.getNivelDeConexion(), medium.getMana() * 20 / 100);
+    }
+
+
 
     @Test
     void ConexionConEspirituFallidaPorLibertad(){
@@ -91,5 +105,8 @@ public class MediumModeloTest {
         Casper.setUbicacion(Quilmes);
         assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));
     };
+
+
+
 
 }

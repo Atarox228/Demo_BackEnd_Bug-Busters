@@ -134,11 +134,11 @@ public class EspirituServiceTest {
     void ConectarConMedium(){
         mediumService.guardar(medium);
         espirituService.crear(Casper);
-        assertEquals(medium.getEspiritus().size(),0);
+        assertEquals(medium.getEspiritusAngelicales().size(),0);
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
         Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(mediumConectado.getEspiritus().size(),1);
+        assertEquals(mediumConectado.getEspiritusAngelicales().size(),1);
         assertFalse(espirituConectado.estaLibre());
         assertEquals(espirituConectado.getNivelDeConexion(),10);
     }

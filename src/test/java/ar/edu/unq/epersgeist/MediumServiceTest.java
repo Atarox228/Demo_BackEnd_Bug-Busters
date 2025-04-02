@@ -5,7 +5,9 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,6 +105,9 @@ public class MediumServiceTest {
         assertEquals(sinDescansar.getId(), descansado.getId());
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
+
+
+
 
     @AfterEach
     void tearDown() {
