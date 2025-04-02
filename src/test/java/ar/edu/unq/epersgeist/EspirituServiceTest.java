@@ -101,8 +101,15 @@ public class EspirituServiceTest {
         espirituService.crear(Jinn);
         List<Espiritu> demonios = espirituService.espiritusDemoniacos();
         assertEquals(demonios.size(), 2);
-        assertEquals(demonios.get(0).getNombre(), "Otakemaru");
-        assertEquals(demonios.get(1).getNombre(), "Marids");
+    }
+
+    @Test
+    void verificarOrdenDeEspiritusDemoniacos(){
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos();
+        assertEquals(demonios.get(0).getNombre(), "Marids");
+        assertEquals(demonios.get(1).getNombre(), "Otakemaru");
 
     }
 
