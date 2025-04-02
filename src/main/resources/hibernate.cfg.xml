@@ -16,6 +16,7 @@
 		<property name="show_sql">true</property>
 
 		<property name="hibernate.hbm2ddl.auto">create-drop</property>
+		<mapping class="ar.edu.unq.epersgeist.modelo.Ubicacion" />
 
 		<mapping class="ar.edu.unq.epersgeist.modelo.Medium" />
 		<mapping class="ar.edu.unq.epersgeist.modelo.Espiritu" />
