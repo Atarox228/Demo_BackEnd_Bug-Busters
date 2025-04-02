@@ -58,14 +58,15 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     public Medium conectar(Long espirituId, Long mediumId) {
-        return HibernateTransactionRunner.runTrx(() -> {
-            Espiritu espiritu = this.espirituDAO.recuperar(espirituId);
-            Medium medium = this.mediumDAO.recuperar(mediumId);
-            medium.conectarseAEspiritu(espiritu);
-            this.espirituDAO.actualizar(espiritu);
-            this.mediumDAO.actualizar(medium);
-            return this.mediumDAO.recuperar(medium.getId());
-        });
+//        return HibernateTransactionRunner.runTrx(() -> {
+//            Espiritu espiritu = this.espirituDAO.recuperar(espirituId);
+//            Medium medium = this.mediumDAO.recuperar(mediumId);
+//            medium.conectarseAEspiritu(espiritu);
+//            this.espirituDAO.actualizar(espiritu);
+//            this.mediumDAO.actualizar(medium);
+//            return this.mediumDAO.recuperar(medium.getId());
+//        });
+        return null;
     }
 
     @Override

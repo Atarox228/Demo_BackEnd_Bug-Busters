@@ -20,8 +20,7 @@ public class Medium implements Serializable {
     private Integer manaMax;
     private Integer mana;
     private Set<Espiritu> espiritus = new HashSet<>();
-
-    //@ManyToOne
+    @ManyToOne
     private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana) {

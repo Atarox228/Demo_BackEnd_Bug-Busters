@@ -21,7 +21,9 @@ public class Espiritu implements Serializable {
     private String tipo;
     private Integer nivelConexion;
     private String nombre;
+    @ManyToOne
     private Medium medium;
+    @ManyToOne
     private Ubicacion ubicacion;
 
     public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
@@ -47,7 +49,7 @@ public class Espiritu implements Serializable {
             this.nivelConexion = 0;
         }
         this.nombre = nombre;
-        this.medium = null;
+        //this.medium = null;
         this.ubicacion = ubicacion;
     }
 
@@ -56,7 +58,7 @@ public class Espiritu implements Serializable {
         this.tipo = tipo;
         this.nivelConexion = nivelDeConexion;
         this.nombre = nombre;
-        this.medium = null;
+        //this.medium = null;
     }
 
     public void aumentarConexion(Integer conexion) {

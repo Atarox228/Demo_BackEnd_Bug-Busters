@@ -36,7 +36,7 @@ public class EspirituServiceTest {
 
     @BeforeEach
     void setUp(){
-        Casper = new Espiritu("Angelical", 0, "Casper", new Ubicacion("Quilmes"));
+        Casper = new Espiritu("Angelical", 0, "Casper");
         Oni = new Espiritu("Demoniaco", 95, "Otakemaru");
         Jinn = new Espiritu("Demoniaco", 100, "Marids");
         Jorge = new Espiritu("Humano", 20, "Jorge");
