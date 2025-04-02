@@ -2,9 +2,13 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,18 +24,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceTest {
 
-    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
+    private MediumServiceImpl mediumService = new MediumServiceImpl(new HibernateMediumDAO());
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
     private Espiritu Jorge;
+    private Medium medium;
+    private Medium medium2;
+    private Ubicacion Bernal;
 
     @BeforeEach
     void setUp(){
-        Casper = new Espiritu("Angelical", 0, "Casper");
+        Casper = new Espiritu("Angelical", 0, "Casper", new Ubicacion("Quilmes"));
         Oni = new Espiritu("Demoniaco", 95, "Otakemaru");
         Jinn = new Espiritu("Demoniaco", 100, "Marids");
         Jorge = new Espiritu("Humano", 20, "Jorge");
+        medium = new Medium("lala", 100, 50);
+        medium2 = new Medium("lolo", 100, 60);
     }
 
 
@@ -112,6 +122,14 @@ public class EspirituServiceTest {
         assertEquals(demonios.get(1).getNombre(), "Otakemaru");
 
     }
+
+//    @Test
+//    void ConectarConMedium(){
+//        mediumService.guardar(medium);
+//        espirituService.crear(Casper);
+//        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
+//        assertEquals(mediumConectado.getId(), medium.getId());
+//    }
 
     @AfterEach
     void cleanup() {

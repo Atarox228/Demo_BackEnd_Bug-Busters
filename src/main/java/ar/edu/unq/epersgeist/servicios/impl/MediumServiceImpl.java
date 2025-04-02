@@ -12,7 +12,6 @@ public class MediumServiceImpl implements MediumService {
 
     private MediumDAO dao;
 
-
     public MediumServiceImpl(MediumDAO dao) {
         this.dao = dao;
     }
