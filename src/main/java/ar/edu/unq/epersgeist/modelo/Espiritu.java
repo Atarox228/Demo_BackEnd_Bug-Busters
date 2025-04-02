@@ -72,6 +72,18 @@ public class Espiritu implements Serializable {
         return this.medium == null;
     }
 
+    @Override
+    public String toString() {
+        return "Espiritu{" +
+                "id=" + id +
+                ", tipo='" + tipo + '\'' +
+                ", nivelConexion=" + nivelConexion +
+                ", nombre='" + nombre + '\'' +
+                ", medium= " + medium.getNombre() +
+                ", ubicacion= " + ubicacion.getNombre() +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

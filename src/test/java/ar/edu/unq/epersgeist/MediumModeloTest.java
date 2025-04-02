@@ -71,7 +71,8 @@ public class MediumModeloTest {
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);
         assertTrue(medium.getEspiritus().contains(Casper));
-        assertFalse(Casper.estaLibre());
+        //assertFalse(Casper.estaLibre());
+        assertNotNull(Casper.getMedium());
         assertEquals(Casper.getNivelDeConexion(), medium.getMana() * 20 / 100);
     };
 

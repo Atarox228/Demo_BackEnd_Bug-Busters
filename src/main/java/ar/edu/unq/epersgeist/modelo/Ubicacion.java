@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Getter
 @Setter
@@ -10,7 +12,7 @@ import lombok.*;
 @ToString @EqualsAndHashCode
 
 @Entity
-public class Ubicacion {
+public class Ubicacion implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

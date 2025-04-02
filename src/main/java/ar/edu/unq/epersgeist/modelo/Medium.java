@@ -29,6 +29,13 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
+        this.nombre = nombre;
+        this.manaMax = manaMax;
+        this.mana = mana;
+        this.ubicacion = ubicacion;
+    }
+
     // COMPLETAR
     public boolean tieneConNombre_(String nombre) {
         return false;
@@ -47,4 +54,5 @@ public class Medium implements Serializable {
     public boolean puedeConectarse( Espiritu espiritu){
         return this.getUbicacion().getNombre() == espiritu.getUbicacion().getNombre() && espiritu.estaLibre();
     }
+
 }
