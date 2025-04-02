@@ -18,7 +18,7 @@ public class Medium implements Serializable {
     private String nombre;
     private Integer manaMax;
     private Integer mana;
-    //private Set<Espiritu> espiritus = new HashSet<>();
+    private Set<Espiritu> espiritus = new HashSet<>();
 
     //@ManyToOne
     //private Ubicacion ubicacion;
@@ -36,5 +36,14 @@ public class Medium implements Serializable {
 
     // COMPLETAR
     public void conectarseAEspiritu(Espiritu espi) {
+    }
+
+    public void descansar() {
+        this.aumentarMana(15);
+        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+    }
+
+    public void aumentarMana(Integer mana) {
+        this.setMana(Math.min(this.getMana() + 15, manaMax));
     }
 }

@@ -12,4 +12,5 @@ public interface MediumService {
     void eliminar(Medium medium);
     void actualizar(Medium medium);
     void eliminarTodo();
+    void descansar(Long idMedium);
 }
