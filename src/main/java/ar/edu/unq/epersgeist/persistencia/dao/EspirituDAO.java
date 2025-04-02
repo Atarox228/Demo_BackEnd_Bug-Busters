@@ -5,10 +5,9 @@ import ar.edu.unq.epersgeist.modelo.Espiritu;
 import java.util.List;
 
 public interface EspirituDAO {
-    void guardar(Espiritu espiritu);
+    Espiritu crear(Espiritu espiritu);
     Espiritu recuperar(Long idDelEspiritu);
     List<Espiritu> recuperarTodos();
     void actualizar(Espiritu espiritu);
-    void eliminar(Espiritu espiritu);
-    void eliminarTodo();
+    void eliminar(Long idDelEspiritu);
 }
