@@ -24,12 +24,14 @@ public class EspirituServiceTest {
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
+    private Espiritu Jorge;
 
     @BeforeEach
     void setUp(){
-        Casper = new Espiritu("Poltergeist", 0, "Casper");
-        Oni = new Espiritu("Oni", 95, "Otakemaru");
-        Jinn = new Espiritu("Jinn", 100, "Marids");
+        Casper = new Espiritu("Angelical", 0, "Casper");
+        Oni = new Espiritu("Demoniaco", 95, "Otakemaru");
+        Jinn = new Espiritu("Demoniaco", 100, "Marids");
+        Jorge = new Espiritu("Humano", 20, "Jorge");
     }
 
 
@@ -66,7 +68,7 @@ public class EspirituServiceTest {
         espirituService.crear(Casper);
         Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
         assertEquals(espirituRecuperado.getNombre(), "Casper");
-        assertEquals(espirituRecuperado.getTipo(), "Poltergeist");
+        assertEquals(espirituRecuperado.getTipo(), "Angelical");
         assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
     }
 
@@ -90,6 +92,18 @@ public class EspirituServiceTest {
         assertNotNull(espirituService.recuperar(espirituId));
         espirituService.eliminar(Casper);
         assertNull(espirituService.recuperar(espirituId));
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacos(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos();
+        assertEquals(demonios.size(), 2);
+        assertEquals(demonios.get(0).getNombre(), "Otakemaru");
+        assertEquals(demonios.get(1).getNombre(), "Marids");
+
     }
 
     @AfterEach

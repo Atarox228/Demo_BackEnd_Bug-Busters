@@ -13,4 +13,6 @@ public interface EspirituService {
     void eliminarTodo();
     void actualizar(Espiritu espiritu);
     Medium conectar(Long espirituId, Medium medium);
+
+    List<Espiritu> espiritusDemoniacos();
 }
