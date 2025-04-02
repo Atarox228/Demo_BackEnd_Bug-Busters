@@ -30,7 +30,7 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     @Override
     public List<Espiritu> espiritusTipo(String tipoEspiritu) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from Espiritu e where e.tipo = :tipoDeEspiritu order by e.nombre desc";
+        String hql = "from Espiritu e where e.tipo = :tipoDeEspiritu order by e.nivelConexion desc";
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
         query.setParameter("tipoDeEspiritu", tipoEspiritu);
         return query.getResultList();
