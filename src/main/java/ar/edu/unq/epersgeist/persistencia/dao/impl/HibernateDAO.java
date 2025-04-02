@@ -23,7 +23,7 @@ public class HibernateDAO<T> {
 
 
     public T recuperar(Long id) {
-        Session session = HibernateTransactionRunner.getCurregntSession();
+        Session session = HibernateTransactionRunner.getCurrentSession();
 
         return session.get(entityType, id);
     }
