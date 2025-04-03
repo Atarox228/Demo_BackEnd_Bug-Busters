@@ -114,10 +114,9 @@ public class MediumServiceTest {
     @Test
     void testDescansarMedium(){
         mediumService.guardar(medium);
-        Long mediumId = medium.getId();
-        Medium sinDescansar = mediumService.recuperar(mediumId);
-        mediumService.descansar(mediumId);
-        Medium descansado = mediumService.recuperar(mediumId);
+        Medium sinDescansar = mediumService.recuperar(medium.getId());
+        mediumService.descansar(medium.getId());
+        Medium descansado = mediumService.recuperar(medium.getId());
         assertEquals(sinDescansar.getId(), descansado.getId());
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
@@ -126,10 +125,12 @@ public class MediumServiceTest {
     @Test
     void testInvocarEspirituLibreConManaSuficiente() {
         espirituService.crear(espiritu);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
         ubicacionService.crear(bernal);
         mediumService.guardar(medium3);
         Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
-        assertNotNull(espirituInvocado);
+        assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
+        assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
     }
 
 //    @Test
@@ -145,10 +146,12 @@ public class MediumServiceTest {
     @Test
     void testInvocarEspirituSinMana() {
         espirituService.crear(espiritu);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
         ubicacionService.crear(bernal);
         mediumService.guardar(mediumSinMana);
         Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
-        assertNull(espirituNoInvocado);
+        assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
+        assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
 
     }
 
