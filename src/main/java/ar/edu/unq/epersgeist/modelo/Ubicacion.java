@@ -1,9 +1,12 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.EntidadConUbicacionRegistradaException;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -22,7 +25,30 @@ public class Ubicacion implements Serializable{
         this.nombre = nombre;
     }
 
-    public void agregarEspiritu(Espiritu espiritu) {}
+    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Espiritu> espiritus = new HashSet<>();
 
-    public void agregarMedium(Espiritu espiritu) {}
+    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Medium> mediums = new HashSet<>();
+
+    public void agregarEspiritu(Espiritu espiritu) {
+        if(espiritu.getUbicacion() == null){
+            espiritus.add(espiritu);
+            espiritu.setUbicacion(this);
+        } else {
+            throw new EntidadConUbicacionRegistradaException(espiritu, this);
+        }
+
+    }
+
+    public void agregarMedium(Medium medium) {
+        if (medium.getUbicacion() == null) {
+            mediums.add(medium);
+            medium.setUbicacion(this);
+        }
+        else{
+            throw new EntidadConUbicacionRegistradaException(medium, this);
+        }
+
+    }
 }

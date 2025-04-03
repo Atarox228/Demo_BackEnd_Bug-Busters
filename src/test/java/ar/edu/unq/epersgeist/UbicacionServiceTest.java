@@ -1,9 +1,15 @@
 package ar.edu.unq.epersgeist;
 
+import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EntidadYaEliminadaException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EntidadYaRegistradaException;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,117 +17,163 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class UbicacionServiceTest {
-    private UbicacionServiceImpl service;
+    private UbicacionServiceImpl ubicacionService;
+    private MediumServiceImpl mediumService;
+    private EspirituServiceImpl espirituService;
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
     private Ubicacion ardenweald;
+    private Espiritu espiritu1;
+    private Espiritu espiritu2;
+    private Medium medium1;
+    private Medium medium2;
 
 
     @BeforeEach
     void prepare() {
-        this.service = new UbicacionServiceImpl(
-                new HibernateUbicacionDao()
-        );
+        ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
+
 
         fellwood = new Ubicacion("Fellwood");
         ashenvale = new Ubicacion("Ashenvale");
         ardenweald = new Ubicacion("Ardenweald");
+
+        espiritu1 = new Espiritu("Demoniaco", 95, "Casper");
+        espiritu2 = new Espiritu("Angelical", 100, "Marids");
+
+        medium1 = new Medium("lala", 100, 50);
+        medium2 = new Medium("lolo", 100, 60);
     }
 
     @Test
     void crearUbicacion(){
 
-        service.crear(ashenvale);
+        ubicacionService.crear(ashenvale);
         assertNotNull(ashenvale.getId());
     }
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        service.crear(fellwood);
+        ubicacionService.crear(fellwood);
         assertThrows(RuntimeException.class, () -> {
-            service.crear(fellwood);
+            ubicacionService.crear(fellwood);
         });
     }
 
     @Test
     void RecuperarUbicacion(){
-        service.crear(fellwood);
-        Ubicacion ubicacion2 = service.recuperar(fellwood.getId());
+        ubicacionService.crear(fellwood);
+        Ubicacion ubicacion2 = ubicacionService.recuperar(fellwood.getId());
 
         assertEquals(fellwood.getNombre(), ubicacion2.getNombre());
     }
 
     @Test
     void EliminarUbicacion(){
-        service.crear(fellwood);
+        ubicacionService.crear(fellwood);
         Long idEliminado = fellwood.getId();
-        service.eliminar(fellwood);
-        assertNull(service.recuperar(idEliminado));
+        ubicacionService.eliminar(fellwood);
+        assertNull(ubicacionService.recuperar(idEliminado));
 
     }
 
     @Test
     void EliminarMismaUbicacionDosVeces(){
-        service.crear(fellwood);
-        service.eliminar(fellwood);
+        ubicacionService.crear(fellwood);
+        ubicacionService.eliminar(fellwood);
         assertThrows(RuntimeException.class, () -> {
-            service.eliminar(fellwood);
+            ubicacionService.eliminar(fellwood);
         });
 
     }
 
     @Test
     void RecuperarTodasLasUbicaciones(){
-        service.crear(fellwood);
-        service.crear(ashenvale);
-        service.crear(ardenweald);
-        Integer cantidadList = service.recuperarTodos().size();
+        ubicacionService.crear(fellwood);
+        ubicacionService.crear(ashenvale);
+        ubicacionService.crear(ardenweald);
+        Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(3, cantidadList);
     }
 
 
     @Test
     void ActualizarUbicacion(){
-        service.crear(fellwood);
+        ubicacionService.crear(fellwood);
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
-        service.actualizar(fellwood);
-        Ubicacion ubiCambiada = service.recuperar(fellwood.getId());
+        ubicacionService.actualizar(fellwood);
+        Ubicacion ubiCambiada = ubicacionService.recuperar(fellwood.getId());
         assertNotEquals(nombrePre , ubiCambiada.getNombre());
     }
 
     @Test
     void actualizarUbicacionEliminada(){
-        service.crear(fellwood);
-        service.eliminar(fellwood);
+        ubicacionService.crear(fellwood);
+        ubicacionService.eliminar(fellwood);
 //        assertThrows(.class, () -> {
-//            service.actualizar(fellwood);
+//            ubicacionService.actualizar(fellwood);
 //        });
     }
     
     @Test
     void ActualizarVariasUbicaciones(){
-        service.crear(fellwood);
-        service.crear(ashenvale);
+        ubicacionService.crear(fellwood);
+        ubicacionService.crear(ashenvale);
         String nombrePre1 = fellwood.getNombre();
         String nombrePre2 = ashenvale.getNombre();
         fellwood.setNombre("Bosque Vil");
         ashenvale.setNombre("Ardenweald");
-        service.actualizar(fellwood);
-        service.actualizar(ashenvale);
-        Ubicacion ubiCambiada1 = service.recuperar(fellwood.getId());
-        Ubicacion ubiCambiada2 = service.recuperar(ashenvale.getId());
+        ubicacionService.actualizar(fellwood);
+        ubicacionService.actualizar(ashenvale);
+        Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId());
+        Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId());
         assertNotEquals(nombrePre1 , ubiCambiada1.getNombre());
         assertNotEquals(nombrePre2 , ubiCambiada2.getNombre());
         
     }
 
+    @Test
+    void EliminarUbicaciones(){
+        ubicacionService.crear(fellwood);
+        ubicacionService.crear(ashenvale);
+        Long ubi1Id = fellwood.getId();
+        Long ubi2Id = ashenvale.getId();
+        assertNotNull(ubicacionService.recuperar(ubi1Id));
+        assertNotNull(ubicacionService.recuperar(ubi2Id));
+        ubicacionService.eliminarTodo();
+        assertNull(ubicacionService.recuperar(ubi1Id));
+        assertNull(ubicacionService.recuperar(ubi2Id));
+    }
+
+    @Test
+    void EspirituEnUbicacion(){
+        ubicacionService.crear(fellwood);
+        espirituService.crear(espiritu1);
+        espirituService.crear(espiritu2);
+
+        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu1.getId());
+        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu2.getId());
+
+        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(fellwood.getId());
+
+        assertEquals(2, espiritusUbi.size());
+        assertEquals(espiritu1.getId(), espiritusUbi.get(0).getId());
+        assertEquals(espiritu2.getId(), espiritusUbi.get(1).getId());
+    }
+
     @AfterEach
     void cleanUp() {
-        service.eliminarTodo();
+        espirituService.eliminarTodo();
+        mediumService.eliminarTodo();
+        ubicacionService.eliminarTodo();
     }
 }

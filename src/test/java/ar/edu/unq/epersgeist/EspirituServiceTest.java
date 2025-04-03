@@ -29,7 +29,7 @@ public class EspirituServiceTest {
 
     private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
     private MediumServiceImpl mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
-    private UbicacionServiceImpl ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDao());
+    private UbicacionServiceImpl ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;

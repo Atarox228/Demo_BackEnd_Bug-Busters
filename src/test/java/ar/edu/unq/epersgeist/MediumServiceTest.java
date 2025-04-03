@@ -36,7 +36,7 @@ public class MediumServiceTest {
     private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
     private Espiritu espiritu;
     private Ubicacion bernal;
-    private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
+    private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
     private Medium medium3;
     private Medium mediumSinMana;
 
