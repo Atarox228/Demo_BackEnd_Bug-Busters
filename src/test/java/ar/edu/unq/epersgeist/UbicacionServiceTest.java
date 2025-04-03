@@ -8,9 +8,13 @@ import ar.edu.unq.epersgeist.persistencia.dao.exception.EntidadYaRegistradaExcep
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionEnlazadaConEntidadesException;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
+import jakarta.persistence.OptimisticLockException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,6 +81,24 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void RecuperarUbicacionNoPersistida(){
+
+        Ubicacion ubicacion2 = ubicacionService.recuperar(1L);
+
+        assertNull(ubicacion2);
+
+    }
+
+    @Test
+    void RecuperarUbicacionNula(){
+
+        assertThrows(IdNoValidoException.class,()->{
+            ubicacionService.recuperar(null);
+        });
+
+    }
+
+    @Test
     void EliminarUbicacion(){
         ubicacionService.crear(fellwood);
         Long idEliminado = fellwood.getId();
@@ -89,8 +111,20 @@ public class UbicacionServiceTest {
     void EliminarMismaUbicacionDosVeces(){
         ubicacionService.crear(fellwood);
         ubicacionService.eliminar(fellwood);
-        assertThrows(RuntimeException.class, () -> {
+        assertThrows(OptimisticLockException.class, () -> {
             ubicacionService.eliminar(fellwood);
+        });
+
+    }
+
+    @Test
+    void EliminarUbicacionConEspiritus(){
+        ubicacionService.crear(fellwood);
+        espirituService.crear(espiritu1);
+        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu1.getId());
+        Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId());
+        assertThrows(UbicacionEnlazadaConEntidadesException.class, () -> {
+            ubicacionService.eliminar(ubicacion);
         });
 
     }
@@ -102,6 +136,13 @@ public class UbicacionServiceTest {
         ubicacionService.crear(ardenweald);
         Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(3, cantidadList);
+    }
+
+    @Test
+    void RecuperarTodosSinUbicaciones(){
+
+        Integer cantidadList = ubicacionService.recuperarTodos().size();
+        assertEquals(0, cantidadList);
     }
 
 
@@ -119,9 +160,9 @@ public class UbicacionServiceTest {
     void actualizarUbicacionEliminada(){
         ubicacionService.crear(fellwood);
         ubicacionService.eliminar(fellwood);
-//        assertThrows(.class, () -> {
-//            ubicacionService.actualizar(fellwood);
-//        });
+        assertThrows(OptimisticLockException.class, () -> {
+            ubicacionService.actualizar(fellwood);
+        });
     }
     
     @Test
@@ -142,7 +183,16 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EliminarUbicaciones(){
+    void ActualizarUbicacionConValoresInvalidos(){
+        ubicacionService.crear(fellwood);
+        fellwood.setNombre("");
+        assertThrows(ConstraintViolationException.class, () -> {
+            ubicacionService.actualizar(fellwood);
+        });
+    }
+
+    @Test
+    void EliminarTodasLasUbicaciones(){
         ubicacionService.crear(fellwood);
         ubicacionService.crear(ashenvale);
         Long ubi1Id = fellwood.getId();
@@ -155,7 +205,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EspirituEnUbicacion(){
+    void EspiritusEnUbicacion(){
         ubicacionService.crear(fellwood);
         espirituService.crear(espiritu1);
         espirituService.crear(espiritu2);
@@ -170,10 +220,42 @@ public class UbicacionServiceTest {
         assertEquals(espiritu2.getId(), espiritusUbi.get(1).getId());
     }
 
+    @Test
+    void UbicacionSinEspiritusRegistrados(){
+        ubicacionService.crear(ashenvale);
+
+        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(fellwood.getId());
+
+        assertEquals(0, espiritusUbi.size());
+    }
+
+    @Test
+    void EspiritusEnUbicacionNoRegistrada(){
+        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(1L);
+
+        assertEquals(0, espiritusUbi.size());
+    }
+
+    @Test
+    void EspiritusEnUbicacionNula(){
+        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(null);
+
+        assertEquals(0, espiritusUbi.size());
+    }
+
     @AfterEach
     void cleanUp() {
         espirituService.eliminarTodo();
         mediumService.eliminarTodo();
         ubicacionService.eliminarTodo();
     }
+
+    // Test de modelo
+//    @Test
+//    void crearUbicacionNula(){
+//        Ubicacion ubi = new Ubicacion(null);
+//        assertThrows(NullPointerException.class, () -> {
+//            ubicacionService.crear(ubi);
+//        });
+//    }
 }
