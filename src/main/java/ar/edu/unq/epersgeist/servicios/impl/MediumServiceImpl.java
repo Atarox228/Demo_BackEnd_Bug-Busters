@@ -64,4 +64,17 @@ public class MediumServiceImpl implements MediumService {
             return null;
         });
     }
+
+    @Override
+    public Espiritu invocar(Long mediumId, Long espirituId) {
+        return HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = dao.recuperar(mediumId);
+            Espiritu espiritu = espirituDao.recuperar(espirituId);
+            medium.invocar(espiritu);
+            dao.actualizar(medium);
+            espirituDao.actualizar(espiritu);
+            ubicacionDao.actualizar(medium.getUbicacion());
+            return espirituDao.recuperar(espirituId);
+        });
+    }
 }

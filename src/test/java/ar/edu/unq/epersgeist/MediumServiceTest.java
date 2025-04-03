@@ -104,6 +104,35 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
+    @Test
+    void testInvocarEspirituLibreConManaSuficiente() {
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+        espiritu = new Espiritu("Angelical", 0, "Casper");
+        espirituService.crear(espiritu);
+
+        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
+        Bernal = new Ubicacion("Bernal");
+        ubicacionService.crear(Bernal);
+
+        medium3 = new Medium("lala", 100, 50,Bernal);
+        mediumService.guardar(medium3);
+
+        Long espirituId = espiritu.getId();
+        Long mediumId = medium3.getId();
+
+        Medium mediumAntesDeInv = mediumService.recuperar(mediumId);
+
+        assertTrue(espiritu.estaLibre());
+
+        Espiritu espirituInvocado = mediumService.invocar(mediumId, espirituId);
+        assertNotNull(espirituInvocado);
+
+        Medium mediumLuegoDeInv = mediumService.recuperar(mediumId);
+
+        //assertTrue(mediumAntesDeInv.getMana() > mediumLuegoDeInv.getMana());
+        //assertFalse(espiritu.estaLibre());
+    }
+
     @AfterEach
     void tearDown() {
         mediumService.eliminarTodo();

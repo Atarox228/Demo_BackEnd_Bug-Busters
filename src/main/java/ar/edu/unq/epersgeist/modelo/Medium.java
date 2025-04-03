@@ -66,4 +66,28 @@ public class Medium implements Serializable {
     public void aumentarMana(Integer mana) {
         this.setMana(Math.min(this.getMana() + 15, manaMax));
     }
+
+    public void aumentarMana(Integer mana) {
+
+        this.setMana(Math.min(this.getMana() + 15, manaMax));
+    }
+
+    public void reducirMana(Integer mana) {
+        this.setMana(Math.max(this.getMana() - mana, 0));
+    }
+
+    public void invocar(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new NoSePuedenConectarException(this,espiritu);
+        }
+        if (mana > 10) {
+            this.reducirMana(10);
+            this.ubicacion.agregarEspiritu(espiritu);
+            espiritu.setMedium(this);
+        }
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
 }
