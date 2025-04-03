@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
@@ -92,5 +93,49 @@ public class MediumModeloTest {
         Casper.setUbicacion(Quilmes);
         assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));
     };
+
+    @Test
+    void descansarAumentaMana() {
+        Integer mana = medium.getMana();
+        medium.descansar();
+        Integer nuevoMana = medium.getMana();
+        assertEquals(mana + 15, nuevoMana);
+    }
+
+    @Test
+    void descansarNoAumentaMana() {
+        medium.setMana(medium.getManaMax());
+        Integer mana = medium.getMana();
+        medium.descansar();
+        Integer nuevoMana = medium.getMana();
+        assertEquals(mana, nuevoMana);
+    }
+
+    @Test
+    void invocacionExitosa() {
+        medium.setUbicacion(Bernal);
+        Integer mana = medium.getMana();
+        medium.invocar(Casper);
+        Integer nuevoMana = medium.getMana();
+        assertEquals(mana - 10, nuevoMana);
+    }
+
+    @Test
+    void invocacionFallidaPorManaInsuficiente() {
+        medium.setUbicacion(Bernal);
+        medium.setMana(5);
+        Integer mana = medium.getMana();
+        medium.invocar(Casper);
+        Integer nuevoMana = medium.getMana();
+        assertEquals(mana, nuevoMana);
+    }
+
+    @Test
+    void invocacionFallidaPorEspirituOcupado() {
+        medium.setUbicacion(Bernal);
+        medium.setUbicacion(Quilmes);
+        medium.invocar(Casper);
+        assertThrows(EspirituNoLibreException.class, () -> medium.invocar(Casper));
+    }
 
 }
