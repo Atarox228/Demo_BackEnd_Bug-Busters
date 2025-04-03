@@ -2,11 +2,20 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +33,23 @@ public class MediumServiceTest {
     private MediumService mediumService;
     private Medium medium;
     private Medium medium2;
+    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
+    private Espiritu espiritu;
+    private Ubicacion bernal;
+    private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
+    private Medium medium3;
+    private Medium mediumSinMana;
+
 
     @BeforeEach
     void setUp() {
-        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
         this.medium = new Medium("Lizzie",150,100);
         this.medium2 = new Medium("Lorraine", 200, 50);
+        espiritu = new Espiritu("Angelical", 0, "Casper");
+        bernal = new Ubicacion("Bernal");
+        medium3 = new Medium("Lala", 100, 50, bernal);
+        mediumSinMana = new Medium("Nomana", 100, 0, bernal);
     }
 
     @Test
@@ -58,8 +78,6 @@ public class MediumServiceTest {
 
     @Test
     void testEliminarMedium() {
-        MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        Medium medium = new Medium("Lizzie", 150, 100);
         mediumService.guardar(medium);
         Long mediumId = medium.getId();
         assertNotNull(mediumService.recuperar(mediumId));
@@ -96,17 +114,52 @@ public class MediumServiceTest {
     @Test
     void testDescansarMedium(){
         mediumService.guardar(medium);
-        Long mediumId = medium.getId();
-        Medium sinDescansar = mediumService.recuperar(mediumId);
-        mediumService.descansar(mediumId);
-        Medium descansado = mediumService.recuperar(mediumId);
+        Medium sinDescansar = mediumService.recuperar(medium.getId());
+        mediumService.descansar(medium.getId());
+        Medium descansado = mediumService.recuperar(medium.getId());
         assertEquals(sinDescansar.getId(), descansado.getId());
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
+
+    @Test
+    void testInvocarEspirituLibreConManaSuficiente() {
+        espirituService.crear(espiritu);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
+        ubicacionService.crear(bernal);
+        mediumService.guardar(medium3);
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
+        assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
+        assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
+    }
+
+//    @Test
+//    void testInvocarEspirituNoLibre() {
+//        espirituService.crear(espiritu);
+//        ubicacionService.crear(bernal);
+//        mediumService.guardar(medium3);
+//        mediumService.guardar(medium2);
+//        mediumService.invocar(medium3.getId(), espiritu.getId());
+//        assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(medium2.getId(), espiritu.getId()));
+//    }
+
+    @Test
+    void testInvocarEspirituSinMana() {
+        espirituService.crear(espiritu);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
+        ubicacionService.crear(bernal);
+        mediumService.guardar(mediumSinMana);
+        Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
+        assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
+        assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
+
+    }
+
     @AfterEach
     void tearDown() {
+        espirituService.eliminarTodo();
         mediumService.eliminarTodo();
+        ubicacionService.eliminarTodo();
     }
 }
 

@@ -21,8 +21,10 @@ public class Espiritu implements Serializable {
     private String tipo;
     private Integer nivelConexion;
     private String nombre;
+
     @ManyToOne
     private Medium medium;
+
     @ManyToOne
     private Ubicacion ubicacion;
 

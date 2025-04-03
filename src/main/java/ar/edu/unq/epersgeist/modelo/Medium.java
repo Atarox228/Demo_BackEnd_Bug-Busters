@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,10 @@ public class Medium implements Serializable {
     private String nombre;
     private Integer manaMax;
     private Integer mana;
+
+    @OneToMany (mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
+
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -65,5 +69,33 @@ public class Medium implements Serializable {
 
     public void aumentarMana(Integer mana) {
         this.setMana(Math.min(this.getMana() + 15, manaMax));
+    }
+
+    public void reducirMana(Integer mana) {
+        this.setMana(Math.max(this.getMana() - mana, 0));
+    }
+
+    public void invocar(Espiritu espiritu) {
+        if (this.mana > 10) {
+            this.verificarSiEstaLibre(espiritu);
+            this.reducirMana(10);
+            this.ubicacion.agregarEspiritu(espiritu);
+            this.cambiosEnEspiritu(this.ubicacion, espiritu);
+        }
+    }
+
+    private void verificarSiEstaLibre(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new EspirituNoLibreException(espiritu);
+        }
+    }
+
+    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
+        espiritu.setMedium(this);
+        espiritu.setUbicacion(ubicacion);
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
     }
 }
