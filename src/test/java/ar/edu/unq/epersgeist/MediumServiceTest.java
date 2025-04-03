@@ -5,6 +5,8 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
@@ -36,6 +38,7 @@ public class MediumServiceTest {
     private Ubicacion bernal;
     private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
     private Medium medium3;
+    private Medium mediumSinMana;
 
 
     @BeforeEach
@@ -46,6 +49,7 @@ public class MediumServiceTest {
         espiritu = new Espiritu("Angelical", 0, "Casper");
         bernal = new Ubicacion("Bernal");
         medium3 = new Medium("Lala", 100, 50, bernal);
+        mediumSinMana = new Medium("Nomana", 100, 0, bernal);
     }
 
     @Test
@@ -126,6 +130,25 @@ public class MediumServiceTest {
         mediumService.guardar(medium3);
         Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
         assertNotNull(espirituInvocado);
+    }
+
+//    @Test
+//    void testInvocarEspirituNoLibre() {
+//        espirituService.crear(espiritu);
+//        ubicacionService.crear(bernal);
+//        mediumService.guardar(medium3);
+//        mediumService.guardar(medium2);
+//        mediumService.invocar(medium3.getId(), espiritu.getId());
+//        assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(medium2.getId(), espiritu.getId()));
+//    }
+
+    @Test
+    void testInvocarEspirituSinMana() {
+        espirituService.crear(espiritu);
+        ubicacionService.crear(bernal);
+        mediumService.guardar(mediumSinMana);
+        Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
+        assertNull(espirituNoInvocado);
 
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -76,11 +77,22 @@ public class Medium implements Serializable {
 
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
+            this.verificarSiEstaLibre(espiritu);
             this.reducirMana(10);
             this.ubicacion.agregarEspiritu(espiritu);
-            espiritu.setMedium(this);
-            this.getEspiritus().add(espiritu);
+            this.cambiosEnEspiritu(this.ubicacion, espiritu);
         }
+    }
+
+    private void verificarSiEstaLibre(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new EspirituNoLibreException(espiritu);
+        }
+    }
+
+    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
+        espiritu.setMedium(this);
+        espiritu.setUbicacion(ubicacion);
     }
 
     public Ubicacion getUbicacion() {
