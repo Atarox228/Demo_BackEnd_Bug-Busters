@@ -106,7 +106,24 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
+    @Test
+    void testExorcizarMedium1a1Victorioso(){
+        EspirituService espirituService = new EspirituServiceImpl();
+        Espiritu kyu = new Espiritu("Angelical", 80,"Kyu");
+        espirituService.crear(kyu);
+        Espiritu kyuMalvado = new Espiritu("Demoniaco", 80,"kyuMalvado");
+        espirituService.crear(kyuMalvado);
 
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+
+        espirituService.conectar(kyu.getId(), medium.getId());
+        espirituService.conectar(kyuMalvado.getId(), medium2.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
+
+
+    }
 
 
     @AfterEach

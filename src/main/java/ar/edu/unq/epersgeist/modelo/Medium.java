@@ -76,4 +76,16 @@ public class Medium implements Serializable {
     public void aumentarMana(Integer mana) {
         this.setMana(Math.min(this.getMana() + 15, manaMax));
     }
+
+    public void exorcizar(Medium medium2) {
+        Set<Espiritu> AngelicalesRestantes = espiritusAngelicales;
+        Set<Espiritu> DemoniacosRestantes = medium2.getEspiritusDemoniacos();
+        while (!(AngelicalesRestantes.isEmpty())) {
+            Espiritu AngelicalAtacante = AngelicalesRestantes.iterator().next();
+            Espiritu DemoniacoDefensor = DemoniacosRestantes.iterator().next();
+            int probabilidadExito = 7 // genenrar numero aleatorio + AngelicalAtacante.getNivelConexion
+            int dificultad = 7 // genenrar numero aleatorio + AngelicalAtacante.getNivelConexion
+        }
+
+    }
 }
