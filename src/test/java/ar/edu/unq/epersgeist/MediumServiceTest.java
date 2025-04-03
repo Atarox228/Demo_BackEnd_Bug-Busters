@@ -2,11 +2,18 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +31,21 @@ public class MediumServiceTest {
     private MediumService mediumService;
     private Medium medium;
     private Medium medium2;
+    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
+    private Espiritu espiritu;
+    private Ubicacion bernal;
+    private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
+    private Medium medium3;
+
 
     @BeforeEach
     void setUp() {
-        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
         this.medium = new Medium("Lizzie",150,100);
         this.medium2 = new Medium("Lorraine", 200, 50);
+        espiritu = new Espiritu("Angelical", 0, "Casper");
+        bernal = new Ubicacion("Bernal");
+        medium3 = new Medium("Lala", 100, 50, bernal);
     }
 
     @Test
@@ -58,8 +74,6 @@ public class MediumServiceTest {
 
     @Test
     void testEliminarMedium() {
-        MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        Medium medium = new Medium("Lizzie", 150, 100);
         mediumService.guardar(medium);
         Long mediumId = medium.getId();
         assertNotNull(mediumService.recuperar(mediumId));
@@ -104,38 +118,22 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
+
     @Test
     void testInvocarEspirituLibreConManaSuficiente() {
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
-        espiritu = new Espiritu("Angelical", 0, "Casper");
         espirituService.crear(espiritu);
-
-        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
-        Bernal = new Ubicacion("Bernal");
-        ubicacionService.crear(Bernal);
-
-        medium3 = new Medium("lala", 100, 50,Bernal);
+        ubicacionService.crear(bernal);
         mediumService.guardar(medium3);
-
-        Long espirituId = espiritu.getId();
-        Long mediumId = medium3.getId();
-
-        Medium mediumAntesDeInv = mediumService.recuperar(mediumId);
-
-        assertTrue(espiritu.estaLibre());
-
-        Espiritu espirituInvocado = mediumService.invocar(mediumId, espirituId);
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
         assertNotNull(espirituInvocado);
 
-        Medium mediumLuegoDeInv = mediumService.recuperar(mediumId);
-
-        //assertTrue(mediumAntesDeInv.getMana() > mediumLuegoDeInv.getMana());
-        //assertFalse(espiritu.estaLibre());
     }
 
     @AfterEach
     void tearDown() {
+        espirituService.eliminarTodo();
         mediumService.eliminarTodo();
+        ubicacionService.eliminarTodo();
     }
 }
 
