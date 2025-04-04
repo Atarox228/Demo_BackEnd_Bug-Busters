@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
@@ -46,7 +47,7 @@ public class MediumServiceTest {
         this.mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
         this.medium = new Medium("Lizzie",150,100);
         this.medium2 = new Medium("Lorraine", 200, 50);
-        espiritu = new Espiritu("Angelical", 0, "Casper");
+        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
         bernal = new Ubicacion("Bernal");
         medium3 = new Medium("Lala", 100, 50, bernal);
         mediumSinMana = new Medium("Nomana", 100, 0, bernal);
