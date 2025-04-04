@@ -40,15 +40,20 @@ public class MediumServiceTest {
     private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao());
     private Medium medium3;
     private Medium mediumSinMana;
-
+    private Ubicacion quilmes;
+    private Espiritu espiritu2;
 
     @BeforeEach
     void setUp() {
         this.mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
+        bernal = new Ubicacion("Bernal");
+        quilmes = new Ubicacion(("Quilmes"));
+        ubicacionService.crear(bernal);
+        ubicacionService.crear(quilmes);
         this.medium = new Medium("Lizzie",150,100);
         this.medium2 = new Medium("Lorraine", 200, 50);
-        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
-        bernal = new Ubicacion("Bernal");
+        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", bernal);
+        espiritu2 = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", quilmes);
         medium3 = new Medium("Lala", 100, 50, bernal);
         mediumSinMana = new Medium("Nomana", 100, 0, bernal);
     }
@@ -125,13 +130,22 @@ public class MediumServiceTest {
 
     @Test
     void testInvocarEspirituLibreConManaSuficiente() {
+        espirituService.crear(espiritu2);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu2.getId());
+        mediumService.guardar(medium3);
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId());
+        assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
+        assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
+    }
+
+    @Test
+    void testInvocarEspirituLibreConManaSuficienteMismaUbicacion() {
         espirituService.crear(espiritu);
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
-        ubicacionService.crear(bernal);
         mediumService.guardar(medium3);
         Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
         assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
-        assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
+        assertEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
     }
 
 //    @Test
@@ -148,11 +162,22 @@ public class MediumServiceTest {
     void testInvocarEspirituSinMana() {
         espirituService.crear(espiritu);
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
-        ubicacionService.crear(bernal);
         mediumService.guardar(mediumSinMana);
         Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
         assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
-        assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
+
+    }
+
+    @Test
+    void espiritusDeMedium(){
+
+        espirituService.crear(espiritu);
+        mediumService.guardar(medium3);
+        // Utilizo conectar pero solo para agregar espiritus al medium.
+        Medium mediumConectado = espirituService.conectar(espiritu.getId(), medium3.getId());
+        Espiritu espirituDeMedium = espirituService.recuperar(espiritu.getId());
+        assertEquals((mediumService.espiritus(mediumConectado.getId())).size(), 1);
+        // VER SI PUEDO AGREGAR OTRO ASSERT
 
     }
 

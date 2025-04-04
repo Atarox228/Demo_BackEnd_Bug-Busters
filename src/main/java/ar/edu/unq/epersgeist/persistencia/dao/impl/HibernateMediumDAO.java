@@ -1,8 +1,10 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
 
+import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import jakarta.persistence.TypedQuery;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -21,4 +23,14 @@ public class HibernateMediumDAO extends HibernateDAO<Medium> implements MediumDA
         Query<Medium> query = session.createQuery(hql, Medium.class);
         return query.getResultList();
     }
+
+    @Override
+    public List<Espiritu> obtenerEspiritus(Long idMedium) {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "SELECT e FROM Espiritu e WHERE e.medium.id = :mediumId";
+        TypedQuery<Espiritu> query = session.createQuery(hql, Espiritu.class);
+        query.setParameter("mediumId", idMedium);
+        return query.getResultList();
+    }
+
 }

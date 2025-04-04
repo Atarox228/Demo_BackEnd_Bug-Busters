@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -82,4 +83,10 @@ public class MediumServiceImpl implements MediumService {
             return espirituDao.recuperar(espirituId);
         });
     }
+
+    @Override
+    public List<Espiritu> espiritus(Long idMedium) {
+        return HibernateTransactionRunner.runTrx(() -> mediumDao.obtenerEspiritus(idMedium));
+    }
+
 }
