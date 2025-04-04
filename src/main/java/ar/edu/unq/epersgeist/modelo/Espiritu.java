@@ -18,7 +18,10 @@ public class Espiritu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoEspiritu tipo;
     private Integer nivelConexion;
     private String nombre;
 
@@ -28,7 +31,7 @@ public class Espiritu implements Serializable {
     @ManyToOne
     private Ubicacion ubicacion;
 
-    public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
+    public Espiritu(@NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
         this.tipo = tipo;
         // esto es para setear el valor default en caso de que no pongan valor
         // o pongan un valor no acorde al rango establecido
@@ -41,7 +44,7 @@ public class Espiritu implements Serializable {
         this.medium = null;
     }
 
-    public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
+    public Espiritu(@NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
         this.tipo = tipo;
         // esto es para setear el valor default en caso de que no pongan valor
         // o pongan un valor no acorde al rango establecido
@@ -55,7 +58,7 @@ public class Espiritu implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    public Espiritu(@NonNull Long id, @NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
+    public Espiritu(@NonNull Long id, @NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
         this.id = id;
         this.tipo = tipo;
         this.nivelConexion = nivelDeConexion;
@@ -90,7 +93,7 @@ public class Espiritu implements Serializable {
         return id;
     }
 
-    public String getTipo() {
+    public TipoEspiritu getTipo() {
         return tipo;
     }
 

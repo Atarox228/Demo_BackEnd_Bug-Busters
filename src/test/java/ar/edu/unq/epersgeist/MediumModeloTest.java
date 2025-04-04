@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
@@ -34,8 +35,8 @@ public class MediumModeloTest {
 
     @BeforeEach
     void setUp(){
-        Casper = new Espiritu("Angelical", 0, "Casper");
-        Jorge = new Espiritu("Humano", 20, "Jorge");
+        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
+        Jorge = new Espiritu(TipoEspiritu.ANGELICAL, 20, "Jorge");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);

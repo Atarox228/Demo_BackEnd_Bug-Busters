@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
@@ -33,7 +34,6 @@ public class EspirituServiceTest {
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
-    private Espiritu Jorge;
     private Medium medium;
     private Medium medium2;
     private Ubicacion Bernal;
@@ -42,10 +42,9 @@ public class EspirituServiceTest {
     void setUp(){
         Bernal = new Ubicacion("Bernal");
         ubicacionService.crear(Bernal);
-        Casper = new Espiritu("Angelical", 0, "Casper", Bernal);
-        Oni = new Espiritu("Demoniaco", 95, "Otakemaru");
-        Jinn = new Espiritu("Demoniaco", 100, "Marids");
-        Jorge = new Espiritu("Humano", 20, "Jorge");
+        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", Bernal);
+        Oni = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Otakemaru");
+        Jinn = new Espiritu(TipoEspiritu.DEMONIACO, 100, "Marids");
         medium = new Medium("lala", 100, 50,Bernal);
         medium2 = new Medium("lolo", 100, 60);
 
@@ -85,7 +84,7 @@ public class EspirituServiceTest {
         espirituService.crear(Casper);
         Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
         assertEquals(espirituRecuperado.getNombre(), "Casper");
-        assertEquals(espirituRecuperado.getTipo(), "Angelical");
+        assertEquals(espirituRecuperado.getTipo(), TipoEspiritu.ANGELICAL);
         assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
     }
 
