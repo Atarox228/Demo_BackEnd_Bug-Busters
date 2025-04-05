@@ -8,7 +8,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.UbicacionEnlazadaConEntidadesException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 
@@ -45,9 +44,6 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        if(ubicacion.getEspiritus().size() > 0 || ubicacion.getMediums().size() > 0){
-            throw new UbicacionEnlazadaConEntidadesException(ubicacion);
-        }
 
         HibernateTransactionRunner.runTrx(() -> {
             ubicacionDAO.eliminar(ubicacion);
@@ -86,13 +82,5 @@ public class UbicacionServiceImpl implements UbicacionService {
         return List.of();
     }
 
-    public void agregarEspiritu(Long ubicacionId,Long espirituId){
-        HibernateTransactionRunner.runTrx(() -> {
-            Ubicacion ubicacion = ubicacionDAO.recuperar(ubicacionId);
-            Espiritu espiritu = espirituDAO.recuperar(espirituId);
-            ubicacion.agregarEspiritu(espiritu);
-            return null;
-        });
 
-    }
 }

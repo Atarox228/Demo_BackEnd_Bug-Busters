@@ -3,13 +3,10 @@ package ar.edu.unq.epersgeist;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.EntidadYaEliminadaException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.EntidadYaRegistradaException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.UbicacionEnlazadaConEntidadesException;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
@@ -41,8 +38,8 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-        ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
+        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDao());
         mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
 
 
@@ -121,10 +118,10 @@ public class UbicacionServiceTest {
     void EliminarUbicacionConEspiritus(){
         ubicacionService.crear(fellwood);
         espirituService.crear(espiritu1);
-        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu1.getId());
+        espirituService.ubicarseEn(espiritu1.getId(),fellwood.getId());
         Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId());
-        assertThrows(UbicacionEnlazadaConEntidadesException.class, () -> {
-            ubicacionService.eliminar(ubicacion);
+        assertThrows(ConstraintViolationException.class, () -> {
+          ubicacionService.eliminar(ubicacion);
         });
 
     }
@@ -210,8 +207,8 @@ public class UbicacionServiceTest {
         espirituService.crear(espiritu1);
         espirituService.crear(espiritu2);
 
-        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu1.getId());
-        ubicacionService.agregarEspiritu(fellwood.getId(),espiritu2.getId());
+        espirituService.ubicarseEn(espiritu1.getId(),fellwood.getId());
+        espirituService.ubicarseEn(espiritu2.getId(),fellwood.getId());
 
         List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(fellwood.getId());
 
@@ -250,12 +247,4 @@ public class UbicacionServiceTest {
         ubicacionService.eliminarTodo();
     }
 
-    // Test de modelo
-//    @Test
-//    void crearUbicacionNula(){
-//        Ubicacion ubi = new Ubicacion(null);
-//        assertThrows(NullPointerException.class, () -> {
-//            ubicacionService.crear(ubi);
-//        });
-//    }
 }

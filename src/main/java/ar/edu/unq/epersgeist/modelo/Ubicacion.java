@@ -25,30 +25,7 @@ public class Ubicacion implements Serializable{
         this.nombre = nombre;
     }
 
-    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Espiritu> espiritus = new HashSet<>();
 
-    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Medium> mediums = new HashSet<>();
 
-    public void agregarEspiritu(Espiritu espiritu) {
-        if(espiritu.getUbicacion() == null){
-            espiritus.add(espiritu);
-            espiritu.setUbicacion(this);
-        } else {
-            throw new EntidadConUbicacionRegistradaException(espiritu, this);
-        }
 
-    }
-
-    public void agregarMedium(Medium medium) {
-        if (medium.getUbicacion() == null) {
-            mediums.add(medium);
-            medium.setUbicacion(this);
-        }
-        else{
-            throw new EntidadConUbicacionRegistradaException(medium, this);
-        }
-
-    }
 }
