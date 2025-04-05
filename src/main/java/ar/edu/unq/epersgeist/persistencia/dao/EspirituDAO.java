@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface EspirituDAO {
     void eliminar(Espiritu espiritu);
     void eliminarTodo();
 
-    List<Espiritu> espiritusTipo(String tipoDeEspiritu);
+    List<Espiritu> espiritusTipo(TipoEspiritu tipoDeEspiritu);
 
     List<Espiritu> espiritusEn(Long ubicacionId);
 }
