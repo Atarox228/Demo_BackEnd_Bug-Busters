@@ -79,7 +79,7 @@ public class Medium implements Serializable {
         if (this.mana > 10) {
             this.verificarSiEstaLibre(espiritu);
             this.reducirMana(10);
-            this.ubicacion.agregarEspiritu(espiritu);
+            espiritu.setUbicacion(this.ubicacion);
             this.cambiosEnEspiritu(this.ubicacion, espiritu);
         }
     }

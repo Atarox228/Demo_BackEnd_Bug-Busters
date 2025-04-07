@@ -14,4 +14,6 @@ public interface EspirituDAO {
     void eliminarTodo();
 
     List<Espiritu> espiritusTipo(TipoEspiritu tipoDeEspiritu);
+
+    List<Espiritu> espiritusEn(Long ubicacionId);
 }
