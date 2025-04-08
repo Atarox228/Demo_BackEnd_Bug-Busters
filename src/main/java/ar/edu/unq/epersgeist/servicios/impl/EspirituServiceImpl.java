@@ -1,26 +1,25 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
+    private final UbicacionDAO ubicacionDAO;
 
-//    public EspirituServiceImpl(EspirituDAO espirituDAO) {
-//        this.espirituDAO = espirituDAO;
-//    }
-
-    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao) {
+    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionDAO ubicacionDAO) {
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDao;
+        this.ubicacionDAO = ubicacionDAO;
     }
 
     @Override
@@ -33,7 +32,16 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        return HibernateTransactionRunner.runTrx(() -> espirituDAO.recuperar(espirituId));
+        if(espirituId == null){
+            throw new IdNoValidoException(espirituId);
+        }
+        return HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = espirituDAO.recuperar(espirituId);
+            if(espiritu == null){
+                throw new IdNoValidoException(espirituId);
+            }
+            return espiritu;
+        });
     }
 
     @Override
@@ -43,6 +51,9 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
+        if(espiritu.getId() == null){
+            throw new IdNoValidoException(espiritu.getId());
+        }
         HibernateTransactionRunner.runTrx(() -> {
             espirituDAO.actualizar(espiritu);
             return null;
@@ -69,8 +80,8 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public List<Espiritu> espiritusDemoniacos() {
-        return HibernateTransactionRunner.runTrx(() -> espirituDAO.espiritusTipo("Demoniaco"));
+    public List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina) {
+        return HibernateTransactionRunner.runTrx(() -> espirituDAO.obtenerEspiritus(direccion, pagina, cantidadPorPagina, TipoEspiritu.DEMONIACO));
     }
 
     public void eliminarTodo(){
@@ -80,4 +91,13 @@ public class EspirituServiceImpl implements EspirituService {
         });
     }
 
+    public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = espirituDAO.recuperar(idEspiritu);
+            Ubicacion ubicacion = ubicacionDAO.recuperar(idUbicacion);
+            espiritu.setUbicacion(ubicacion);
+            return null;
+        });
+
+    }
 }

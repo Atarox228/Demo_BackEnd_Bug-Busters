@@ -5,13 +5,12 @@ import java.io.Serializable;
 import lombok.*;
 
 import jakarta.persistence.*;
-import org.hibernate.id.Assigned;
 
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
 public class Espiritu implements Serializable {
@@ -19,7 +18,9 @@ public class Espiritu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoEspiritu tipo;
     private Integer nivelConexion;
     private String nombre;
     @ManyToOne
@@ -27,8 +28,7 @@ public class Espiritu implements Serializable {
     @ManyToOne
     private Ubicacion ubicacion;
 
-
-    public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
+    public Espiritu(@NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
         this.tipo = tipo;
         // esto es para setear el valor default en caso de que no pongan valor
         // o pongan un valor no acorde al rango establecido
@@ -41,7 +41,7 @@ public class Espiritu implements Serializable {
         this.medium = null;
     }
 
-    public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
+    public Espiritu(@NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
         this.tipo = tipo;
         // esto es para setear el valor default en caso de que no pongan valor
         // o pongan un valor no acorde al rango establecido
@@ -55,7 +55,7 @@ public class Espiritu implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    public Espiritu(@NonNull Long id, @NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
+    public Espiritu(@NonNull Long id, @NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
         this.id = id;
         this.tipo = tipo;
         this.nivelConexion = nivelDeConexion;
@@ -74,23 +74,23 @@ public class Espiritu implements Serializable {
         return this.medium == null;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Espiritu{" +
-//                "id=" + id +
-//                ", tipo='" + tipo + '\'' +
-//                ", nivelConexion=" + nivelConexion +
-//                ", nombre='" + nombre + '\'' +
-//                ", medium= " + medium.getNombre() +
-//                ", ubicacion= " + ubicacion.getNombre() +
-//                '}';
-//    }
+    @Override
+    public String toString() {
+        return "Espiritu{" +
+                "id=" + id +
+                ", tipo='" + tipo + '\'' +
+                ", nivelConexion=" + nivelConexion +
+                ", nombre='" + nombre + '\'' +
+                ", medium= " + medium.getNombre() +
+                ", ubicacion= " + ubicacion.getNombre() +
+                '}';
+    }
 
     public Long getId() {
         return id;
     }
 
-    public String getTipo() {
+    public TipoEspiritu getTipo() {
         return tipo;
     }
 
@@ -100,6 +100,14 @@ public class Espiritu implements Serializable {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public Medium getMedium() {
+        return medium;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
     }
 
     public void setNombre(String nombre){
@@ -121,5 +129,9 @@ public class Espiritu implements Serializable {
         if (nivelConexion == 0) {
             this.medium = null;
         }
+    }
+    public void invocarme(Medium medium, Ubicacion ubicacion)  {
+        this.medium = medium;
+        this.ubicacion = ubicacion;
     }
 }

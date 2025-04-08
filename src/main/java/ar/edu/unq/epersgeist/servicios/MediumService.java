@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios;
 
+import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 
 import java.util.Collection;
@@ -14,4 +15,5 @@ public interface MediumService {
     void eliminarTodo();
     void descansar(Long idMedium);
     void exorcizar(long idMedium, long idMedium2);
+    Espiritu invocar(Long mediumId, Long espirituId);
 }

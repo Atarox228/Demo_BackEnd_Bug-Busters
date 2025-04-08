@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
 @Entity
@@ -45,12 +47,6 @@ public class Medium implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    // COMPLETAR
-    public boolean tieneConNombre_(String nombre) {
-        return false;
-    }
-
-    // COMPLETAR
     public void conectarseAEspiritu(Espiritu espiritu) {
         if(!puedeConectarse(espiritu)){
             throw new NoSePuedenConectarException(this,espiritu);
@@ -102,5 +98,33 @@ public class Medium implements Serializable {
         }
 
 
+    }
+
+    public void reducirMana(Integer mana) {
+        this.setMana(Math.max(this.getMana() - mana, 0));
+    }
+
+    public void invocar(Espiritu espiritu) {
+        if (this.mana > 10) {
+            this.verificarSiEstaLibre(espiritu);
+            this.reducirMana(10);
+            espiritu.setUbicacion(this.ubicacion);
+            this.cambiosEnEspiritu(this.ubicacion, espiritu);
+        }
+    }
+
+    private void verificarSiEstaLibre(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new EspirituNoLibreException(espiritu);
+        }
+    }
+
+    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
+        espiritu.setMedium(this);
+        espiritu.setUbicacion(ubicacion);
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
     }
 }
