@@ -41,16 +41,18 @@ public class Medium implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    public void addEspiritu(Espiritu espiritu) {
-        espiritus.add(espiritu);
+    // COMPLETAR
+    public boolean tieneConNombre_(String nombre) {
+        return false;
     }
 
+    // COMPLETAR
     public void conectarseAEspiritu(Espiritu espiritu) {
         if(!puedeConectarse(espiritu)){
             throw new NoSePuedenConectarException(this,espiritu);
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
-        addEspiritu(espiritu);
+        espiritus.add(espiritu);
         espiritu.setMedium(this);
     }
 
@@ -77,7 +79,8 @@ public class Medium implements Serializable {
         if (this.mana > 10) {
             this.verificarSiEstaLibre(espiritu);
             this.reducirMana(10);
-            espiritu.invocarme(this, this.ubicacion);
+            espiritu.setUbicacion(this.ubicacion);
+            this.cambiosEnEspiritu(this.ubicacion, espiritu);
         }
     }
 
@@ -85,6 +88,11 @@ public class Medium implements Serializable {
         if (!espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
         }
+    }
+
+    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
+        espiritu.setMedium(this);
+        espiritu.setUbicacion(ubicacion);
     }
 
     public Ubicacion getUbicacion() {

@@ -2,10 +2,12 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
@@ -32,6 +34,9 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium recuperar(Long id) {
+        if (id == null) {
+            throw new IdNoValidoException(id);
+        }
         return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(id));
     }
 
