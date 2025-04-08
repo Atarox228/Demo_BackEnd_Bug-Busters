@@ -52,7 +52,7 @@ public class Medium implements Serializable {
             throw new NoSePuedenConectarException(this,espiritu);
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
-        if (espiritu.getTipo().equals("Demoniaco")){
+        if (espiritu.getTipo() == TipoEspiritu.DEMONIACO){
             espiritusDemoniacos.add(espiritu);
         } else {
             espiritusAngelicales.add(espiritu);
