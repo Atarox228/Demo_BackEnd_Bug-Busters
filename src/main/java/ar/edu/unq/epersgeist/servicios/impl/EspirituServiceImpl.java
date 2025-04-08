@@ -6,7 +6,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
@@ -14,10 +13,6 @@ public class EspirituServiceImpl implements EspirituService {
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
     private final UbicacionDAO ubicacionDAO;
-
-//    public EspirituServiceImpl(EspirituDAO espirituDAO) {
-//        this.espirituDAO = espirituDAO;
-//    }
 
     public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionDAO ubicacionDAO) {
         this.espirituDAO = espirituDAO;

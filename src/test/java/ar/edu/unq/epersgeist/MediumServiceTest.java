@@ -4,10 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
@@ -54,13 +51,13 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testGuardarMedium() {
+    void guardarMedium() {
         mediumService.guardar(medium);
         assertNotNull(medium.getId());
     }
 
     @Test
-    void testRecuperarMedium() {
+    void recuperarMedium() {
         mediumService.guardar(medium);
         Medium mediumRecuperado = mediumService.recuperar(medium.getId());
         assertNotNull(mediumRecuperado);
@@ -68,7 +65,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testRecuperarTodos() {
+    void recuperarTodos() {
         mediumService.guardar(medium);
         mediumService.guardar(medium2);
         Collection<Medium> mediums = mediumService.recuperarTodos();
@@ -78,7 +75,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testEliminarMedium() {
+    void eliminarMedium() {
         mediumService.guardar(medium);
         Long mediumId = medium.getId();
         assertNotNull(mediumService.recuperar(mediumId));
@@ -87,7 +84,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testEliminarTodosLosMediums() {
+    void eliminarTodosLosMediums() {
         mediumService.guardar(medium);
         mediumService.guardar(medium2);
         Long mediumId = medium.getId();
@@ -100,7 +97,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testActualizarMedium(){
+    void actualizarMedium(){
         mediumService.guardar(medium);
         Medium sinActualizar = mediumService.recuperar(medium.getId());
         medium.setNombre("Juan");
@@ -113,7 +110,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testDescansarMedium(){
+    void descansarMedium(){
         mediumService.guardar(medium);
         Medium sinDescansar = mediumService.recuperar(medium.getId());
         mediumService.descansar(medium.getId());
@@ -124,7 +121,7 @@ public class MediumServiceTest {
 
 
     @Test
-    void testInvocarEspirituLibreConManaSuficiente() {
+    void invocarEspirituLibreConManaSuficiente() {
         espirituService.crear(espiritu);
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
         ubicacionService.crear(bernal);
@@ -135,7 +132,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testInvocarEspirituNoLibre() {
+    void invocarEspirituNoLibre() {
         espirituService.crear(espiritu);
         ubicacionService.crear(bernal);
         mediumService.guardar(medium3);
@@ -145,7 +142,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testInvocarEspirituSinMana() {
+    void invocarEspirituSinMana() {
         espirituService.crear(espiritu);
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
         ubicacionService.crear(bernal);
@@ -156,7 +153,7 @@ public class MediumServiceTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void cleanUp() {
         espirituService.eliminarTodo();
         mediumService.eliminarTodo();
         ubicacionService.eliminarTodo();
