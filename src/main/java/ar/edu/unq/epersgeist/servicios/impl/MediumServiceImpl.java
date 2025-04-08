@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
@@ -9,6 +10,7 @@ import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -80,6 +82,15 @@ public class MediumServiceImpl implements MediumService {
             this.espirituDao.actualizar(espiritu);
             this.mediumDao.actualizar(medium);
             return espirituDao.recuperar(espirituId);
+        });
+    }
+
+    public void ubicarseEn(Long mediumId, Long ubicacionId) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(mediumId);
+            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
+            medium.setUbicacion(ubicacion);
+            return null;
         });
     }
 }

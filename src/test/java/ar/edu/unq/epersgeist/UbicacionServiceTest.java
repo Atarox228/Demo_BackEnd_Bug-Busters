@@ -241,6 +241,42 @@ public class UbicacionServiceTest {
         assertEquals(0, espiritusUbi.size());
     }
 
+    @Test
+    void MediumsEnUbicacionSinEspirtus(){
+        ubicacionService.crear(ashenvale);
+        mediumService.guardar(medium1);
+        mediumService.guardar(medium2);
+
+        mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium2.getId(),ashenvale.getId());
+
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(2, mediumsSinEsps.size());
+    }
+
+    @Test
+    void MediumsEnUbicacionNoRegistrada(){
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(1L);
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
+    @Test
+    void MediumsEnUbicacionNula(){
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
+    @Test
+    void ubicacionSinMediumRegistrados(){
+        ubicacionService.crear(ashenvale);
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
     @AfterEach
     void cleanUp() {
         espirituService.eliminarTodo();
