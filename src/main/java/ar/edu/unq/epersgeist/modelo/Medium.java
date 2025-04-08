@@ -19,7 +19,11 @@ public class Medium implements Serializable {
     private String nombre;
     private Integer manaMax;
     private Integer mana;
+
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritusAngelicales = new HashSet<>();
+
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritusDemoniacos = new HashSet<>();
 
 
@@ -52,10 +56,10 @@ public class Medium implements Serializable {
             throw new NoSePuedenConectarException(this,espiritu);
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
-        if (espiritu.getTipo() == "Angelical"){
-            espiritusAngelicales.add(espiritu);
-        } else {
+        if (espiritu.getTipo().equals("Demoniaco")){
             espiritusDemoniacos.add(espiritu);
+        } else {
+            espiritusAngelicales.add(espiritu);
         }
 
         espiritu.setMedium(this);
@@ -78,14 +82,25 @@ public class Medium implements Serializable {
     }
 
     public void exorcizar(Medium medium2) {
-        Set<Espiritu> AngelicalesRestantes = espiritusAngelicales;
-        Set<Espiritu> DemoniacosRestantes = medium2.getEspiritusDemoniacos();
-        while (!(AngelicalesRestantes.isEmpty())) {
-            Espiritu AngelicalAtacante = AngelicalesRestantes.iterator().next();
-            Espiritu DemoniacoDefensor = DemoniacosRestantes.iterator().next();
-            int probabilidadExito = 7 // genenrar numero aleatorio + AngelicalAtacante.getNivelConexion
-            int dificultad = 7 // genenrar numero aleatorio + AngelicalAtacante.getNivelConexion
+        Set<Espiritu> angelicalesRestantes = espiritusAngelicales;
+        Set<Espiritu> demoniacosRestantes = medium2.getEspiritusDemoniacos();
+        Espiritu atacante = angelicalesRestantes.iterator().next();
+        Espiritu defensor = demoniacosRestantes.iterator().next();
+        while (angelicalesRestantes.iterator().hasNext() & demoniacosRestantes.iterator().hasNext()) {
+             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
+                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
+                 if (defensor.getNivelConexion() == 0) {
+                     demoniacosRestantes.remove(defensor);
+                     defensor = demoniacosRestantes.iterator().next();
+                 }
+             } else {
+                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
+
+             }
+            angelicalesRestantes.remove(atacante);
+            atacante = angelicalesRestantes.iterator().next();
         }
+
 
     }
 }

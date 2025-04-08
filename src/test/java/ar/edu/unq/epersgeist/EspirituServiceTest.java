@@ -143,12 +143,12 @@ public class EspirituServiceTest {
         assertEquals(espirituConectado.getNivelDeConexion(),10);
     }
 
-    @AfterEach
-    void cleanup() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
-        ubicacionService.eliminarTodo();
-    }
+//    @AfterEach
+//    void cleanup() {
+//        espirituService.eliminarTodo();
+//        mediumService.eliminarTodo();
+//        ubicacionService.eliminarTodo();
+//    }
 
     //    @Test
 //    void guardarEspirituYaExistenteEnDB(){

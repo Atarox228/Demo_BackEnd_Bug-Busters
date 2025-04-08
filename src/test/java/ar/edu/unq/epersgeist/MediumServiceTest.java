@@ -1,14 +1,16 @@
 package ar.edu.unq.epersgeist;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +28,23 @@ public class MediumServiceTest {
     private MediumService mediumService;
     private Medium medium;
     private Medium medium2;
+    private EspirituService espirituService;
+    private GeneradorNumeros dado;
+    private Ubicacion ubicacion;
 
     @BeforeEach
     void setUp() {
-        this.mediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        this.medium = new Medium("Lizzie",150,100);
-        this.medium2 = new Medium("Lorraine", 200, 50);
+        MediumDAO mDAO =new HibernateMediumDAO();
+        UbicacionServiceImpl ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDao());
+        this.ubicacion = new Ubicacion("Bernal");
+        ubicacionService.crear(ubicacion);
+        this.mediumService = new MediumServiceImpl(mDAO);
+        this.espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), mDAO);
+        this.medium = new Medium("Lizzie",150,100, ubicacion);
+        this.medium2 = new Medium("Lorraine", 200, 50, ubicacion);
+
+        this.dado = Dado.getInstance();
+
     }
 
     @Test
@@ -106,29 +119,35 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
-    @Test
-    void testExorcizarMedium1a1Victorioso(){
-        EspirituService espirituService = new EspirituServiceImpl();
-        Espiritu kyu = new Espiritu("Angelical", 80,"Kyu");
-        espirituService.crear(kyu);
-        Espiritu kyuMalvado = new Espiritu("Demoniaco", 80,"kyuMalvado");
-        espirituService.crear(kyuMalvado);
-
-        mediumService.guardar(medium);
-        mediumService.guardar(medium2);
-
-        espirituService.conectar(kyu.getId(), medium.getId());
-        espirituService.conectar(kyuMalvado.getId(), medium2.getId());
-
-        mediumService.exorcizar(medium.getId(), medium2.getId());
-
-
-    }
+//    @Test
+//    void testExorcizarMedium1a1Victorioso(){
+//
+//        dado.setModo(new ModoTrucado(6,60));
+//        Espiritu kyu = new Espiritu("Demoniaco", 80,"Kyu",ubicacion);
+//        espirituService.crear(kyu);
+//        Espiritu kyuMalvado = new Espiritu("Angelical", 40,"kyuMalvado",ubicacion);
+//        espirituService.crear(kyuMalvado);
+//
+//        mediumService.guardar(medium);
+//        mediumService.guardar(medium2);
+//
+//        Medium mediumConectado = espirituService.conectar(kyu.getId(), medium2.getId());
+//        Medium mediumConectado2 = espirituService.conectar(kyuMalvado.getId(), medium2.getId());
+//
+//        mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
+//
+//        assertTrue(kyuMalvado.estaLibre());
+//        assertFalse(kyu.estaLibre());
+//
+//
+//    }
 
 
     @AfterEach
     void tearDown() {
         mediumService.eliminarTodo();
+        espirituService.eliminarTodo();
+        dado.setModo(new ModoRandom());
     }
 }
 

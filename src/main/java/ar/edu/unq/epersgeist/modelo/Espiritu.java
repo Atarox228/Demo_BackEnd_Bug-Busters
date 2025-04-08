@@ -5,6 +5,7 @@ import java.io.Serializable;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.id.Assigned;
 
 
 import java.util.HashSet;
@@ -25,6 +26,7 @@ public class Espiritu implements Serializable {
     private Medium medium;
     @ManyToOne
     private Ubicacion ubicacion;
+
 
     public Espiritu(@NonNull String tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
         this.tipo = tipo;
@@ -72,17 +74,17 @@ public class Espiritu implements Serializable {
         return this.medium == null;
     }
 
-    @Override
-    public String toString() {
-        return "Espiritu{" +
-                "id=" + id +
-                ", tipo='" + tipo + '\'' +
-                ", nivelConexion=" + nivelConexion +
-                ", nombre='" + nombre + '\'' +
-                ", medium= " + medium.getNombre() +
-                ", ubicacion= " + ubicacion.getNombre() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Espiritu{" +
+//                "id=" + id +
+//                ", tipo='" + tipo + '\'' +
+//                ", nivelConexion=" + nivelConexion +
+//                ", nombre='" + nombre + '\'' +
+//                ", medium= " + medium.getNombre() +
+//                ", ubicacion= " + ubicacion.getNombre() +
+//                '}';
+//    }
 
     public Long getId() {
         return id;
@@ -104,4 +106,20 @@ public class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
+    public int getProbDefensa() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return dado.generarNumero(1,100);
+    }
+
+    public int getProbAtaque() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return Math.min(dado.generarNumero(1,10) + nivelConexion, 100);
+    }
+
+    public void reducirConexionYdesvincularSiEsNecesario(int i) {
+        this.nivelConexion = Math.max(this.nivelConexion - i, 0);
+        if (nivelConexion == 0) {
+            this.medium = null;
+        }
+    }
 }
