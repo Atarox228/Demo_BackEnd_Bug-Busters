@@ -51,6 +51,9 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
+        if(espiritu.getId() == null){
+            throw new IdNoValidoException(espiritu.getId());
+        }
         HibernateTransactionRunner.runTrx(() -> {
             espirituDAO.actualizar(espiritu);
             return null;

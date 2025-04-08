@@ -67,12 +67,29 @@ public class EspirituServiceTest {
         espirituService.crear(Casper);
         Espiritu sinActualizar = espirituService.recuperar(Casper.getId());
         Casper.setNombre("Lala");
-        System.out.println("El nombre ahora es: " + Casper.getNombre());
         espirituService.actualizar(Casper);
         Espiritu actualizado = espirituService.recuperar(Casper.getId());
         assertEquals(sinActualizar.getId(), Casper.getId());
         assertEquals(sinActualizar.getNombre(), "Casper");
         assertEquals(actualizado.getNombre(), "Lala");
+    }
+
+    @Test
+    void actualizarEspirituNoRegistrado(){
+        Casper.setNombre("Lala");
+        assertThrows(IdNoValidoException.class, () -> {
+            espirituService.actualizar(Casper);
+        });
+    }
+
+    @Test
+    void actualizarEspirituEliminado(){
+        espirituService.crear(Casper);
+        Casper.setNombre("Lala");
+        espirituService.eliminar(Casper);
+        assertThrows(OptimisticLockException.class, () -> {
+            espirituService.actualizar(Casper);
+        });
     }
 
 
