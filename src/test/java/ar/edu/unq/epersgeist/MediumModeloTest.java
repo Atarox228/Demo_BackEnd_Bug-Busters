@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediumModeloTest {
-    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDao());
-    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
     private Espiritu Casper;
     private Medium medium;
     private Medium medium2;
@@ -56,7 +54,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void NoPuedenconectarsePorLibertad(){
+    void noPuedenconectarsePorLibertad(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         Casper.setMedium(medium2);

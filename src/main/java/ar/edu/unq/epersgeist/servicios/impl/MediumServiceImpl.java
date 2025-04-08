@@ -69,8 +69,10 @@ public class MediumServiceImpl implements MediumService {
     }
 
     public void descansar(Long mediumId){
+        if (mediumId == null) {throw new IdNoValidoException(mediumId);}
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(mediumId);
+            if (medium == null) {throw new IdNoValidoException(mediumId);}
             medium.descansar();
             mediumDao.actualizar(medium);
             return null;

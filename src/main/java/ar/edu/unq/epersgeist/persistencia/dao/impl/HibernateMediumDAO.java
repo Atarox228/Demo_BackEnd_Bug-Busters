@@ -5,9 +5,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-
 import java.util.Collection;
-import java.util.List;
 
 public class HibernateMediumDAO extends HibernateDAO<Medium> implements MediumDAO {
 
