@@ -56,7 +56,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void NoPuedenconectarsePorLibertad(){
+    void noPuedenconectarsePorLibertad(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         Casper.setMedium(medium2);
