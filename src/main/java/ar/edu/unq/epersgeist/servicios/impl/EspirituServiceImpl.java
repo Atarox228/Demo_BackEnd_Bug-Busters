@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import java.util.List;
 
@@ -31,7 +32,16 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        return HibernateTransactionRunner.runTrx(() -> espirituDAO.recuperar(espirituId));
+        if(espirituId == null){
+            throw new IdNoValidoException(espirituId);
+        }
+        return HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = espirituDAO.recuperar(espirituId);
+            if(espiritu == null){
+                throw new IdNoValidoException(espirituId);
+            }
+            return espiritu;
+        });
     }
 
     @Override

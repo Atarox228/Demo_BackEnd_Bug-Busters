@@ -1,14 +1,18 @@
 package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
+import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +31,14 @@ public class EspirituServiceTest {
     private Espiritu Volac;
     private Medium medium;
     private Ubicacion Bernal;
+    private Ubicacion Quilmes;
 
     @BeforeEach
     void setUp(){
         Bernal = new Ubicacion("Bernal");
+        Quilmes = new Ubicacion("Quilmes");
         ubicacionService.crear(Bernal);
+        ubicacionService.crear(Quilmes);
         Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", Bernal);
         Oni = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Otakemaru");
         Jinn = new Espiritu(TipoEspiritu.DEMONIACO, 100, "Marids");
@@ -79,6 +86,29 @@ public class EspirituServiceTest {
     }
 
     @Test
+    void RecuperarEspirituNoRegistrado() {
+        assertThrows(IdNoValidoException.class, () -> {
+            espirituService.recuperar(Casper.getId());
+        });
+    }
+
+    @Test
+    void RecuperarEspirituConIdNoPersistido(){
+        assertThrows(IdNoValidoException.class, () -> {
+            espirituService.recuperar(10L);
+        });
+    }
+
+    @Test
+    void RecuperarEspirituEliminado() {
+        espirituService.crear(Casper);
+        espirituService.eliminar(Casper);
+        assertThrows(IdNoValidoException.class, () -> {
+            espirituService.recuperar(Casper.getId());
+        });
+    }
+
+    @Test
     void recuperarTodosLosEspiritus(){
         //Se deben obtener alfabeticamente
         espirituService.crear(Oni);
@@ -92,12 +122,23 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void eliminarEspiritu(){
+    void EliminarEspiritu(){
         espirituService.crear(Casper);
         Long espirituId = Casper.getId();
         assertNotNull(espirituService.recuperar(espirituId));
         espirituService.eliminar(Casper);
-        assertNull(espirituService.recuperar(espirituId));
+        assertThrows(IdNoValidoException.class, () -> {
+            espirituService.recuperar(espirituId);
+        });
+    }
+
+    @Test
+    void EliminarEspirituDosVeces() {
+        espirituService.crear(Casper);
+        espirituService.eliminar(Casper);
+        assertThrows(OptimisticLockException.class, () -> {
+            espirituService.eliminar(Casper);
+        });
     }
 
     @Test
@@ -164,7 +205,9 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void conectarConMedium(){
+    void conectarConMediumExitoso(){
+        medium.setUbicacion(Bernal);
+        Casper.setUbicacion(Bernal);
         mediumService.guardar(medium);
         espirituService.crear(Casper);
         assertEquals(0, medium.getEspiritus().size());
@@ -175,6 +218,37 @@ public class EspirituServiceTest {
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelDeConexion());
     }
+
+    @Test
+    void conexionFallidaPorUbicacion(){
+        medium.setUbicacion(Bernal);
+        Casper.setUbicacion(Quilmes);
+        mediumService.guardar(medium);
+        espirituService.crear(Casper);
+        assertEquals(0, medium.getEspiritus().size());
+        assertThrows(NoSePuedenConectarException.class, () -> {
+            espirituService.conectar(Casper.getId(), medium.getId());
+        });
+    }
+
+    @Test
+    void conexionFallidaPorLibertadDeEspiritu(){
+        Medium medium2 = new Medium("lala",100,100, Bernal);
+        medium.setUbicacion(Bernal);
+        Casper.setUbicacion(Bernal);
+        mediumService.guardar(medium);
+        espirituService.crear(Casper);
+        mediumService.guardar(medium2);
+        espirituService.conectar(Casper.getId(), medium2.getId());
+        assertEquals(0, medium.getEspiritus().size());
+        assertThrows(NoSePuedenConectarException.class, () -> {
+            espirituService.conectar(Casper.getId(), medium.getId());
+        });
+    }
+
+
+
+
 
     @AfterEach
     void cleanUp() {
