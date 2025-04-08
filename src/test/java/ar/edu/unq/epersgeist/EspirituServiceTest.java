@@ -1,29 +1,18 @@
 package ar.edu.unq.epersgeist;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceTest {
@@ -34,8 +23,9 @@ public class EspirituServiceTest {
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
+    private Espiritu Anabelle;
+    private Espiritu Volac;
     private Medium medium;
-    private Medium medium2;
     private Ubicacion Bernal;
 
     @BeforeEach
@@ -45,9 +35,9 @@ public class EspirituServiceTest {
         Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", Bernal);
         Oni = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Otakemaru");
         Jinn = new Espiritu(TipoEspiritu.DEMONIACO, 100, "Marids");
+        Anabelle = new Espiritu(TipoEspiritu.DEMONIACO, 48, "Anabelle");
+        Volac = new Espiritu(TipoEspiritu.DEMONIACO, 55, "Volac");
         medium = new Medium("lala", 100, 50,Bernal);
-        medium2 = new Medium("lolo", 100, 60);
-
     }
 
 
@@ -111,26 +101,70 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void obtenerEspiritusDemoniacos(){
+    void obtenerLos3EspiritusDemoniacosConMayorNivel(){
         espirituService.crear(Casper);
         espirituService.crear(Oni);
         espirituService.crear(Jinn);
-        List<Espiritu> demonios = espirituService.espiritusDemoniacos();
-        assertEquals(demonios.size(), 2);
-    }
-
-    @Test
-    void verificarOrdenDeEspiritusDemoniacos(){
-        espirituService.crear(Oni);
-        espirituService.crear(Jinn);
-        List<Espiritu> demonios = espirituService.espiritusDemoniacos();
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1, 3);
+        assertEquals(demonios.size(), 3);
         assertEquals(demonios.get(0).getNombre(), "Marids");
         assertEquals(demonios.get(1).getNombre(), "Otakemaru");
-
+        assertEquals(demonios.get(2).getNombre(), "Volac");
     }
 
     @Test
-    void ConectarConMedium(){
+    void obtenerLos3EspiritusDemoniacosConMenorNivel(){
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        espirituService.crear(Casper);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 1, 3);
+        assertEquals(demonios.size(), 3);
+        assertEquals(demonios.get(0).getNombre(), "Anabelle");
+        assertEquals(demonios.get(1).getNombre(), "Volac");
+        assertEquals(demonios.get(2).getNombre(), "Otakemaru");
+    }
+
+    @Test
+    void obtener2EspiritusDemoniacosDeLaSegundPaginaOrdenAscendente(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 2, 2);
+        assertEquals(demonios.size(), 2);
+        assertEquals(demonios.get(0).getNombre(), "Otakemaru");
+        assertEquals(demonios.get(1).getNombre(), "Marids");
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosDePaginaVacia(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 4, 2);
+        assertEquals(demonios.size(), 0);
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosConMenosDeLaCantidadSolicitada(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 1, 10);
+        assertEquals(demonios.size(), 4);
+    }
+
+    @Test
+    void conectarConMedium(){
         mediumService.guardar(medium);
         espirituService.crear(Casper);
         assertEquals(0, medium.getEspiritus().size());
@@ -143,7 +177,7 @@ public class EspirituServiceTest {
     }
 
     @AfterEach
-    void cleanup() {
+    void cleanUp() {
         espirituService.eliminarTodo();
         mediumService.eliminarTodo();
         ubicacionService.eliminarTodo();

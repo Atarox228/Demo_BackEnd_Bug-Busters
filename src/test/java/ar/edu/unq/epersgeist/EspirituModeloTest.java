@@ -6,7 +6,6 @@ import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -28,16 +27,16 @@ public class EspirituModeloTest {
     }
 
     @Test
-    void testVerificarTipoEspirituAngelical(){
+    void verificarTipoEspirituAngelical(){
         assertEquals(angel.getTipo(), TipoEspiritu.ANGELICAL);
     }
     @Test
-    void testVerificarTipoEspirituDemoniaco(){
+    void verificarTipoEspirituDemoniaco(){
         assertEquals(demonio.getTipo(), TipoEspiritu.DEMONIACO);
     }
 
     @Test
-    void testInvocarme() {
+    void invocarme() {
         angel.setUbicacion(null);
         angel.setMedium(null);
         angel.invocarme(medium, Bernal);
