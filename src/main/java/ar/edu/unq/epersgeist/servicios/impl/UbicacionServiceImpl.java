@@ -61,6 +61,9 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
+        if(ubicacion.getId() == null){
+            throw new IdNoValidoException(null);
+        }
         HibernateTransactionRunner.runTrx(() -> {
             ubicacionDAO.actualizar(ubicacion);
             return null;

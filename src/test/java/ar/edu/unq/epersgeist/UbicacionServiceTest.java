@@ -155,6 +155,20 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void ActualizarUbicacionNoRegistrada(){
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.actualizar(ashenvale);
+        });
+    }
+
+    @Test
+    void ActualizarUbicacionNula(){
+        assertThrows(NullPointerException.class, () -> {
+            ubicacionService.actualizar(null);
+        });
+    }
+
+    @Test
     void actualizarUbicacionEliminada(){
         ubicacionService.crear(fellwood);
         ubicacionService.eliminar(fellwood);
