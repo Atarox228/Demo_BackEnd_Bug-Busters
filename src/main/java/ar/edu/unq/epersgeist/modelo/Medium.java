@@ -98,13 +98,14 @@ public class Medium implements Serializable {
     public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) {
         List<Espiritu> angelicalesRestantes = angeles;
         List<Espiritu> demoniacosRestantes = demonios;
-        while (angelicalesRestantes.iterator().hasNext() & demoniacosRestantes.iterator().hasNext()) {
+        Espiritu defensor = demoniacosRestantes.getFirst();
+        while (angelicalesRestantes.size() >= 1 & demoniacosRestantes.size() >= 1) {
             Espiritu atacante = angelicalesRestantes.getFirst();
-            Espiritu defensor = demoniacosRestantes.getFirst();
              if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
                  defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
-                 if (defensor.getNivelConexion() == 0) {
+                 if (defensor.getNivelConexion() == 0 & demoniacosRestantes.size() >= 2) {
                      demoniacosRestantes.remove(defensor);
+                     defensor = demoniacosRestantes.getFirst();
                  }
              } else {
                  atacante.reducirConexionYdesvincularSiEsNecesario(5);
