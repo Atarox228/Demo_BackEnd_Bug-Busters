@@ -12,6 +12,7 @@ import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -102,14 +103,18 @@ public class MediumServiceImpl implements MediumService {
 
 
    public void exorcizar(long idMedium, long idMedium2){
-//        HibernateTransactionRunner.runTrx(() -> {
-//            Medium medium = mediumDao.recuperar(idMedium);
-//            Medium medium2 = mediumDao.recuperar(idMedium2);
-//            medium.exorcizar(medium2);
-//            mediumDao.actualizar(medium);
-//            mediumDao.actualizar(medium2);
-//            return null;
-//        });
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(idMedium);
+            Medium medium2 = mediumDao.recuperar(idMedium2);
+            List<Espiritu> angeles = espirituDao.recuperarAngelesDe(medium.getId());
+            List<Espiritu> demonios = espirituDao.recuperarDemoniosDe(medium2.getId());
+            medium.exorcizar(medium2, angeles, demonios);
+            mediumDao.actualizar(medium);
+            mediumDao.actualizar(medium2);
+            espirituDao.actualizarEspiritus(angeles);
+            espirituDao.actualizarEspiritus(demonios);
+            return null;
+        });
 
     }
 }

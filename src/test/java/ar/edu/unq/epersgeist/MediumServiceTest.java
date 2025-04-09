@@ -181,28 +181,41 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
-//    @Test
-//    void testExorcizarMedium1a1Victorioso(){
-//
-//        dado.setModo(new ModoTrucado(6,60));
-//        Espiritu kyu = new Espiritu("Demoniaco", 80,"Kyu",ubicacion);
-//        espirituService.crear(kyu);
-//        Espiritu kyuMalvado = new Espiritu("Angelical", 40,"kyuMalvado",ubicacion);
-//        espirituService.crear(kyuMalvado);
-//
-//        mediumService.guardar(medium);
-//        mediumService.guardar(medium2);
-//
-//        Medium mediumConectado = espirituService.conectar(kyu.getId(), medium2.getId());
-//        Medium mediumConectado2 = espirituService.conectar(kyuMalvado.getId(), medium2.getId());
-//
-//        mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
-//
-//        assertTrue(kyuMalvado.estaLibre());
-//        assertFalse(kyu.estaLibre());
-//
-//
-//    }
+    @Test
+    void testExorcizarMedium1a1Victorioso(){
+
+        dado.setModo(new ModoTrucado(6,60));
+        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 80,"Kyu");
+        espirituService.crear(kyu);
+        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        espirituService.crear(kyuMalvado);
+
+        espirituService.ubicarseEn(kyu.getId(),bernal.getId());
+        espirituService.ubicarseEn(kyuMalvado.getId(),bernal.getId());
+
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+
+        mediumService.ubicarseEn(medium.getId(),bernal.getId());
+        mediumService.ubicarseEn(medium2.getId(),bernal.getId());
+
+        Medium mediumConectado = espirituService.conectar(kyu.getId(), medium.getId());
+        Medium mediumConectado2 = espirituService.conectar(kyuMalvado.getId(), medium2.getId());
+
+        mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
+
+        Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
+        Espiritu kyuAct = espirituService.recuperar(kyu.getId());
+        Medium mediumAct = mediumService.recuperar(medium.getId());
+        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
+
+        assertEquals(mediumAct.getEspiritus().size(), 1);
+        assertEquals(mediumAct2.getEspiritus().size(), 0);
+        assertTrue(kyuMalvadoAct.estaLibre());
+        assertFalse(kyuAct.estaLibre());
+
+
+    }
 
 
     @Test

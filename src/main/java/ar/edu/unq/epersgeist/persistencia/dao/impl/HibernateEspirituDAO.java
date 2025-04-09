@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import java.util.List;
+import java.util.Set;
 
 public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements EspirituDAO {
 
@@ -42,6 +43,36 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         query.setParameter("ubicacionEspiritu", ubicacionId);
         return query.getResultList();
     }
+
+    @Override
+    public void actualizarEspiritus(List<Espiritu> espiritus) {
+        while (espiritus.iterator().hasNext()) {
+            Espiritu actualizado = espiritus.getFirst();
+            this.actualizar(actualizado);
+            espiritus.remove(actualizado);
+        }
+    }
+
+    @Override
+    public List<Espiritu> recuperarAngelesDe(Long id) {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "from Espiritu e where e.medium.id = :id AND e.tipo = :tipoDeEspiritu";
+        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
+        query.setParameter("tipoDeEspiritu", TipoEspiritu.ANGELICAL);
+        query.setParameter("id",id);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Espiritu> recuperarDemoniosDe(Long id) {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "from Espiritu e where e.medium.id = :id AND e.tipo = :tipoDeEspiritu";
+        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
+        query.setParameter("tipoDeEspiritu", TipoEspiritu.DEMONIACO);
+        query.setParameter("id",id);
+        return query.getResultList();
+    }
+
 
     public List<Espiritu> recuperarTodos(){
         Session session = HibernateTransactionRunner.getCurrentSession();

@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor
 
 @Entity
 public class Espiritu implements Serializable {

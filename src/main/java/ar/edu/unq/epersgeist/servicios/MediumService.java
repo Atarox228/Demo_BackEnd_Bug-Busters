@@ -16,4 +16,5 @@ public interface MediumService {
     void descansar(Long idMedium);
     void exorcizar(long idMedium, long idMedium2);
     Espiritu invocar(Long mediumId, Long espirituId);
+    void ubicarseEn(Long mediumId, Long ubicacionId);
 }
