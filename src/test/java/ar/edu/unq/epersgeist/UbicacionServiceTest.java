@@ -155,6 +155,20 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void ActualizarUbicacionNoRegistrada(){
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.actualizar(ashenvale);
+        });
+    }
+
+    @Test
+    void ActualizarUbicacionNula(){
+        assertThrows(NullPointerException.class, () -> {
+            ubicacionService.actualizar(null);
+        });
+    }
+
+    @Test
     void actualizarUbicacionEliminada(){
         ubicacionService.crear(fellwood);
         ubicacionService.eliminar(fellwood);
@@ -239,6 +253,84 @@ public class UbicacionServiceTest {
         List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(null);
 
         assertEquals(0, espiritusUbi.size());
+    }
+
+    @Test
+    void MediumsEnUbicacionSinEspirtus(){
+        ubicacionService.crear(ashenvale);
+        mediumService.guardar(medium1);
+        mediumService.guardar(medium2);
+
+        mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium2.getId(),ashenvale.getId());
+
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(2, mediumsSinEsps.size());
+    }
+
+    @Test
+    void TodosLosMediumsEnUbicacionConEspiritus(){
+        ubicacionService.crear(ashenvale);
+        mediumService.guardar(medium1);
+        mediumService.guardar(medium2);
+        espirituService.crear(espiritu1);
+        espirituService.crear(espiritu2);
+
+        espirituService.ubicarseEn(espiritu1.getId(),ashenvale.getId());
+        espirituService.ubicarseEn(espiritu2.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium2.getId(),ashenvale.getId());
+
+        espirituService.conectar(espiritu1.getId(),medium1.getId());
+        espirituService.conectar(espiritu2.getId(),medium2.getId());
+
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
+    @Test
+    void AlgunMediumEnUbicacionConEspiritus(){
+        ubicacionService.crear(ashenvale);
+        mediumService.guardar(medium1);
+        mediumService.guardar(medium2);
+        espirituService.crear(espiritu1);
+        espirituService.crear(espiritu2);
+
+        espirituService.ubicarseEn(espiritu1.getId(),ashenvale.getId());
+        espirituService.ubicarseEn(espiritu2.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
+        mediumService.ubicarseEn(medium2.getId(),ashenvale.getId());
+
+        espirituService.conectar(espiritu1.getId(),medium1.getId());
+        espirituService.conectar(espiritu2.getId(),medium1.getId());
+
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(1, mediumsSinEsps.size());
+    }
+
+    @Test
+    void MediumsEnUbicacionNoRegistrada(){
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(1L);
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
+    @Test
+    void MediumsEnUbicacionNula(){
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
+
+        assertEquals(0, mediumsSinEsps.size());
+    }
+
+    @Test
+    void ubicacionSinMediumRegistrados(){
+        ubicacionService.crear(ashenvale);
+        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
+
+        assertEquals(0, mediumsSinEsps.size());
     }
 
     @AfterEach
