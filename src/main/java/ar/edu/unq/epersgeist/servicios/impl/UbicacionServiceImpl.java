@@ -61,6 +61,9 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
+        if(ubicacion.getId() == null){
+            throw new IdNoValidoException(null);
+        }
         HibernateTransactionRunner.runTrx(() -> {
             ubicacionDAO.actualizar(ubicacion);
             return null;
@@ -79,7 +82,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return List.of();
+        return HibernateTransactionRunner.runTrx(() -> mediumDAO.mediumsSinEspiritusEn(ubicacionId));
     }
 
 

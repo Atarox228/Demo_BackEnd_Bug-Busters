@@ -11,6 +11,7 @@ import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -87,6 +88,15 @@ public class MediumServiceImpl implements MediumService {
             this.espirituDao.actualizar(espiritu);
             this.mediumDao.actualizar(medium);
             return espirituDao.recuperar(espirituId);
+        });
+    }
+
+    public void ubicarseEn(Long mediumId, Long ubicacionId) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(mediumId);
+            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
+            medium.setUbicacion(ubicacion);
+            return null;
         });
     }
 

@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EntidadConUbicacionRegistradaException;
+
 import jakarta.persistence.*;
 import lombok.*;
 
