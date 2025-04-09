@@ -91,6 +91,12 @@ public class MediumServiceImpl implements MediumService {
         });
     }
 
+    @Override
+    public List<Espiritu> espiritus(Long idMedium) {
+        return HibernateTransactionRunner.runTrx(() -> mediumDao.obtenerEspiritus(idMedium));
+    }
+
+
     public void ubicarseEn(Long mediumId, Long ubicacionId) {
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(mediumId);

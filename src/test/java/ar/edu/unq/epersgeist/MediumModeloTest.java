@@ -132,4 +132,5 @@ public class MediumModeloTest {
         assertThrows(EspirituNoLibreException.class, () -> medium.invocar(Casper));
     }
 
+
 }

@@ -21,7 +21,7 @@ public class Medium implements Serializable {
     private Integer manaMax;
     private Integer mana;
 
-    @OneToMany (mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany (mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritus = new HashSet<>();
 
     @ManyToOne

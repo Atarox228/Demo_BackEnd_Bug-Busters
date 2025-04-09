@@ -40,15 +40,22 @@ public class MediumServiceTest {
     private UbicacionService ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
     private Medium medium3;
     private Medium mediumSinMana;
-
+    private Ubicacion quilmes;
+    private Espiritu espiritu2;
+    private Espiritu espiritu3;
 
     @BeforeEach
     void setUp() {
         this.mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
+        bernal = new Ubicacion("Bernal");
+        quilmes = new Ubicacion(("Quilmes"));
+        ubicacionService.crear(bernal);
+        ubicacionService.crear(quilmes);
         this.medium = new Medium("Lizzie",150,100);
         this.medium2 = new Medium("Lorraine", 200, 50);
-        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
-        bernal = new Ubicacion("Bernal");
+        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", bernal);
+        espiritu2 = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Ghosty", quilmes);
+        espiritu3 = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Bernalero", bernal);
         medium3 = new Medium("Lala", 100, 50, bernal);
         mediumSinMana = new Medium("Nomana", 100, 0, bernal);
     }
@@ -106,7 +113,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void elminarMediumYaEliminado(){
+    void eliminarMediumYaEliminado(){
         mediumService.guardar(medium);
         mediumService.eliminar(medium);
         assertThrows(OptimisticLockException.class, () -> {
@@ -175,19 +182,19 @@ public class MediumServiceTest {
 
     @Test
     void invocarEspirituLibreConManaSuficiente() {
-        espirituService.crear(espiritu);
-        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
-        ubicacionService.crear(bernal);
+        espirituService.crear(espiritu2);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu2.getId());
         mediumService.guardar(medium3);
-        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId());
         assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
         assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
     }
 
+    // Testear que pasa si invoco en la misma ubicacion
+
     @Test
     void invocarEspirituNoLibre() {
         espirituService.crear(espiritu);
-        ubicacionService.crear(bernal);
         mediumService.guardar(medium3);
         mediumService.guardar(medium2);
         mediumService.invocar(medium3.getId(), espiritu.getId());
@@ -198,11 +205,36 @@ public class MediumServiceTest {
     void invocarEspirituSinMana() {
         espirituService.crear(espiritu);
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
-        ubicacionService.crear(bernal);
         mediumService.guardar(mediumSinMana);
         Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
         assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
         assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
+
+    }
+
+    @Test
+    void espiritusDeMedium(){
+        espirituService.crear(espiritu);
+        mediumService.guardar(medium3);
+        // Utilizo conectar pero solo para agregar espiritus al medium.
+        espirituService.conectar(espiritu.getId(), medium3.getId());
+        assertEquals((mediumService.espiritus(medium3.getId())).size(), 1);
+    }
+
+    @Test
+    void espiritusDeMediumSinEspiritus(){
+        mediumService.guardar(medium3);
+        assertEquals((mediumService.espiritus(medium3.getId())).size(), 0);
+    }
+
+    @Test
+    void espiritusDeMediumConVariosEspiritus(){
+        espirituService.crear(espiritu);
+        espirituService.crear(espiritu3);
+        mediumService.guardar(medium3);
+        espirituService.conectar(espiritu.getId(), medium3.getId());
+        espirituService.conectar(espiritu3.getId(), medium3.getId());
+        assertEquals((mediumService.espiritus(medium3.getId())).size(), 2);
     }
 
     @AfterEach
