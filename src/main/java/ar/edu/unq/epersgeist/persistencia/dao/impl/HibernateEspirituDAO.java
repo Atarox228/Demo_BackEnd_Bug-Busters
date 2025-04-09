@@ -54,24 +54,16 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public List<Espiritu> recuperarAngelesDe(Long id) {
+    public List<Espiritu> recuperarEspirtusDeTipo(Long id, TipoEspiritu tipo) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "from Espiritu e where e.medium.id = :id AND e.tipo = :tipoDeEspiritu";
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
-        query.setParameter("tipoDeEspiritu", TipoEspiritu.ANGELICAL);
+        query.setParameter("tipoDeEspiritu", tipo);
         query.setParameter("id",id);
         return query.getResultList();
     }
 
-    @Override
-    public List<Espiritu> recuperarDemoniosDe(Long id) {
-        Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from Espiritu e where e.medium.id = :id AND e.tipo = :tipoDeEspiritu";
-        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
-        query.setParameter("tipoDeEspiritu", TipoEspiritu.DEMONIACO);
-        query.setParameter("id",id);
-        return query.getResultList();
-    }
+
 
 
     public List<Espiritu> recuperarTodos(){

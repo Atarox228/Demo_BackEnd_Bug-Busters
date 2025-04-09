@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
@@ -13,7 +14,6 @@ import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -113,8 +113,8 @@ public class MediumServiceImpl implements MediumService {
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(idMedium);
             Medium medium2 = mediumDao.recuperar(idMedium2);
-            List<Espiritu> angeles = espirituDao.recuperarAngelesDe(medium.getId());
-            List<Espiritu> demonios = espirituDao.recuperarDemoniosDe(medium2.getId());
+            List<Espiritu> angeles = espirituDao.recuperarEspirtusDeTipo(medium.getId(), TipoEspiritu.ANGELICAL);
+            List<Espiritu> demonios = espirituDao.recuperarEspirtusDeTipo(medium2.getId(), TipoEspiritu.DEMONIACO);
             medium.exorcizar(medium2, angeles, demonios);
             mediumDao.actualizar(medium);
             mediumDao.actualizar(medium2);

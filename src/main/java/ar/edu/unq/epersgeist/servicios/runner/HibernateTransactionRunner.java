@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.runner;
 
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import org.hibernate.Session;
 
 public class HibernateTransactionRunner {
@@ -33,6 +32,6 @@ public class HibernateTransactionRunner {
 
     @FunctionalInterface
     public interface TransactionBlock<T> {
-        T execute() throws NoHayAngelesException;
+        T execute();
     }
 }
