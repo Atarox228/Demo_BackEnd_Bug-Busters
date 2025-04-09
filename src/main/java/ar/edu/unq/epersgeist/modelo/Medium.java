@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
@@ -33,14 +34,6 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
-
-    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
-        this.nombre = nombre;
-        this.manaMax = manaMax;
-        this.mana = mana;
-        this.ubicacion = ubicacion;
-    }
-
     public void conectarseAEspiritu(Espiritu espiritu) {
         if(!puedeConectarse(espiritu)){
             throw new NoSePuedenConectarException(this,espiritu);
@@ -52,7 +45,7 @@ public class Medium implements Serializable {
 
 
     public boolean puedeConectarse( Espiritu espiritu){
-        return this.getUbicacion().getNombre() == espiritu.getUbicacion().getNombre() && espiritu.estaLibre();
+        return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
 
@@ -89,7 +82,4 @@ public class Medium implements Serializable {
         espiritu.setUbicacion(ubicacion);
     }
 
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
 }

@@ -26,7 +26,7 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public void guardar(Medium medium) {
+    public void crear(Medium medium) {
         HibernateTransactionRunner.runTrx(() -> {
             mediumDao.guardar(medium);
             return null;

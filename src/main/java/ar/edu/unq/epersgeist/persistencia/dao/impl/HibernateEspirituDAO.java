@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
+
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.TipoEspiritu;

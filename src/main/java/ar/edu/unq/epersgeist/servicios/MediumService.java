@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MediumService {
 
-    void guardar(Medium medium);
+    void crear(Medium medium);
     Medium recuperar(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
@@ -16,6 +16,6 @@ public interface MediumService {
     void eliminarTodo();
     void descansar(Long idMedium);
     Espiritu invocar(Long mediumId, Long espirituId);
-
     List<Espiritu> espiritus(Long idMedium);
+    void ubicarseEn(Long idMedium, Long idUbicacion);
 }

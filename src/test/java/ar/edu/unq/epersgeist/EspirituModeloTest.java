@@ -1,9 +1,6 @@
 package ar.edu.unq.epersgeist;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,11 +25,11 @@ public class EspirituModeloTest {
 
     @Test
     void verificarTipoEspirituAngelical(){
-        assertEquals(angel.getTipo(), TipoEspiritu.ANGELICAL);
+        assertEquals(TipoEspiritu.ANGELICAL, angel.getTipo());
     }
     @Test
     void verificarTipoEspirituDemoniaco(){
-        assertEquals(demonio.getTipo(), TipoEspiritu.DEMONIACO);
+        assertEquals(TipoEspiritu.DEMONIACO, demonio.getTipo());
     }
 
     @Test

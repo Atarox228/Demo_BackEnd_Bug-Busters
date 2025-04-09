@@ -5,11 +5,10 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-
 import java.util.Collection;
 
-public class HibernateUbicacionDao extends HibernateDAO<Ubicacion> implements UbicacionDAO {
-    public HibernateUbicacionDao() {
+public class HibernateUbicacionDAO extends HibernateDAO<Ubicacion> implements UbicacionDAO {
+    public HibernateUbicacionDAO() {
         super(Ubicacion.class);
     }
 

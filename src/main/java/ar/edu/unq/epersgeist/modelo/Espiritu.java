@@ -1,14 +1,8 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import java.io.Serializable;
-
 import lombok.*;
-
 import jakarta.persistence.*;
-
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -44,28 +38,6 @@ public class Espiritu implements Serializable {
         this.medium = null;
     }
 
-    public Espiritu(@NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
-        this.tipo = tipo;
-        // esto es para setear el valor default en caso de que no pongan valor
-        // o pongan un valor no acorde al rango establecido
-        if(nivelDeConexion>=0 && nivelDeConexion<=100){
-            this.nivelConexion = nivelDeConexion;
-        } else {
-            this.nivelConexion = 0;
-        }
-        this.nombre = nombre;
-        //this.medium = null;
-        this.ubicacion = ubicacion;
-    }
-
-    public Espiritu(@NonNull Long id, @NonNull TipoEspiritu tipo, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
-        this.id = id;
-        this.tipo = tipo;
-        this.nivelConexion = nivelDeConexion;
-        this.nombre = nombre;
-        //this.medium = null;
-    }
-
     public void aumentarConexion(Integer conexion) {
             int maxNivelConexion = 100;
             int nuevoNivelConexion = this.nivelConexion + conexion;
@@ -87,34 +59,6 @@ public class Espiritu implements Serializable {
                 ", medium= " + medium.getNombre() +
                 ", ubicacion= " + ubicacion.getNombre() +
                 '}';
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TipoEspiritu getTipo() {
-        return tipo;
-    }
-
-    public Integer getNivelDeConexion() {
-        return nivelConexion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Medium getMedium() {
-        return medium;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setNombre(String nombre){
-        this.nombre = nombre;
     }
 
     public void invocarme(Medium medium, Ubicacion ubicacion)  {
