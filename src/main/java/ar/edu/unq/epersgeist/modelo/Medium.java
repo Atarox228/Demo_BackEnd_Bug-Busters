@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -95,12 +96,15 @@ public class Medium implements Serializable {
         return ubicacion;
     }
 
-    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) {
+    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {
+        if(angeles.size() == 0){
+            throw new NoHayAngelesException();
+        }
         List<Espiritu> angelicalesRestantes = angeles;
         List<Espiritu> demoniacosRestantes = demonios;
-        Espiritu defensor = demoniacosRestantes.getFirst();
         while (angelicalesRestantes.size() >= 1 & demoniacosRestantes.size() >= 1) {
             Espiritu atacante = angelicalesRestantes.getFirst();
+            Espiritu defensor = demoniacosRestantes.getFirst();
              if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
                  defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
                  if (defensor.getNivelConexion() == 0 & demoniacosRestantes.size() >= 2) {

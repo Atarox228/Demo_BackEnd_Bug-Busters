@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface MediumService {
     void actualizar(Medium medium);
     void eliminarTodo();
     void descansar(Long idMedium);
-    void exorcizar(long idMedium, long idMedium2);
+    void exorcizar(long idMedium, long idMedium2) throws NoHayAngelesException;
     Espiritu invocar(Long mediumId, Long espirituId);
 
     List<Espiritu> espiritus(Long idMedium);

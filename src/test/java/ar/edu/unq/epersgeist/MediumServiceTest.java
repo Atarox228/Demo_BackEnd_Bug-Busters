@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
@@ -207,12 +208,11 @@ public class MediumServiceTest {
         Medium mediumConectado = espirituService.conectar(kyu.getId(), medium.getId());
         Medium mediumConectado2 = espirituService.conectar(kyuMalvado.getId(), medium2.getId());
 
+
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -257,10 +257,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -301,10 +299,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -343,10 +339,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -390,10 +384,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -439,10 +431,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -488,10 +478,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -537,10 +525,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -586,10 +572,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -635,10 +619,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -688,10 +670,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -743,10 +723,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -798,10 +776,8 @@ public class MediumServiceTest {
 
         mediumService.exorcizar(mediumConectado.getId(), mediumConectado2.getId());
 
-        Medium mediumAct = mediumService.recuperar(medium.getId());
-        Medium mediumAct2 = mediumService.recuperar(medium2.getId());
-        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumAct.getId());
-        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumAct2.getId());
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
 
         Espiritu kyuMalvadoAct = espirituService.recuperar(kyuMalvado.getId());
         Espiritu kyuAct = espirituService.recuperar(kyu.getId());
@@ -876,6 +852,46 @@ public class MediumServiceTest {
         assertTrue(hanaAct.estaLibre());
         assertFalse(ivaarAct.estaLibre());
         assertFalse(rikaAct.estaLibre());
+    }
+
+    @Test
+    void NoHayAngelesException(){
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+
+        mediumService.ubicarseEn(medium.getId(),bernal.getId());
+        mediumService.ubicarseEn(medium2.getId(),bernal.getId());
+
+
+        assertThrows(NoHayAngelesException.class,()->{
+            mediumService.exorcizar(medium.getId(), medium2.getId());
+        });
+    }
+
+    @Test
+    void NoHayDemonios(){
+        mediumService.guardar(medium);
+        mediumService.guardar(medium2);
+
+        mediumService.ubicarseEn(medium.getId(),bernal.getId());
+        mediumService.ubicarseEn(medium2.getId(),bernal.getId());
+
+        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 70,"Kyu");
+        espirituService.crear(kyu);
+
+        espirituService.ubicarseEn(kyu.getId(),bernal.getId());
+
+        Medium mediumConectado = espirituService.conectar(kyu.getId(), medium.getId());
+        Espiritu kyuAct = espirituService.recuperar(kyu.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        assertEquals(espiritusMedium1.size(), 1);
+        assertEquals(espiritusMedium2.size(), 0);
+        assertFalse(kyuAct.estaLibre());
     }
 
     @Test
