@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MediumService {
 
@@ -16,5 +17,7 @@ public interface MediumService {
     void descansar(Long idMedium);
     void exorcizar(long idMedium, long idMedium2);
     Espiritu invocar(Long mediumId, Long espirituId);
+
+    List<Espiritu> espiritus(Long idMedium);
     void ubicarseEn(Long mediumId, Long ubicacionId);
 }

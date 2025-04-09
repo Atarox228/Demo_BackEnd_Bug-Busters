@@ -26,9 +26,6 @@ public class Medium implements Serializable {
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritus = new HashSet<>();
 
-
-
-
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -52,7 +49,6 @@ public class Medium implements Serializable {
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
         espiritus.add(espiritu);
-
         espiritu.setMedium(this);
     }
 
@@ -70,29 +66,6 @@ public class Medium implements Serializable {
     public void aumentarMana(Integer mana) {
         this.setMana(Math.min(this.getMana() + 15, manaMax));
     }
-
-//    public void exorcizar(Medium medium2) {
-//        Set<Espiritu> angelicalesRestantes = espiritus;
-//        Set<Espiritu> demoniacosRestantes = medium2.getEspiritusDemoniacos();
-//        Espiritu atacante = angelicalesRestantes.iterator().next();
-//        Espiritu defensor = demoniacosRestantes.iterator().next();
-//        while (angelicalesRestantes.iterator().hasNext() & demoniacosRestantes.iterator().hasNext()) {
-//             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
-//                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
-//                 if (defensor.getNivelConexion() == 0) {
-//                     demoniacosRestantes.remove(defensor);
-//                     defensor = demoniacosRestantes.iterator().next();
-//                 }
-//             } else {
-//                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
-//
-//             }
-//            angelicalesRestantes.remove(atacante);
-//            atacante = angelicalesRestantes.iterator().next();
-//        }
-//
-//
-//    }
 
     public void reducirMana(Integer mana) {
         this.setMana(Math.max(this.getMana() - mana, 0));
