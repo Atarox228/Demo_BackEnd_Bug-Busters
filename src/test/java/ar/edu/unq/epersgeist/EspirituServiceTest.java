@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarExcept
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
-import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -39,7 +38,7 @@ public class EspirituServiceTest {
         Quilmes = new Ubicacion("Quilmes");
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
-        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", Bernal);
+        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
         Oni = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Otakemaru");
         Jinn = new Espiritu(TipoEspiritu.DEMONIACO, 100, "Marids");
         Anabelle = new Espiritu(TipoEspiritu.DEMONIACO, 48, "Anabelle");
@@ -227,11 +226,11 @@ public class EspirituServiceTest {
         Casper.setUbicacion(Bernal);
         mediumService.guardar(medium);
         espirituService.crear(Casper);
-        assertEquals(0, medium.getEspiritus().size());
+        assertEquals(medium.getEspiritus().size(),0);
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
         Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(1, mediumConectado.getEspiritus().size());
+        assertEquals(mediumConectado.getEspiritus().size(),1);
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelDeConexion());
     }

@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor
 
 @Entity
 public class Espiritu implements Serializable {
@@ -18,16 +18,13 @@ public class Espiritu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoEspiritu tipo;
     private Integer nivelConexion;
     private String nombre;
-
     @ManyToOne
     private Medium medium;
-
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -117,6 +114,22 @@ public class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
+    public int getProbDefensa() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return dado.generarNumero(1,100);
+    }
+
+    public int getProbAtaque() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return Math.min(dado.generarNumero(1,10) + nivelConexion, 100);
+    }
+
+    public void reducirConexionYdesvincularSiEsNecesario(int i) {
+        this.nivelConexion = Math.max(this.nivelConexion - i, 0);
+        if (nivelConexion == 0) {
+            this.medium = null;
+        }
+    }
     public void invocarme(Medium medium, Ubicacion ubicacion)  {
         this.medium = medium;
         this.ubicacion = ubicacion;
