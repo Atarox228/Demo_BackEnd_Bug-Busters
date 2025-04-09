@@ -2,10 +2,12 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
@@ -33,6 +35,9 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium recuperar(Long id) {
+        if (id == null) {
+            throw new IdNoValidoException(id);
+        }
         return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(id));
     }
 
@@ -64,8 +69,10 @@ public class MediumServiceImpl implements MediumService {
     }
 
     public void descansar(Long mediumId){
+        if (mediumId == null) {throw new IdNoValidoException(mediumId);}
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(mediumId);
+            if (medium == null) {throw new IdNoValidoException(mediumId);}
             medium.descansar();
             mediumDao.actualizar(medium);
             return null;
@@ -89,4 +96,13 @@ public class MediumServiceImpl implements MediumService {
         return HibernateTransactionRunner.runTrx(() -> mediumDao.obtenerEspiritus(idMedium));
     }
 
+
+    public void ubicarseEn(Long mediumId, Long ubicacionId) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(mediumId);
+            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
+            medium.setUbicacion(ubicacion);
+            return null;
+        });
+    }
 }

@@ -1,9 +1,12 @@
 package ar.edu.unq.epersgeist.modelo;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -16,13 +19,13 @@ public class Ubicacion implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+    @Column(unique = true,nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
     public Ubicacion(@NonNull String nombre) {
         this.nombre = nombre;
     }
 
-    public void agregarEspiritu(Espiritu espiritu) {}
 
-    public void agregarMedium(Espiritu espiritu) {}
+
+
 }

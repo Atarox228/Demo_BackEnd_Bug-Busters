@@ -15,17 +15,11 @@ import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.text.BreakIterator;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediumModeloTest {
-    private EspirituService espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
-    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
     private Espiritu Casper;
-    private Espiritu Jorge;
     private Medium medium;
     private Medium medium2;
     private Ubicacion Bernal;
@@ -36,7 +30,6 @@ public class MediumModeloTest {
     @BeforeEach
     void setUp(){
         Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
-        Jorge = new Espiritu(TipoEspiritu.ANGELICAL, 20, "Jorge");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
@@ -47,21 +40,21 @@ public class MediumModeloTest {
 
 
     @Test
-    void Puedenconectarse(){
+    void puedenconectarse(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         assertTrue(medium.puedeConectarse(Casper));
     };
 
     @Test
-    void NoPuedenconectarsePorUbicacion(){
+    void noPuedenconectarsePorUbicacion(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Quilmes);
         assertFalse(medium.puedeConectarse(Casper));
     };
 
     @Test
-    void NoPuedenconectarsePorLibertad(){
+    void noPuedenconectarsePorLibertad(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         Casper.setMedium(medium2);
@@ -69,7 +62,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConectarseConEspiritu(){
+    void conectarseConEspiritu(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);
@@ -80,7 +73,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConexionConEspirituFallidaPorLibertad(){
+    void conexionConEspirituFallidaPorLibertad(){
         medium.setUbicacion(Bernal);
         medium2.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);

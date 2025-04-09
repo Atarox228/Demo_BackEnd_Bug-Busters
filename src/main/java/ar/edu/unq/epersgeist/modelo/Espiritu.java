@@ -105,8 +105,20 @@ public class Espiritu implements Serializable {
         return nombre;
     }
 
+    public Medium getMedium() {
+        return medium;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
     public void setNombre(String nombre){
         this.nombre = nombre;
     }
 
+    public void invocarme(Medium medium, Ubicacion ubicacion)  {
+        this.medium = medium;
+        this.ubicacion = ubicacion;
+    }
 }
