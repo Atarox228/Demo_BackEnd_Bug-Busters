@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarExcept
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
-import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -227,11 +226,11 @@ public class EspirituServiceTest {
         Casper.setUbicacion(Bernal);
         mediumService.guardar(medium);
         espirituService.crear(Casper);
-        assertEquals(medium.getEspiritusAngelicales().size(),0);
+        assertEquals(medium.getEspiritus().size(),0);
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
         Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(mediumConectado.getEspiritusAngelicales().size(),1);
+        assertEquals(mediumConectado.getEspiritus().size(),1);
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelDeConexion());
     }
@@ -242,7 +241,7 @@ public class EspirituServiceTest {
         Casper.setUbicacion(Quilmes);
         mediumService.guardar(medium);
         espirituService.crear(Casper);
-        assertEquals(0, medium.getEspiritusAngelicales().size());
+        assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
         });
@@ -257,7 +256,7 @@ public class EspirituServiceTest {
         espirituService.crear(Casper);
         mediumService.guardar(medium2);
         espirituService.conectar(Casper.getId(), medium2.getId());
-        assertEquals(0, medium.getEspiritusAngelicales().size());
+        assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
         });

@@ -23,10 +23,8 @@ public class Medium implements Serializable {
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Espiritu> espiritusAngelicales = new HashSet<>();
+    private Set<Espiritu> espiritus = new HashSet<>();
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Espiritu> espiritusDemoniacos = new HashSet<>();
 
 
 
@@ -52,11 +50,7 @@ public class Medium implements Serializable {
             throw new NoSePuedenConectarException(this,espiritu);
         }
         espiritu.aumentarConexion(this.getMana() * 20 / 100);
-        if (espiritu.getTipo() == TipoEspiritu.DEMONIACO){
-            espiritusDemoniacos.add(espiritu);
-        } else {
-            espiritusAngelicales.add(espiritu);
-        }
+        espiritus.add(espiritu);
 
         espiritu.setMedium(this);
     }
@@ -69,36 +63,35 @@ public class Medium implements Serializable {
 
     public void descansar() {
         this.aumentarMana(15);
-        espiritusAngelicales.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
-        espiritusDemoniacos.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
     }
 
     public void aumentarMana(Integer mana) {
         this.setMana(Math.min(this.getMana() + 15, manaMax));
     }
 
-    public void exorcizar(Medium medium2) {
-        Set<Espiritu> angelicalesRestantes = espiritusAngelicales;
-        Set<Espiritu> demoniacosRestantes = medium2.getEspiritusDemoniacos();
-        Espiritu atacante = angelicalesRestantes.iterator().next();
-        Espiritu defensor = demoniacosRestantes.iterator().next();
-        while (angelicalesRestantes.iterator().hasNext() & demoniacosRestantes.iterator().hasNext()) {
-             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
-                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
-                 if (defensor.getNivelConexion() == 0) {
-                     demoniacosRestantes.remove(defensor);
-                     defensor = demoniacosRestantes.iterator().next();
-                 }
-             } else {
-                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
-
-             }
-            angelicalesRestantes.remove(atacante);
-            atacante = angelicalesRestantes.iterator().next();
-        }
-
-
-    }
+//    public void exorcizar(Medium medium2) {
+//        Set<Espiritu> angelicalesRestantes = espiritus;
+//        Set<Espiritu> demoniacosRestantes = medium2.getEspiritusDemoniacos();
+//        Espiritu atacante = angelicalesRestantes.iterator().next();
+//        Espiritu defensor = demoniacosRestantes.iterator().next();
+//        while (angelicalesRestantes.iterator().hasNext() & demoniacosRestantes.iterator().hasNext()) {
+//             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
+//                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
+//                 if (defensor.getNivelConexion() == 0) {
+//                     demoniacosRestantes.remove(defensor);
+//                     defensor = demoniacosRestantes.iterator().next();
+//                 }
+//             } else {
+//                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
+//
+//             }
+//            angelicalesRestantes.remove(atacante);
+//            atacante = angelicalesRestantes.iterator().next();
+//        }
+//
+//
+//    }
 
     public void reducirMana(Integer mana) {
         this.setMana(Math.max(this.getMana() - mana, 0));

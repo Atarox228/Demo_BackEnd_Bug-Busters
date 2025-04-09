@@ -91,14 +91,15 @@ public class MediumServiceImpl implements MediumService {
     }
 
 
-    public void exorcizar(long idMedium, long idMedium2){
-        HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(idMedium);
-            Medium medium2 = mediumDao.recuperar(idMedium2);
-            medium.exorcizar(medium2);
-            mediumDao.actualizar(medium);
-            mediumDao.actualizar(medium2);
-            return null;
-        });
+   public void exorcizar(long idMedium, long idMedium2){
+//        HibernateTransactionRunner.runTrx(() -> {
+//            Medium medium = mediumDao.recuperar(idMedium);
+//            Medium medium2 = mediumDao.recuperar(idMedium2);
+//            medium.exorcizar(medium2);
+//            mediumDao.actualizar(medium);
+//            mediumDao.actualizar(medium2);
+//            return null;
+//        });
+
     }
 }
