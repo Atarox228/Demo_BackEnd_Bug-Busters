@@ -1,9 +1,6 @@
 package ar.edu.unq.epersgeist;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
@@ -48,8 +45,8 @@ public class UbicacionServiceTest {
         ashenvale = new Ubicacion("Ashenvale");
         ardenweald = new Ubicacion("Ardenweald");
 
-        espiritu1 = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Casper");
-        espiritu2 = new Espiritu(TipoEspiritu.ANGELICAL, 100, "Marids");
+        espiritu1 = new Demonio(95, "Casper");
+        espiritu2 = new Angel( 100, "Marids");
 
         medium1 = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);

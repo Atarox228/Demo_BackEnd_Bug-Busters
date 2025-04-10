@@ -16,9 +16,9 @@ public interface EspirituDAO {
     void eliminar(Espiritu espiritu);
     void eliminarTodo();
     List<Espiritu> todosLosEspiritusDeTipo(TipoEspiritu tipoDeEspiritu);
-    List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidadPorPagina, TipoEspiritu tipoEspiritu);
+    List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidadPorPagina, Class<? extends Espiritu> tipoEspiritu);
     List<Espiritu> espiritusEn(Long ubicacionId);
     void actualizarEspiritus(List<Espiritu> espiritus);
-    List<Espiritu> recuperarEspirtusDeTipo(Long id, TipoEspiritu t);
+    List<Espiritu> recuperarEspirtusDeTipo(Long id, Class<? extends Espiritu> tipoEspiritu);
 
 }

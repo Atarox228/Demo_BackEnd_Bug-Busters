@@ -38,11 +38,11 @@ public class EspirituServiceTest {
         Quilmes = new Ubicacion("Quilmes");
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
-        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
-        Oni = new Espiritu(TipoEspiritu.DEMONIACO, 95, "Otakemaru");
-        Jinn = new Espiritu(TipoEspiritu.DEMONIACO, 100, "Marids");
-        Anabelle = new Espiritu(TipoEspiritu.DEMONIACO, 48, "Anabelle");
-        Volac = new Espiritu(TipoEspiritu.DEMONIACO, 55, "Volac");
+        Casper = new Angel( 0, "Casper");
+        Oni = new Demonio( 95, "Otakemaru");
+        Jinn = new Demonio( 100, "Marids");
+        Anabelle = new Demonio( 48, "Anabelle");
+        Volac = new Demonio( 55, "Volac");
         medium = new Medium("lala", 100, 50,Bernal);
     }
 
@@ -155,6 +155,17 @@ public class EspirituServiceTest {
         assertThrows(OptimisticLockException.class, () -> {
             espirituService.eliminar(Casper);
         });
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacos() {
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Volac);
+        List<Espiritu> demonios = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1, 5);
+        assertEquals(demonios.size(), 4);
     }
 
     @Test

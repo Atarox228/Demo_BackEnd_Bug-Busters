@@ -25,9 +25,9 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidad, TipoEspiritu tipoEspiritu) {
+    public List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidad, Class<? extends Espiritu> tipoEspiritu) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from Espiritu e where e.tipo = :tipoDeEspiritu order by e.nivelConexion " + direccion.getOrden();
+        String hql = "from Espiritu e where type(e) = :tipoDeEspiritu order by e.nivelConexion " + direccion.getOrden();
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
         query.setParameter("tipoDeEspiritu", tipoEspiritu);
         query.setFirstResult((pagina - 1) * cantidad);
@@ -54,9 +54,9 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public List<Espiritu> recuperarEspirtusDeTipo(Long id, TipoEspiritu tipo) {
+    public List<Espiritu> recuperarEspirtusDeTipo(Long id, Class<? extends Espiritu> tipo) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from Espiritu e where e.medium.id = :id AND e.tipo = :tipoDeEspiritu";
+        String hql = "from Espiritu e where e.medium.id = :id AND type(e) = :tipoDeEspiritu";
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
         query.setParameter("tipoDeEspiritu", tipo);
         query.setParameter("id",id);
