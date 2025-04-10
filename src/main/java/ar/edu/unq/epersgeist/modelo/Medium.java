@@ -47,7 +47,7 @@ public class Medium implements Serializable {
 
 
     public boolean puedeConectarse( Espiritu espiritu){
-        return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
+        return Objects.equals(this.getUbicacion().getId(), espiritu.getUbicacion().getId()) && espiritu.estaLibre();
     }
 
 
