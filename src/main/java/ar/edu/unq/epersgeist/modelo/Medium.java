@@ -47,7 +47,7 @@ public class Medium implements Serializable {
 
 
     public boolean puedeConectarse( Espiritu espiritu){
-        return Objects.equals(this.getUbicacion().getId(), espiritu.getUbicacion().getId()) && espiritu.estaLibre();
+        return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
 
@@ -68,8 +68,7 @@ public class Medium implements Serializable {
         if (this.mana > 10) {
             this.verificarSiEstaLibre(espiritu);
             this.reducirMana(10);
-            espiritu.setUbicacion(this.ubicacion);
-            this.cambiosEnEspiritu(this.ubicacion, espiritu);
+            espiritu.invocarme(this,this.ubicacion);
         }
     }
 
@@ -77,11 +76,6 @@ public class Medium implements Serializable {
         if (!espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
         }
-    }
-
-    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
-        espiritu.setMedium(this);
-        espiritu.setUbicacion(ubicacion);
     }
 
     public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {

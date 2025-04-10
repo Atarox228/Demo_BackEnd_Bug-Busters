@@ -170,7 +170,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium1a1Victorioso(){
+    void exorcizarMedium1a1Victorioso(){
         dado.setModo(new ModoTrucado(6,60));
         espirituRecu = espirituService.recuperar(espiritu.getId());
         espirituRecu.setNivelConexion(80);
@@ -196,7 +196,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium1a1VictoriosoteniendoDemoniacosYangelicalesDeMas(){
+    void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYangelicalesDeMas(){
         dado.setModo(new ModoTrucado(6,60));
         espirituRecu.setNivelConexion(80);
         espirituService.actualizar(espirituRecu);
@@ -233,7 +233,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium1a1DerrotaSinDesconexion(){
+    void exorcizarMedium1a1DerrotaSinDesconexion(){
         dado.setModo(new ModoTrucado(6,60));
 
         espirituRecu.setNivelConexion(40);
@@ -257,7 +257,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium1a1DerrotaConDesconexion(){
+    void exorcizarMedium1a1DerrotaConDesconexion(){
 
         dado.setModo(new ModoTrucado(6,60));
 
@@ -279,7 +279,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1Victoria(){
+    void exorcizarMedium2a1Victoria(){
         dado.setModo(new ModoTrucado(5,10));
         espirituRecu.setNivelConexion(30);
         espirituService.actualizar(espirituRecu);
@@ -309,7 +309,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1AmbasDerrotasSinDesconexion(){
+    void exorcizarMedium2a1AmbasDerrotasSinDesconexion(){
         dado.setModo(new ModoTrucado(5,90));
         espirituRecu.setNivelConexion(30);
         espirituService.actualizar(espirituRecu);
@@ -340,7 +340,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1AmbasDerrotasConDesconexion(){
+    void exorcizarMedium2a1AmbasDerrotasConDesconexion(){
         dado.setModo(new ModoTrucado(5,90));
         Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 5,"castiel");
         espirituService.crear(castiel);
@@ -368,7 +368,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1UnaDerrotaYUnaVictoriaSinDesconexion(){
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaSinDesconexion(){
         dado.setModo(new ModoTrucado(5,40));
         espirituRecu.setNivelConexion(10);
         espirituService.actualizar(espirituRecu);
@@ -398,7 +398,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexion(){
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexion(){
         dado.setModo(new ModoTrucado(5,40));
         Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"castiel");
         espirituService.crear(castiel);
@@ -426,7 +426,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexionDeAmbosLados(){
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexionDeAmbosLados(){
         dado.setModo(new ModoTrucado(5,40));
         Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"castiel");
         espirituService.crear(castiel);
@@ -456,7 +456,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a2VictoriaAbsoluta(){
+    void exorcizarMedium2a2VictoriaAbsoluta(){
         dado.setModo(new ModoTrucado(5,40));
         espirituRecu.setNivelConexion(50);
         espirituService.actualizar(espirituRecu);
@@ -494,7 +494,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a2DerrotaAbsolutaSinYConDesconexion(){
+    void exorcizarMedium2a2DerrotaAbsolutaSinYConDesconexion(){
         dado.setModo(new ModoTrucado(5,70));
         Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 10,"castiel");
         espirituService.crear(castiel);
@@ -530,7 +530,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void testExorcizarMedium2a2UnaVictoriaYUnaDerrotaConDesconexionDeAmbosLados(){
+    void exorcizarMedium2a2UnaVictoriaYUnaDerrotaConDesconexionDeAmbosLados(){
         dado.setModo(new ModoTrucado(5,70));
         espirituRecu.setNivelConexion(70);
         espirituService.actualizar(espirituRecu);
@@ -625,11 +625,8 @@ public class MediumServiceTest {
 
     @Test
     void NoHayDemonios(){
-        espirituRecu.setNivelConexion(70);
-        espirituService.actualizar(espirituRecu);
-
-        espirituService.conectar(espirituRecu.getId(), medium.getId());
-        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        espirituService.conectar(espiritu.getId(), medium.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
 
         mediumService.exorcizar(medium.getId(), medium2.getId());
 
