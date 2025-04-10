@@ -1,12 +1,14 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
@@ -22,7 +24,7 @@ public class Medium implements Serializable {
     private Integer manaMax;
     private Integer mana;
 
-    @OneToMany (mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritus = new HashSet<>();
 
     @ManyToOne
@@ -82,4 +84,26 @@ public class Medium implements Serializable {
         espiritu.setUbicacion(ubicacion);
     }
 
+    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {
+        if(angeles.size() == 0){
+            throw new NoHayAngelesException();
+        }
+        List<Espiritu> angelicalesRestantes = angeles;
+        List<Espiritu> demoniacosRestantes = demonios;
+        while (angelicalesRestantes.size() >= 1 & demoniacosRestantes.size() >= 1) {
+            Espiritu atacante = angelicalesRestantes.getFirst();
+            Espiritu defensor = demoniacosRestantes.getFirst();
+             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
+                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
+                 if (defensor.getNivelConexion() == 0 & demoniacosRestantes.size() >= 2) {
+                     demoniacosRestantes.remove(defensor);
+                     defensor = demoniacosRestantes.getFirst();
+                 }
+             } else {
+                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
+             }
+            angelicalesRestantes.remove(atacante);
+
+        }
+    }
 }

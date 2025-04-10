@@ -2,10 +2,12 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
@@ -104,5 +106,22 @@ public class MediumServiceImpl implements MediumService {
             medium.setUbicacion(ubicacion);
             return null;
         });
+    }
+
+
+   public void exorcizar(long idMedium, long idMedium2) throws NoHayAngelesException {
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(idMedium);
+            Medium medium2 = mediumDao.recuperar(idMedium2);
+            List<Espiritu> angeles = espirituDao.recuperarEspirtusDeTipo(medium.getId(), TipoEspiritu.ANGELICAL);
+            List<Espiritu> demonios = espirituDao.recuperarEspirtusDeTipo(medium2.getId(), TipoEspiritu.DEMONIACO);
+            medium.exorcizar(medium2, angeles, demonios);
+            mediumDao.actualizar(medium);
+            mediumDao.actualizar(medium2);
+            espirituDao.actualizarEspiritus(angeles);
+            espirituDao.actualizarEspiritus(demonios);
+            return null;
+        });
+
     }
 }

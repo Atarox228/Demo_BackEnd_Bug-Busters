@@ -17,7 +17,7 @@ public class MediumModeloTest {
     private Medium medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
-
+    private Espiritu Lilith;
 
 
     @BeforeEach
@@ -55,7 +55,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void conectarseConEspiritu(){
+    void ConexionConEspirituAngelicalExitosa(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);

@@ -7,6 +7,8 @@ import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
 import java.util.List;
 
 public interface EspirituDAO {
+
+
     void guardar(Espiritu espiritu);
     Espiritu recuperar(Long idDelEspiritu);
     List<Espiritu> recuperarTodos();
@@ -16,4 +18,7 @@ public interface EspirituDAO {
     List<Espiritu> todosLosEspiritusDeTipo(TipoEspiritu tipoDeEspiritu);
     List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidadPorPagina, TipoEspiritu tipoEspiritu);
     List<Espiritu> espiritusEn(Long ubicacionId);
+    void actualizarEspiritus(List<Espiritu> espiritus);
+    List<Espiritu> recuperarEspirtusDeTipo(Long id, TipoEspiritu t);
+
 }
