@@ -24,6 +24,8 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         return query.getResultList();
     }
 
+    // EL METODO DE ARRIBA NO SE ESTA UTILIZANDO BORRAR??¡¡
+
     @Override
     public List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidad, Class<? extends Espiritu> tipoEspiritu) {
         Session session = HibernateTransactionRunner.getCurrentSession();
