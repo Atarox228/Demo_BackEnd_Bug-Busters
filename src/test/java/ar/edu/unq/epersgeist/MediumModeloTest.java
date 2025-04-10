@@ -107,7 +107,7 @@ public class MediumModeloTest {
     }
 
     @Test
-    void invocacionFallidaPorManaInsuficiente() {
+    void invocacionPorManaInsuficiente() {
         medium.setUbicacion(Bernal);
         medium.setMana(5);
         Integer mana = medium.getMana();

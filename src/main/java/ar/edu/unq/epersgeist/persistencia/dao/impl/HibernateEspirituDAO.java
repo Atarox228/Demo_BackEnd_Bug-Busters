@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
+import ar.edu.unq.epersgeist.modelo.Demonio;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
@@ -16,22 +17,11 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public List<Espiritu> todosLosEspiritusDeTipo(TipoEspiritu tipoEspiritu) {
-        Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from Espiritu e where e.tipo = :tipoDeEspiritu order by e.nivelConexion desc";
-        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
-        query.setParameter("tipoDeEspiritu", tipoEspiritu);
-        return query.getResultList();
-    }
-
-    // EL METODO DE ARRIBA NO SE ESTA UTILIZANDO BORRAR??¡¡
-
-    @Override
-    public List<Espiritu> obtenerEspiritus(Direccion direccion, Integer pagina, Integer cantidad, Class<? extends Espiritu> tipoEspiritu) {
+    public List<Espiritu> obtenerDemonios(Direccion direccion, Integer pagina, Integer cantidad) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "from Espiritu e where type(e) = :tipoDeEspiritu order by e.nivelConexion " + direccion.getOrden();
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
-        query.setParameter("tipoDeEspiritu", tipoEspiritu);
+        query.setParameter("tipoDeEspiritu", Demonio.class);
         query.setFirstResult((pagina - 1) * cantidad);
         query.setMaxResults(cantidad);
         return query.getResultList();
