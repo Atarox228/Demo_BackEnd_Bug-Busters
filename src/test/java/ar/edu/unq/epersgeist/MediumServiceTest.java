@@ -74,9 +74,13 @@ public class MediumServiceTest {
 
         this.dado = Dado.getInstance();
 
-        espiritu = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper", bernal);
-        espiritu2 = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Ghosty", quilmes);
-        espiritu3 = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Bernalero", bernal);
+        espiritu = new Angel(0, "Casper");
+        espiritu2 = new Angel(0, "Ghosty");
+        espiritu3 = new Angel(0, "Bernalero");
+
+        espiritu.setUbicacion(bernal);
+        espiritu2.setUbicacion(quilmes);
+        espiritu3.setUbicacion(bernal);
 
 
     }
@@ -191,9 +195,9 @@ public class MediumServiceTest {
     void testExorcizarMedium1a1Victorioso(){
 
         dado.setModo(new ModoTrucado(6,60));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 80,"Kyu");
+        Espiritu kyu = new Angel( 80,"Kyu");
         espirituService.crear(kyu);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -230,13 +234,13 @@ public class MediumServiceTest {
     void testExorcizarMedium1a1VictoriosoteniendoDemoniacosYangelicalesDeMas(){
 
         dado.setModo(new ModoTrucado(6,60));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 80,"Kyu");
+        Espiritu kyu = new Angel( 80,"Kyu");
         espirituService.crear(kyu);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio( 40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
-        Espiritu azael = new Espiritu(TipoEspiritu.DEMONIACO, 40,"Azael");
+        Espiritu azael = new Demonio( 40,"Azael");
         espirituService.crear(azael);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"Castiel");
+        Espiritu castiel = new Angel( 40,"Castiel");
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -280,9 +284,9 @@ public class MediumServiceTest {
     void testExorcizarMedium1a1DerrotaSinDesconexion(){
 
         dado.setModo(new ModoTrucado(6,60));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 40,"Kyu");
+        Espiritu kyu = new Angel( 40,"Kyu");
         espirituService.crear(kyu);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -320,9 +324,9 @@ public class MediumServiceTest {
         medium.setMana(0);
 
         dado.setModo(new ModoTrucado(6,60));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Kyu");
+        Espiritu kyu = new Angel(5,"Kyu");
         espirituService.crear(kyu);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -361,11 +365,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,10));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 30,"Kyu");
+        Espiritu kyu = new Angel(30,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 50,"castiel");
+        Espiritu castiel = new Angel(50,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -408,11 +412,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,90));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 30,"Kyu");
+        Espiritu kyu = new Angel(30,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 50,"castiel");
+        Espiritu castiel = new Angel(50,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -455,11 +459,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,90));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Kyu");
+        Espiritu kyu = new Angel(5,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 5,"castiel");
+        Espiritu castiel = new Angel(5,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -502,11 +506,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 10,"Kyu");
+        Espiritu kyu = new Angel(10,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"castiel");
+        Espiritu castiel = new Angel(40,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -549,11 +553,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Kyu");
+        Espiritu kyu = new Angel(5,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"castiel");
+        Espiritu castiel = new Angel(40,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 40,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(40,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -596,11 +600,11 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Kyu");
+        Espiritu kyu = new Angel(5,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 40,"castiel");
+        Espiritu castiel = new Angel(40,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 20,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(20,"kyuMalvado");
         espirituService.crear(kyuMalvado);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -643,13 +647,13 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 50,"Kyu");
+        Espiritu kyu = new Angel(50,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 70,"castiel");
+        Espiritu castiel = new Angel(70,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 25,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(25,"kyuMalvado");
         espirituService.crear(kyuMalvado);
-        Espiritu azael = new Espiritu(TipoEspiritu.DEMONIACO, 35,"azael");
+        Espiritu azael = new Demonio(35,"azael");
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -696,13 +700,13 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,70));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Kyu");
+        Espiritu kyu = new Angel(5,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 10,"castiel");
+        Espiritu castiel = new Angel(10,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 25,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(25,"kyuMalvado");
         espirituService.crear(kyuMalvado);
-        Espiritu azael = new Espiritu(TipoEspiritu.DEMONIACO, 35,"azael");
+        Espiritu azael = new Demonio(35,"azael");
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -749,13 +753,13 @@ public class MediumServiceTest {
         medium2.setMana(0);
 
         dado.setModo(new ModoTrucado(5,70));
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 70,"Kyu");
+        Espiritu kyu = new Angel(70,"Kyu");
         espirituService.crear(kyu);
-        Espiritu castiel = new Espiritu(TipoEspiritu.ANGELICAL, 5,"castiel");
+        Espiritu castiel = new Angel(5,"castiel");
         espirituService.crear(castiel);
-        Espiritu kyuMalvado = new Espiritu(TipoEspiritu.DEMONIACO, 25,"kyuMalvado");
+        Espiritu kyuMalvado = new Demonio(25,"kyuMalvado");
         espirituService.crear(kyuMalvado);
-        Espiritu azael = new Espiritu(TipoEspiritu.DEMONIACO, 35,"azael");
+        Espiritu azael = new Demonio(35,"azael");
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -809,15 +813,15 @@ public class MediumServiceTest {
         mediumService.ubicarseEn(medium.getId(),bernal.getId());
         mediumService.ubicarseEn(medium2.getId(),bernal.getId());
 
-        Espiritu rika = new Espiritu(TipoEspiritu.ANGELICAL, 60,"Rika");
+        Espiritu rika = new Angel(60,"Rika");
         espirituService.crear(rika);
-        Espiritu ivaar = new Espiritu(TipoEspiritu.ANGELICAL, 80,"Ivaar");
+        Espiritu ivaar = new Angel(80,"Ivaar");
         espirituService.crear(ivaar);
-        Espiritu hana = new Espiritu(TipoEspiritu.ANGELICAL, 5,"Hana");
+        Espiritu hana = new Angel(5,"Hana");
         espirituService.crear(hana);
-        Espiritu jeager = new Espiritu(TipoEspiritu.DEMONIACO, 50,"Jeager");
+        Espiritu jeager = new Demonio(50,"Jeager");
         espirituService.crear(jeager);
-        Espiritu noroi = new Espiritu(TipoEspiritu.DEMONIACO, 66,"Noroi");
+        Espiritu noroi = new Demonio(66,"Noroi");
         espirituService.crear(noroi);
 
         espirituService.ubicarseEn(rika.getId(),bernal.getId());
@@ -876,7 +880,7 @@ public class MediumServiceTest {
         mediumService.ubicarseEn(medium.getId(),bernal.getId());
         mediumService.ubicarseEn(medium2.getId(),bernal.getId());
 
-        Espiritu kyu = new Espiritu(TipoEspiritu.ANGELICAL, 70,"Kyu");
+        Espiritu kyu = new Angel(70,"Kyu");
         espirituService.crear(kyu);
 
         espirituService.ubicarseEn(kyu.getId(),bernal.getId());
@@ -964,6 +968,8 @@ public class MediumServiceTest {
         espirituService.conectar(espiritu3.getId(), medium3.getId());
         assertEquals((mediumService.espiritus(medium3.getId())).size(), 2);
     }
+
+
 
     @AfterEach
     void cleanUp() {

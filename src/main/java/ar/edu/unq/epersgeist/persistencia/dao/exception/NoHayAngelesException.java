@@ -5,6 +5,6 @@ public class NoHayAngelesException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "No Hay Angeles Para Realizar El Exorcismo ";
+        return "No hay angeles para realizar el exorcismo ";
     }
 }

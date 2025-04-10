@@ -1,9 +1,6 @@
 package ar.edu.unq.epersgeist;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +19,7 @@ public class MediumModeloTest {
 
     @BeforeEach
     void setUp(){
-        Casper = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Casper");
+        Casper = new Angel(0, "Casper");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
@@ -110,7 +107,7 @@ public class MediumModeloTest {
     }
 
     @Test
-    void invocacionFallidaPorManaInsuficiente() {
+    void invocacionPorManaInsuficiente() {
         medium.setUbicacion(Bernal);
         medium.setMana(5);
         Integer mana = medium.getMana();
