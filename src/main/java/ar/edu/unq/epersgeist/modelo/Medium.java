@@ -1,10 +1,12 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -14,14 +16,18 @@ import java.util.Set;
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
 @Entity
+@Check(constraints = "mana <= manaMax")
 public class Medium implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
+    @Column(nullable = false)
     private Integer manaMax;
+    @Column(nullable = false)
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -98,6 +104,14 @@ public class Medium implements Serializable {
              }
             angelicalesRestantes.remove(atacante);
 
+        }
+    }
+
+    public void setMana(int mana) {
+        if (mana > this.manaMax) {
+            this.mana = this.manaMax;
+        }else{
+            this.mana = mana;
         }
     }
 }

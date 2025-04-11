@@ -15,23 +15,27 @@ public class EspirituModeloTest {
 
     @BeforeEach
     void setUp(){
-        angel = new Espiritu(TipoEspiritu.ANGELICAL, 0, "Gabriel");
-        demonio = new Espiritu(TipoEspiritu.DEMONIACO, 0, "Lucifer");
+        angel = new Angel(0, "Gabriel");
+        demonio = new Demonio(0, "Lucifer");
 
         medium = new Medium("lala", 100, 50);
 
         Bernal = new Ubicacion("Bernal");
     }
 
+
     @Test
     void verificarTipoEspirituAngelical(){
         assertEquals(TipoEspiritu.ANGELICAL, angel.getTipo());
     }
+
     @Test
     void verificarTipoEspirituDemoniaco(){
         assertEquals(TipoEspiritu.DEMONIACO, demonio.getTipo());
     }
 
+    @Test
+    void verificarPorDemonioCuandoEsAngel() {assertNotEquals(demonio.getTipo(), TipoEspiritu.ANGELICAL);}
     @Test
     void invocarme() {
         angel.setUbicacion(null);
