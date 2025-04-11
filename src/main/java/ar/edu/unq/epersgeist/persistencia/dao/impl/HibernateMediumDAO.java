@@ -35,7 +35,7 @@ public class HibernateMediumDAO extends HibernateDAO<Medium> implements MediumDA
 
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId){
         Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "select m from Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e) and m.ubicacion.id = :ubicacion";
+        String hql = "select m from Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) and m.ubicacion.id = :ubicacion";
         Query<Medium> query = session.createQuery(hql, Medium.class);
         query.setParameter("ubicacion", ubicacionId);
         return query.getResultList();

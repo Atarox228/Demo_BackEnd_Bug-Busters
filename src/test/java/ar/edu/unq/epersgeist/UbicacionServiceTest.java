@@ -3,11 +3,12 @@ package ar.edu.unq.epersgeist;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDao;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.servicios.impl.*;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import jakarta.persistence.OptimisticLockException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
@@ -22,12 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class UbicacionServiceTest {
-    private UbicacionServiceImpl ubicacionService;
-    private MediumServiceImpl mediumService;
-    private EspirituServiceImpl espirituService;
+    private UbicacionService ubicacionService;
+    private MediumService mediumService;
+    private EspirituService espirituService;
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
-    private Ubicacion ardenweald;
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Medium medium1;
@@ -36,57 +36,53 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDao(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDao());
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDao());
-
+        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
 
         fellwood = new Ubicacion("Fellwood");
+        ubicacionService.crear(fellwood);
         ashenvale = new Ubicacion("Ashenvale");
-        ardenweald = new Ubicacion("Ardenweald");
+        ubicacionService.crear(ashenvale);
 
         espiritu1 = new Demonio(95, "Casper");
-        espiritu2 = new Angel( 100, "Marids");
+        espirituService.crear(espiritu1);
+        espiritu2 = new Angel(100, "Marids");
+        espirituService.crear(espiritu2);
 
         medium1 = new Medium("lala", 100, 50);
+        mediumService.crear(medium1);
         medium2 = new Medium("lolo", 100, 60);
+        mediumService.crear(medium2);
     }
 
     @Test
     void crearUbicacion(){
-
-        ubicacionService.crear(ashenvale);
         assertNotNull(ashenvale.getId());
     }
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        ubicacionService.crear(fellwood);
         assertThrows(RuntimeException.class, () -> {
             ubicacionService.crear(fellwood);
         });
     }
 
     @Test
-    void RecuperarUbicacion(){
-        ubicacionService.crear(fellwood);
+    void recuperarUbicacion(){
         Ubicacion ubicacion2 = ubicacionService.recuperar(fellwood.getId());
-
         assertEquals(fellwood.getNombre(), ubicacion2.getNombre());
     }
 
     @Test
-    void RecuperarUbicacionNoPersistida(){
-
+    void recuperarUbicacionNoPersistida(){
         Ubicacion ubicacion2 = ubicacionService.recuperar(1L);
-
         assertNull(ubicacion2);
 
     }
 
     @Test
-    void RecuperarUbicacionNula(){
-
+    void recuperarUbicacionNula(){
         assertThrows(IdNoValidoException.class,()->{
             ubicacionService.recuperar(null);
         });
@@ -94,8 +90,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EliminarUbicacion(){
-        ubicacionService.crear(fellwood);
+    void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
         assertNull(ubicacionService.recuperar(idEliminado));
@@ -103,8 +98,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EliminarMismaUbicacionDosVeces(){
-        ubicacionService.crear(fellwood);
+    void eliminarMismaUbicacionDosVeces(){
         ubicacionService.eliminar(fellwood);
         assertThrows(OptimisticLockException.class, () -> {
             ubicacionService.eliminar(fellwood);
@@ -113,9 +107,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EliminarUbicacionConEspiritus(){
-        ubicacionService.crear(fellwood);
-        espirituService.crear(espiritu1);
+    void eliminarUbicacionConEspiritus(){
         espirituService.ubicarseEn(espiritu1.getId(),fellwood.getId());
         Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId());
         assertThrows(ConstraintViolationException.class, () -> {
@@ -125,25 +117,24 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void RecuperarTodasLasUbicaciones(){
-        ubicacionService.crear(fellwood);
-        ubicacionService.crear(ashenvale);
+    void recuperarTodasLasUbicaciones(){
+        Ubicacion ardenweald = new Ubicacion("Ardenweald");
         ubicacionService.crear(ardenweald);
         Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(3, cantidadList);
     }
 
     @Test
-    void RecuperarTodosSinUbicaciones(){
-
+    void recuperarTodosSinUbicaciones(){
+        ubicacionService.eliminar(ashenvale);
+        ubicacionService.eliminar(fellwood);
         Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(0, cantidadList);
     }
 
 
     @Test
-    void ActualizarUbicacion(){
-        ubicacionService.crear(fellwood);
+    void actualizarUbicacion(){
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
         ubicacionService.actualizar(fellwood);
@@ -152,14 +143,15 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void ActualizarUbicacionNoRegistrada(){
+    void actualizarUbicacionNoRegistrada(){
+        Ubicacion ardenweald = new Ubicacion("Ardenweald");
         assertThrows(IdNoValidoException.class, () -> {
-            ubicacionService.actualizar(ashenvale);
+            ubicacionService.actualizar(ardenweald);
         });
     }
 
     @Test
-    void ActualizarUbicacionNula(){
+    void actualizarUbicacionNula(){
         assertThrows(NullPointerException.class, () -> {
             ubicacionService.actualizar(null);
         });
@@ -167,17 +159,14 @@ public class UbicacionServiceTest {
 
     @Test
     void actualizarUbicacionEliminada(){
-        ubicacionService.crear(fellwood);
         ubicacionService.eliminar(fellwood);
         assertThrows(OptimisticLockException.class, () -> {
             ubicacionService.actualizar(fellwood);
         });
     }
-    
+
     @Test
-    void ActualizarVariasUbicaciones(){
-        ubicacionService.crear(fellwood);
-        ubicacionService.crear(ashenvale);
+    void actualizarVariasUbicaciones(){
         String nombrePre1 = fellwood.getNombre();
         String nombrePre2 = ashenvale.getNombre();
         fellwood.setNombre("Bosque Vil");
@@ -186,14 +175,13 @@ public class UbicacionServiceTest {
         ubicacionService.actualizar(ashenvale);
         Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId());
         Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId());
+
         assertNotEquals(nombrePre1 , ubiCambiada1.getNombre());
         assertNotEquals(nombrePre2 , ubiCambiada2.getNombre());
-        
     }
 
     @Test
-    void ActualizarUbicacionConValoresInvalidos(){
-        ubicacionService.crear(fellwood);
+    void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
         assertThrows(ConstraintViolationException.class, () -> {
             ubicacionService.actualizar(fellwood);
@@ -201,11 +189,10 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EliminarTodasLasUbicaciones(){
-        ubicacionService.crear(fellwood);
-        ubicacionService.crear(ashenvale);
+    void eliminarTodasLasUbicaciones(){
         Long ubi1Id = fellwood.getId();
         Long ubi2Id = ashenvale.getId();
+
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
         ubicacionService.eliminarTodo();
@@ -214,11 +201,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void EspiritusEnUbicacion(){
-        ubicacionService.crear(fellwood);
-        espirituService.crear(espiritu1);
-        espirituService.crear(espiritu2);
-
+    void espiritusEnUbicacion(){
         espirituService.ubicarseEn(espiritu1.getId(),fellwood.getId());
         espirituService.ubicarseEn(espiritu2.getId(),fellwood.getId());
 
@@ -230,50 +213,35 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void UbicacionSinEspiritusRegistrados(){
-        ubicacionService.crear(ashenvale);
-
+    void ubicacionSinEspiritusRegistrados(){
         List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(fellwood.getId());
-
         assertEquals(0, espiritusUbi.size());
     }
 
     @Test
-    void EspiritusEnUbicacionNoRegistrada(){
+    void espiritusEnUbicacionNoRegistrada(){
         List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(1L);
-
         assertEquals(0, espiritusUbi.size());
     }
 
     @Test
-    void EspiritusEnUbicacionNula(){
+    void espiritusEnUbicacionNula(){
         List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(null);
 
         assertEquals(0, espiritusUbi.size());
     }
 
     @Test
-    void MediumsEnUbicacionSinEspirtus(){
-        ubicacionService.crear(ashenvale);
-        mediumService.guardar(medium1);
-        mediumService.guardar(medium2);
-
+    void mediumsSinEspirtusEnUbicacion(){
         mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
         mediumService.ubicarseEn(medium2.getId(),ashenvale.getId());
 
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
-
         assertEquals(2, mediumsSinEsps.size());
     }
 
     @Test
-    void TodosLosMediumsEnUbicacionConEspiritus(){
-        ubicacionService.crear(ashenvale);
-        mediumService.guardar(medium1);
-        mediumService.guardar(medium2);
-        espirituService.crear(espiritu1);
-        espirituService.crear(espiritu2);
-
+    void todosLosMediumsConEspiritusEnUbicacion(){
         espirituService.ubicarseEn(espiritu1.getId(),ashenvale.getId());
         espirituService.ubicarseEn(espiritu2.getId(),ashenvale.getId());
         mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
@@ -283,18 +251,11 @@ public class UbicacionServiceTest {
         espirituService.conectar(espiritu2.getId(),medium2.getId());
 
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
-
         assertEquals(0, mediumsSinEsps.size());
     }
 
     @Test
-    void AlgunMediumEnUbicacionConEspiritus(){
-        ubicacionService.crear(ashenvale);
-        mediumService.guardar(medium1);
-        mediumService.guardar(medium2);
-        espirituService.crear(espiritu1);
-        espirituService.crear(espiritu2);
-
+    void algunMediumConEspiritusEnUbicacion(){
         espirituService.ubicarseEn(espiritu1.getId(),ashenvale.getId());
         espirituService.ubicarseEn(espiritu2.getId(),ashenvale.getId());
         mediumService.ubicarseEn(medium1.getId(),ashenvale.getId());
@@ -304,29 +265,24 @@ public class UbicacionServiceTest {
         espirituService.conectar(espiritu2.getId(),medium1.getId());
 
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
-
         assertEquals(1, mediumsSinEsps.size());
     }
 
     @Test
-    void MediumsEnUbicacionNoRegistrada(){
+    void mediumsEnUbicacionNoRegistrada(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(1L);
-
         assertEquals(0, mediumsSinEsps.size());
     }
 
     @Test
-    void MediumsEnUbicacionNula(){
+    void mediumsEnUbicacionNula(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
-
         assertEquals(0, mediumsSinEsps.size());
     }
 
     @Test
-    void ubicacionSinMediumRegistrados(){
-        ubicacionService.crear(ashenvale);
+    void ubicacionSinMediumsRegistrados(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
-
         assertEquals(0, mediumsSinEsps.size());
     }
 
@@ -336,5 +292,4 @@ public class UbicacionServiceTest {
         mediumService.eliminarTodo();
         ubicacionService.eliminarTodo();
     }
-
 }

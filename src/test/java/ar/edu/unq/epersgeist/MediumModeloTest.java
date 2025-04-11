@@ -1,8 +1,8 @@
 package ar.edu.unq.epersgeist;
 
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +14,6 @@ public class MediumModeloTest {
     private Medium medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
-    private Espiritu Lilith;
 
 
     @BeforeEach
@@ -52,17 +51,15 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConexionConEspirituAngelicalExitosa(){
+    void conexionConEspirituAngelicalExitosa(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);
         assertTrue(medium.getEspiritus().contains(Casper));
         //assertFalse(Casper.estaLibre());
         assertNotNull(Casper.getMedium());
-        assertEquals(Casper.getNivelDeConexion(), medium.getMana() * 20 / 100);
-    }
-
-
+        assertEquals(Casper.getNivelConexion(), medium.getMana() * 20 / 100);
+    };
 
     @Test
     void conexionConEspirituFallidaPorLibertad(){
@@ -74,7 +71,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConexionConEspirituFallidaPorUbicacion(){
+    void conexionConEspirituFallidaPorUbicacion(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Quilmes);
         assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));

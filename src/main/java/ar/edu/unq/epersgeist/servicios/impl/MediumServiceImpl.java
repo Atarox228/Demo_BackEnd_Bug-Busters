@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
@@ -25,7 +24,7 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public void guardar(Medium medium) {
+    public void crear(Medium medium) {
         HibernateTransactionRunner.runTrx(() -> {
             mediumDao.guardar(medium);
             return null;
@@ -106,7 +105,7 @@ public class MediumServiceImpl implements MediumService {
     }
 
 
-   public void exorcizar(long idMedium, long idMedium2) throws NoHayAngelesException {
+   public void exorcizar(long idMedium, long idMedium2){
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(idMedium);
             Medium medium2 = mediumDao.recuperar(idMedium2);

@@ -26,12 +26,12 @@ public class EspirituModeloTest {
 
     @Test
     void verificarTipoEspirituAngelical(){
-        assertEquals(angel.getTipo(), TipoEspiritu.ANGELICAL);
+        assertEquals(TipoEspiritu.ANGELICAL, angel.getTipo());
     }
 
     @Test
     void verificarTipoEspirituDemoniaco(){
-        assertEquals(demonio.getTipo(), TipoEspiritu.DEMONIACO);
+        assertEquals(TipoEspiritu.DEMONIACO, demonio.getTipo());
     }
 
     @Test

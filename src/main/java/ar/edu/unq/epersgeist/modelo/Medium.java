@@ -1,27 +1,33 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.persistencia.dao.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoHayAngelesException;
-import ar.edu.unq.epersgeist.persistencia.dao.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
 @Entity
+@Check(constraints = "mana <= manaMax")
 public class Medium implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
+    @Column(nullable = false)
     private Integer manaMax;
+    @Column(nullable = false)
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -30,18 +36,15 @@ public class Medium implements Serializable {
     @ManyToOne
     private Ubicacion ubicacion;
 
-    public Medium(String nombre, Integer manaMax, Integer mana) {
+    public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
+        if (manaMax >= mana) {
+            this.mana = mana;
+        } else {
+            this.mana = manaMax;
+        }
         this.nombre = nombre;
         this.manaMax = manaMax;
-        this.mana = mana;
-    }
 
-
-    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
-        this.nombre = nombre;
-        this.manaMax = manaMax;
-        this.mana = mana;
-        this.ubicacion = ubicacion;
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -55,7 +58,7 @@ public class Medium implements Serializable {
 
 
     public boolean puedeConectarse( Espiritu espiritu){
-        return this.getUbicacion().getNombre() == espiritu.getUbicacion().getNombre() && espiritu.estaLibre();
+        return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
 
@@ -76,8 +79,7 @@ public class Medium implements Serializable {
         if (this.mana > 10) {
             this.verificarSiEstaLibre(espiritu);
             this.reducirMana(10);
-            espiritu.setUbicacion(this.ubicacion);
-            this.cambiosEnEspiritu(this.ubicacion, espiritu);
+            espiritu.invocarme(this,this.ubicacion);
         }
     }
 
@@ -85,15 +87,6 @@ public class Medium implements Serializable {
         if (!espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
         }
-    }
-
-    private void cambiosEnEspiritu(Ubicacion ubicacion, Espiritu espiritu) {
-        espiritu.setMedium(this);
-        espiritu.setUbicacion(ubicacion);
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
     }
 
     public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {
@@ -116,6 +109,14 @@ public class Medium implements Serializable {
              }
             angelicalesRestantes.remove(atacante);
 
+        }
+    }
+
+    public void setMana(int mana) {
+        if (mana > this.manaMax) {
+            this.mana = this.manaMax;
+        }else{
+            this.mana = mana;
         }
     }
 }

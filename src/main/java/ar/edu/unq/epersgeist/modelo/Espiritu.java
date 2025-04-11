@@ -1,9 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import java.io.Serializable;
-
 import lombok.*;
-
 import jakarta.persistence.*;
 
 
@@ -23,6 +21,7 @@ public abstract class Espiritu implements Serializable {
     private Long id;
     @Column(nullable = false)
     private Integer nivelConexion;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
     @ManyToOne
     private Medium medium;
@@ -39,26 +38,6 @@ public abstract class Espiritu implements Serializable {
         }
         this.nombre = nombre;
         this.medium = null;
-    }
-
-    public Espiritu(@NonNull Integer nivelDeConexion, @NonNull String nombre, @NonNull Ubicacion ubicacion) {
-        // esto es para setear el valor default en caso de que no pongan valor
-        // o pongan un valor no acorde al rango establecido
-        if(nivelDeConexion>=0 && nivelDeConexion<=100){
-            this.nivelConexion = nivelDeConexion;
-        } else {
-            this.nivelConexion = 0;
-        }
-        this.nombre = nombre;
-        //this.medium = null;
-        this.ubicacion = ubicacion;
-    }
-
-    public Espiritu(@NonNull Long id, @NonNull Integer nivelDeConexion, @NonNull String nombre) {
-        this.id = id;
-        this.nivelConexion = nivelDeConexion;
-        this.nombre = nombre;
-        //this.medium = null;
     }
 
     public void aumentarConexion(Integer conexion) {
@@ -83,30 +62,6 @@ public abstract class Espiritu implements Serializable {
                 '}';
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getNivelDeConexion() {
-        return nivelConexion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Medium getMedium() {
-        return medium;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setNombre(String nombre){
-        this.nombre = nombre;
-    }
-
     public int getProbDefensa() {
         GeneradorNumeros dado = Dado.getInstance();
         return dado.generarNumero(1,100);
@@ -123,6 +78,7 @@ public abstract class Espiritu implements Serializable {
             this.medium = null;
         }
     }
+
     public void invocarme(Medium medium, Ubicacion ubicacion)  {
         this.medium = medium;
         this.ubicacion = ubicacion;

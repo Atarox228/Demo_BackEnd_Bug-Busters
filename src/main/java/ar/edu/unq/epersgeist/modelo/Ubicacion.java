@@ -1,13 +1,8 @@
 package ar.edu.unq.epersgeist.modelo;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Getter
 @Setter
@@ -24,8 +19,5 @@ public class Ubicacion implements Serializable{
     public Ubicacion(@NonNull String nombre) {
         this.nombre = nombre;
     }
-
-
-
 
 }
