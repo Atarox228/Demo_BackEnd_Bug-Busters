@@ -161,15 +161,6 @@ public class MediumServiceTest {
     }
 
     @Test
-    void descansarMedium(){
-        Medium sinDescansar = mediumService.recuperar(medium.getId());
-        mediumService.descansar(medium.getId());
-        Medium descansado = mediumService.recuperar(medium.getId());
-        assertEquals(sinDescansar.getId(), descansado.getId());
-        assertNotEquals(sinDescansar.getMana(), descansado.getMana());
-    }
-
-    @Test
     void exorcizarMedium1a1Victorioso(){
         dado.setModo(new ModoTrucado(6,60));
         espirituRecu = espirituService.recuperar(espiritu.getId());
@@ -178,7 +169,6 @@ public class MediumServiceTest {
 
         espirituService.conectar(espirituRecu.getId(), medium.getId());
         espirituService.conectar(espiritu2.getId(), medium2.getId());
-
 
         mediumService.exorcizar(medium.getId(), medium2.getId());
 
@@ -192,7 +182,6 @@ public class MediumServiceTest {
         assertEquals(0, espiritusMedium2.size());
         assertTrue(espiritu2Act.estaLibre());
         assertFalse(espirituAct.estaLibre());
-
     }
 
     @Test
@@ -570,7 +559,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void TestEjemplo(){
+    void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYAngelicalesDeMas(){
         dado.setModo(new ModoTrucado(5,60));
 
         Espiritu rika = new Angel(60,"Rika");
@@ -617,14 +606,14 @@ public class MediumServiceTest {
     }
 
     @Test
-    void NoHayAngelesException(){
+    void noHayAngelesException(){
         assertThrows(NoHayAngelesException.class,()->{
             mediumService.exorcizar(medium.getId(), medium2.getId());
         });
     }
 
     @Test
-    void NoHayDemonios(){
+    void noHayDemonios(){
         espirituService.conectar(espiritu.getId(), medium.getId());
         Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
 
@@ -636,6 +625,15 @@ public class MediumServiceTest {
         assertEquals(1, espiritusMedium1.size());
         assertEquals(0, espiritusMedium2.size());
         assertFalse(espirituAct.estaLibre());
+    }
+
+    @Test
+    void descansarMedium(){
+        Medium sinDescansar = mediumService.recuperar(medium.getId());
+        mediumService.descansar(medium.getId());
+        Medium descansado = mediumService.recuperar(medium.getId());
+        assertEquals(sinDescansar.getId(), descansado.getId());
+        assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
     @Test

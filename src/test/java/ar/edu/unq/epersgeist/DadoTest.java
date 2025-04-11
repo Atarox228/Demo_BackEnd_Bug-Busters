@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DadoTest {
 
     @Test
-    void testMismaInsatncia() {
+    void mismaInsatncia() {
         GeneradorNumeros g = Dado.getInstance();
         GeneradorNumeros g2 = Dado.getInstance();
 
@@ -19,7 +19,7 @@ public class DadoTest {
     }
 
     @Test
-    void testTrucado() {
+    void trucado() {
         GeneradorNumeros g = Dado.getInstance();
         g.setModo(new ModoTrucado(6, 60));
 
@@ -32,7 +32,7 @@ public class DadoTest {
 
 
     @Test
-    void testRandom(){
+    void random(){
         GeneradorNumeros g = Dado.getInstance();
         g.setModo(new ModoRandom());
 

@@ -36,10 +36,15 @@ public class Medium implements Serializable {
     @ManyToOne
     private Ubicacion ubicacion;
 
-    public Medium(String nombre, Integer manaMax, Integer mana) {
+    public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
+        if (manaMax >= mana) {
+            this.mana = mana;
+        } else {
+            this.mana = manaMax;
+        }
         this.nombre = nombre;
         this.manaMax = manaMax;
-        this.mana = mana;
+
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {

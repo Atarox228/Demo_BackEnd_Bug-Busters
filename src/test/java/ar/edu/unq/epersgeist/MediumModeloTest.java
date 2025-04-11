@@ -14,7 +14,6 @@ public class MediumModeloTest {
     private Medium medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
-    private Espiritu Lilith;
 
 
     @BeforeEach
@@ -52,7 +51,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConexionConEspirituAngelicalExitosa(){
+    void conexionConEspirituAngelicalExitosa(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Bernal);
         medium.conectarseAEspiritu(Casper);
@@ -72,7 +71,7 @@ public class MediumModeloTest {
     };
 
     @Test
-    void ConexionConEspirituFallidaPorUbicacion(){
+    void conexionConEspirituFallidaPorUbicacion(){
         medium.setUbicacion(Bernal);
         Casper.setUbicacion(Quilmes);
         assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));

@@ -35,20 +35,22 @@ public class EspirituServiceTest {
     void setUp(){
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
         mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
+
         ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
         Bernal = new Ubicacion("Bernal");
         Quilmes = new Ubicacion("Quilmes");
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
+
         Casper = new Angel( 0, "Casper");
         Oni = new Demonio(95, "Otakemaru");
         Jinn = new Demonio(100, "Marids");
         Anabelle = new Demonio(48, "Anabelle");
         Volac = new Demonio(55, "Volac");
+
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
     }
-
 
     @Test
     void guardarEspiritu(){
@@ -59,7 +61,6 @@ public class EspirituServiceTest {
         assertNotNull(Oni.getId());
         assertNotNull(Jinn.getId());
     }
-
 
     @Test
     void actualizarEspiritu(){
@@ -102,21 +103,21 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void RecuperarEspirituNoRegistrado() {
+    void recuperarEspirituNoRegistrado() {
         assertThrows(IdNoValidoException.class, () -> {
             espirituService.recuperar(Casper.getId());
         });
     }
 
     @Test
-    void RecuperarEspirituConIdNoPersistido(){
+    void recuperarEspirituConIdNoPersistido(){
         assertThrows(IdNoValidoException.class, () -> {
             espirituService.recuperar(10L);
         });
     }
 
     @Test
-    void RecuperarEspirituEliminado() {
+    void recuperarEspirituEliminado() {
         espirituService.crear(Casper);
         espirituService.eliminar(Casper);
         assertThrows(IdNoValidoException.class, () -> {
@@ -138,7 +139,7 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void EliminarEspiritu(){
+    void eliminarEspiritu(){
         espirituService.crear(Casper);
         Long espirituId = Casper.getId();
         assertNotNull(espirituService.recuperar(espirituId));
@@ -149,7 +150,7 @@ public class EspirituServiceTest {
     }
 
     @Test
-    void EliminarEspirituDosVeces() {
+    void eliminarEspirituDosVeces() {
         espirituService.crear(Casper);
         espirituService.eliminar(Casper);
         assertThrows(OptimisticLockException.class, () -> {

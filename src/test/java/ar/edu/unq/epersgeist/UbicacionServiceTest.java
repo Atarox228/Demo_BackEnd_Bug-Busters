@@ -269,13 +269,13 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void MediumsEnUbicacionNoRegistrada(){
+    void mediumsEnUbicacionNoRegistrada(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(1L);
         assertEquals(0, mediumsSinEsps.size());
     }
 
     @Test
-    void MediumsEnUbicacionNula(){
+    void mediumsEnUbicacionNula(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
         assertEquals(0, mediumsSinEsps.size());
     }
@@ -292,5 +292,4 @@ public class UbicacionServiceTest {
         mediumService.eliminarTodo();
         ubicacionService.eliminarTodo();
     }
-
 }
