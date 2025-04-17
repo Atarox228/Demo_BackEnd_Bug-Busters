@@ -1,9 +1,10 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.servicios.DataService;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(Lifecycle.PER_CLASS)
 public class MediumServiceTest {
 
+    private DataService dataService;
     private MediumService mediumService;
     private UbicacionService ubicacionService;
     private EspirituService espirituService;
@@ -44,6 +46,7 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
+        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
         ubicacionService  = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
         mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
@@ -136,7 +139,7 @@ public class MediumServiceTest {
         Long mediumId2 = medium2.getId();
         assertNotNull(mediumService.recuperar(mediumId));
         assertNotNull(mediumService.recuperar(mediumId2));
-        mediumService.eliminarTodo();
+        dataService.eliminarTodo();
         assertNull(mediumService.recuperar(mediumId));
         assertNull(mediumService.recuperar(mediumId2));
     }
@@ -717,11 +720,10 @@ public class MediumServiceTest {
 
     @AfterEach
     void cleanUp() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
+        dataService.eliminarTodo();
 
         dado.setModo(new ModoRandom());
-        ubicacionService.eliminarTodo();
+
     }
 }
 

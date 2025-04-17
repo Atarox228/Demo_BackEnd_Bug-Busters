@@ -1,9 +1,10 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.servicios.DataService;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -23,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class UbicacionServiceTest {
+
+    private DataService dataService;
     private UbicacionService ubicacionService;
     private MediumService mediumService;
     private EspirituService espirituService;
@@ -36,6 +39,7 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
+        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
         ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
         mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
@@ -195,7 +199,7 @@ public class UbicacionServiceTest {
 
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
-        ubicacionService.eliminarTodo();
+        dataService.eliminarTodo();
         assertNull(ubicacionService.recuperar(ubi1Id));
         assertNull(ubicacionService.recuperar(ubi2Id));
     }
@@ -288,8 +292,6 @@ public class UbicacionServiceTest {
 
     @AfterEach
     void cleanUp() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
-        ubicacionService.eliminarTodo();
+        dataService.eliminarTodo();
     }
 }

@@ -1,6 +1,5 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import org.junit.jupiter.api.BeforeEach;

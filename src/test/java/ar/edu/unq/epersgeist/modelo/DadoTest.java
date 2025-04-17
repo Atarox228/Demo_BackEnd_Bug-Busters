@@ -1,9 +1,5 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.Dado;
-import ar.edu.unq.epersgeist.modelo.GeneradorNumeros;
-import ar.edu.unq.epersgeist.modelo.ModoRandom;
-import ar.edu.unq.epersgeist.modelo.ModoTrucado;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

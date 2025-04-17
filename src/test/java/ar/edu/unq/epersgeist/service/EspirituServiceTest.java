@@ -1,10 +1,13 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.servicios.DataService;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
@@ -18,9 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceTest {
 
+    private DataService dataService;
     private EspirituService espirituService;
-    private MediumServiceImpl mediumService;
-    private UbicacionServiceImpl ubicacionService;
+    private MediumService mediumService;
+    private UbicacionService ubicacionService;
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
@@ -33,6 +37,7 @@ public class EspirituServiceTest {
 
     @BeforeEach
     void setUp(){
+        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
         mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
 
@@ -282,9 +287,7 @@ public class EspirituServiceTest {
 
     @AfterEach
     void cleanUp() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
-        ubicacionService.eliminarTodo();
+        dataService.eliminarTodo();
     }
 
 }

@@ -13,7 +13,6 @@ public interface MediumService {
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void actualizar(Medium medium);
-    void eliminarTodo();
     void descansar(Long idMedium);
     void exorcizar(long idMedium, long idMedium2);
     Espiritu invocar(Long mediumId, Long espirituId);

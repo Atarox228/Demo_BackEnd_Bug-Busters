@@ -84,13 +84,6 @@ public class EspirituServiceImpl implements EspirituService {
         return HibernateTransactionRunner.runTrx(() -> espirituDAO.obtenerDemonios(direccion, pagina, cantidadPorPagina));
     }
 
-    public void eliminarTodo(){
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.eliminarTodo();
-            return null;
-        });
-    }
-
     public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
         HibernateTransactionRunner.runTrx(() -> {
             Espiritu espiritu = espirituDAO.recuperar(idEspiritu);

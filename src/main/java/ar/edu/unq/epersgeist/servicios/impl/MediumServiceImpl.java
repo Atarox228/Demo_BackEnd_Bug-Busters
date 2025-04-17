@@ -59,13 +59,6 @@ public class MediumServiceImpl implements MediumService {
         });
     }
 
-    public void eliminarTodo(){
-        HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.eliminarTodo();
-            return null;
-        });
-    }
-
     public void descansar(Long mediumId){
         if (mediumId == null) {throw new IdNoValidoException(mediumId);}
         HibernateTransactionRunner.runTrx(() -> {
