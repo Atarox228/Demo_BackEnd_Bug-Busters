@@ -17,5 +17,6 @@ public interface MediumService {
     void exorcizar(long idMedium, long idMedium2);
     Espiritu invocar(Long mediumId, Long espirituId);
     List<Espiritu> espiritus(Long idMedium);
-    void ubicarseEn(Long mediumId, Long ubicacionId);
+//    void mover(Long mediumId, Long ubicacionId);
+    // Comento mover, ya que lo podriamos utilizar en el TP3
 }

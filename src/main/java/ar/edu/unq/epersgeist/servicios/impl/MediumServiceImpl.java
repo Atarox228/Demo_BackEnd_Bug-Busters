@@ -88,14 +88,15 @@ public class MediumServiceImpl implements MediumService {
     }
 
 
-    public void ubicarseEn(Long mediumId, Long ubicacionId) {
-        HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(mediumId);
-            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
-            medium.setUbicacion(ubicacion);
-            return null;
-        });
-    }
+//    public void mover(Long mediumId, Long ubicacionId) {
+//        HibernateTransactionRunner.runTrx(() -> {
+//            Medium medium = mediumDao.recuperar(mediumId);
+//            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
+//            medium.setUbicacion(ubicacion);
+//            return null;
+//        });
+//    }
+    // Comento mover a que podriamos utilizarlo en el TP3
 
 
    public void exorcizar(long idMedium, long idMedium2){

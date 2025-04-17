@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
@@ -242,12 +243,42 @@ public class EspirituServiceTest {
     }
 
     @Test
+    void obtenerEspiritusDemoniacosDePaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, -3, 10);
+        });
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosDeCantidadPorPaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 3, -10);
+        });
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosDeCantidadPorPaginaInvalidaYPaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, -1, -10);
+        });
+    }
+
+    @Test
     void conectarConMediumExitoso(){
         mediumService.crear(medium);
         espirituService.crear(Casper);
 
-        mediumService.ubicarseEn(medium.getId(),Bernal.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
@@ -263,8 +294,12 @@ public class EspirituServiceTest {
         mediumService.crear(medium);
         espirituService.crear(Casper);
 
-        mediumService.ubicarseEn(medium.getId(),Quilmes.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Quilmes);
+        mediumService.actualizar(medium);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Quilmes.getId());
+//
 
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
@@ -278,9 +313,14 @@ public class EspirituServiceTest {
         mediumService.crear(medium);
         espirituService.crear(Casper);
         mediumService.crear(medium2);
-        mediumService.ubicarseEn(medium.getId(),Bernal.getId());
-        mediumService.ubicarseEn(medium2.getId(),Bernal.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Bernal);
+        medium2.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+        mediumService.actualizar(medium2);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Bernal.getId());
+//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
