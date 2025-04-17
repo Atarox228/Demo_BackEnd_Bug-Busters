@@ -10,8 +10,8 @@ import jakarta.persistence.*;
 @DiscriminatorValue("ANGELICAL")
 public final class Angel extends Espiritu {
 
-    public Angel(@NonNull Integer nivelDeConexion, @NonNull String nombre) {
-        this.setNivelConexion(nivelDeConexion);
+    public Angel(@NonNull String nombre) {
+        this.setNivelConexion(0);
         this.setNombre(nombre);
     }
 

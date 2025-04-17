@@ -1,6 +1,5 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,8 +14,8 @@ public class EspirituModeloTest {
 
     @BeforeEach
     void setUp(){
-        angel = new Angel(0, "Gabriel");
-        demonio = new Demonio(0, "Lucifer");
+        angel = new Angel("Gabriel");
+        demonio = new Demonio("Lucifer");
 
         medium = new Medium("lala", 100, 50);
 

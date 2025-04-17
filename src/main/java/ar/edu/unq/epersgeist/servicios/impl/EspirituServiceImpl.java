@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import java.util.List;
 
@@ -81,14 +82,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina) {
+        if (pagina < 0 || cantidadPorPagina < 0){
+            throw new PaginaInvalidaException();
+        }
         return HibernateTransactionRunner.runTrx(() -> espirituDAO.obtenerDemonios(direccion, pagina, cantidadPorPagina));
-    }
-
-    public void eliminarTodo(){
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.eliminarTodo();
-            return null;
-        });
     }
 
     public void ubicarseEn(Long idEspiritu, Long idUbicacion) {

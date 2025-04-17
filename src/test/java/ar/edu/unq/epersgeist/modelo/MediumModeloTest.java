@@ -1,6 +1,5 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,7 @@ public class MediumModeloTest {
 
     @BeforeEach
     void setUp(){
-        Casper = new Angel(0, "Casper");
+        Casper = new Angel("Casper");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);

@@ -47,7 +47,7 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public List<Espiritu> recuperarEspirtusDeTipo(Long id, Class<? extends Espiritu> tipo) {
+    public List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipo) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         String hql = "from Espiritu e where e.medium.id = :id AND type(e) = :tipoDeEspiritu";
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);

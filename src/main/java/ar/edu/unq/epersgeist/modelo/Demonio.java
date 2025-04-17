@@ -10,8 +10,8 @@ import jakarta.persistence.*;
 @DiscriminatorValue("DEMONIACO")
 public final class Demonio extends Espiritu {
 
-    public Demonio(@NonNull Integer nivelDeConexion, @NonNull String nombre) {
-        this.setNivelConexion(nivelDeConexion);
+    public Demonio(@NonNull String nombre) {
+        this.setNivelConexion(0);
         this.setNombre(nombre);
     }
 
