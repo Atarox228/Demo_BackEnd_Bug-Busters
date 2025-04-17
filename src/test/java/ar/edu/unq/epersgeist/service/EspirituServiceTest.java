@@ -40,7 +40,7 @@ public class EspirituServiceTest {
     void setUp(){
         dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 
         ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
         Bernal = new Ubicacion("Bernal");

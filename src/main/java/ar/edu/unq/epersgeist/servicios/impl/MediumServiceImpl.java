@@ -3,10 +3,8 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
@@ -15,13 +13,11 @@ import java.util.List;
 public class MediumServiceImpl implements MediumService {
 
     private final EspirituDAO espirituDao;
-    private final UbicacionDAO ubicacionDao;
-    private MediumDAO mediumDao;
+    private final MediumDAO mediumDao;
 
-    public MediumServiceImpl(MediumDAO mediumDao, EspirituDAO espirituDao, UbicacionDAO ubicacionDao) {
+    public MediumServiceImpl(MediumDAO mediumDao, EspirituDAO espirituDao) {
         this.mediumDao = mediumDao;
         this.espirituDao = espirituDao;
-        this.ubicacionDao = ubicacionDao;
     }
 
     @Override
@@ -113,13 +109,11 @@ public class MediumServiceImpl implements MediumService {
         HibernateTransactionRunner.runTrx(() -> {
             Medium medium = mediumDao.recuperar(idMedium);
             Medium medium2 = mediumDao.recuperar(idMedium2);
-            List<Espiritu> angeles = espirituDao.recuperarEspirtusDeTipo(medium.getId(), Angel.class);
-            List<Espiritu> demonios = espirituDao.recuperarEspirtusDeTipo(medium2.getId(), Demonio.class);
+            List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
+            List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
             medium.exorcizar(medium2, angeles, demonios);
             mediumDao.actualizar(medium);
             mediumDao.actualizar(medium2);
-            espirituDao.actualizarEspiritus(angeles);
-            espirituDao.actualizarEspiritus(demonios);
             return null;
         });
 
