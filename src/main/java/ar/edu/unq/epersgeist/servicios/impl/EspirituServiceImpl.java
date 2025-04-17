@@ -1,44 +1,100 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
-
+import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
 
+    private final EspirituDAO espirituDAO;
+    private final MediumDAO mediumDAO;
+    private final UbicacionDAO ubicacionDAO;
+
+    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionDAO ubicacionDAO) {
+        this.espirituDAO = espirituDAO;
+        this.mediumDAO = mediumDao;
+        this.ubicacionDAO = ubicacionDAO;
+    }
+
     @Override
-    public Espiritu crear(Espiritu espiritu) {
-        // TODO completar
-        return null;
+    public void crear(Espiritu espiritu) {
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDAO.guardar(espiritu);
+            return null;
+        });
     }
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        // TODO completar
-        return null;
+        if(espirituId == null){
+            throw new IdNoValidoException(espirituId);
+        }
+        return HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = espirituDAO.recuperar(espirituId);
+            if(espiritu == null){
+                throw new IdNoValidoException(espirituId);
+            }
+            return espiritu;
+        });
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        // TODO completar
-        return null;
+        return HibernateTransactionRunner.runTrx(() -> espirituDAO.recuperarTodos());
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        // TODO completar
+        if(espiritu.getId() == null){
+            throw new IdNoValidoException(espiritu.getId());
+        }
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDAO.actualizar(espiritu);
+            return null;
+        });
     }
 
     @Override
-    public void eliminar(Long espirituId) {
-        // TODO completar
+    public void eliminar(Espiritu espiritu) {
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDAO.eliminar(espiritu);
+            return null;
+        });
+    }
+
+    public Medium conectar(Long espirituId, Long mediumId) {
+        return HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = this.espirituDAO.recuperar(espirituId);
+            Medium medium = this.mediumDAO.recuperar(mediumId);
+            medium.conectarseAEspiritu(espiritu);
+            this.espirituDAO.actualizar(espiritu);
+            this.mediumDAO.actualizar(medium);
+            return this.mediumDAO.recuperar(medium.getId());
+        });
     }
 
     @Override
-    public Medium conectar(Long espirituId, Medium medium) {
-        // TODO completar
-        return null;
+    public List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina) {
+        if (pagina < 0 || cantidadPorPagina < 0){
+            throw new PaginaInvalidaException();
+        }
+        return HibernateTransactionRunner.runTrx(() -> espirituDAO.obtenerDemonios(direccion, pagina, cantidadPorPagina));
+    }
+
+    public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Espiritu espiritu = espirituDAO.recuperar(idEspiritu);
+            Ubicacion ubicacion = ubicacionDAO.recuperar(idUbicacion);
+            espiritu.setUbicacion(ubicacion);
+            return null;
+        });
+
     }
 }

@@ -1,38 +1,83 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import java.io.Serializable;
+import lombok.*;
+import jakarta.persistence.*;
 
-public class Espiritu implements Serializable {
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter @Setter @NoArgsConstructor
+
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
+
+@Entity
+public abstract class Espiritu implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
-    private Integer nivelDeConexion;
+    @Column(nullable = false)
+    private Integer nivelConexion;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
+    @ManyToOne
+    private Medium medium;
+    @ManyToOne
+    private Ubicacion ubicacion;
 
-    public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
-        this.tipo = tipo;
-        this.nivelDeConexion = nivelDeConexion;
+    public Espiritu(@NonNull String nombre) {
+
+        this.nivelConexion = 0;
         this.nombre = nombre;
+        this.medium = null;
     }
 
-    public Medium aumentarConexion(Medium medium) {
-        // TODO completar
-        return null;
+    public void aumentarConexion(Integer conexion) {
+            int maxNivelConexion = 100;
+            int nuevoNivelConexion = this.nivelConexion + conexion;
+            int minimo = Math.min(nuevoNivelConexion, maxNivelConexion);
+            nivelConexion = minimo;
     }
 
-    public Long getId() {
-        return id;
+    public boolean estaLibre(){
+        return this.medium == null;
     }
 
-    public String getTipo() {
-        return tipo;
+    @Override
+    public String toString() {
+        return "Espiritu{" +
+                "id=" + id +
+                ", nivelConexion=" + nivelConexion +
+                ", nombre='" + nombre + '\'' +
+                ", medium= " + medium.getNombre() +
+                ", ubicacion= " + ubicacion.getNombre() +
+                '}';
     }
 
-    public Integer getNivelDeConexion() {
-        return nivelDeConexion;
+    public int getProbDefensa() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return dado.generarNumero(1,100);
     }
 
-    public String getNombre() {
-        return nombre;
+    public int getProbAtaque() {
+        GeneradorNumeros dado = Dado.getInstance();
+        return Math.min(dado.generarNumero(1,10) + nivelConexion, 100);
     }
+
+    public void reducirConexionYdesvincularSiEsNecesario(int i) {
+        this.nivelConexion = Math.max(this.nivelConexion - i, 0);
+        if (nivelConexion == 0) {
+            this.medium = null;
+        }
+    }
+
+    public void invocarme(Medium medium, Ubicacion ubicacion)  {
+        this.medium = medium;
+        this.ubicacion = ubicacion;
+    }
+
+    public abstract TipoEspiritu getTipo();
 }
