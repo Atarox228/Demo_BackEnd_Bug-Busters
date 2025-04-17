@@ -47,11 +47,15 @@ public class EspirituServiceTest {
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
 
-        Casper = new Angel( 0, "Casper");
-        Oni = new Demonio(95, "Otakemaru");
-        Jinn = new Demonio(100, "Marids");
-        Anabelle = new Demonio(48, "Anabelle");
-        Volac = new Demonio(55, "Volac");
+        Casper = new Angel("Casper");
+        Oni = new Demonio("Otakemaru");
+        Oni.setNivelConexion(95);
+        Jinn = new Demonio("Marids");
+        Jinn.setNivelConexion(100);
+        Anabelle = new Demonio("Anabelle");
+        Anabelle.setNivelConexion(48);
+        Volac = new Demonio("Volac");
+        Volac.setNivelConexion(55);
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);

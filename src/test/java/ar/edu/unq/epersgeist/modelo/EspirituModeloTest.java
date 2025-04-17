@@ -14,8 +14,8 @@ public class EspirituModeloTest {
 
     @BeforeEach
     void setUp(){
-        angel = new Angel(0, "Gabriel");
-        demonio = new Demonio(0, "Lucifer");
+        angel = new Angel("Gabriel");
+        demonio = new Demonio("Lucifer");
 
         medium = new Medium("lala", 100, 50);
 

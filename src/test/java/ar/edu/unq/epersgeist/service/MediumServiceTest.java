@@ -56,9 +56,11 @@ public class MediumServiceTest {
         mediumService.crear(medium);
         medium2 = new Medium("Lala", 100, 50);
         mediumService.crear(medium2);
-        espiritu = new Angel(5, "Casper");
+        espiritu = new Angel("Casper");
+        espiritu.setNivelConexion(5);
         espirituService.crear(espiritu);
-        espiritu2 = new Demonio(40, "Ghosty");
+        espiritu2 = new Demonio("Ghosty");
+        espiritu2.setNivelConexion(40);
         espirituService.crear(espiritu2);
 
         espirituService.ubicarseEn(espiritu.getId(),bernal.getId());
@@ -193,9 +195,11 @@ public class MediumServiceTest {
         espirituRecu.setNivelConexion(80);
         espirituService.actualizar(espirituRecu);
 
-        Espiritu azael = new Demonio(40,"Azael");
+        Espiritu azael = new Demonio("Azael");
+        azael.setNivelConexion(40);
         espirituService.crear(azael);
-        Espiritu castiel = new Angel( 40,"Castiel");
+        Espiritu castiel = new Angel( "Castiel");
+        castiel.setNivelConexion(40);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(azael.getId(),bernal.getId());
@@ -275,7 +279,8 @@ public class MediumServiceTest {
         dado.setModo(new ModoTrucado(5,10));
         espirituRecu.setNivelConexion(30);
         espirituService.actualizar(espirituRecu);
-        Espiritu castiel = new Angel(50,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(50);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -305,9 +310,11 @@ public class MediumServiceTest {
         dado.setModo(new ModoTrucado(5,90));
         espirituRecu.setNivelConexion(30);
         espirituService.actualizar(espirituRecu);
-        Espiritu kyu = new Angel(30,"Kyu");
+        Espiritu kyu = new Angel("Kyu");
+        kyu.setNivelConexion(30);
         espirituService.crear(kyu);
-        Espiritu castiel = new Angel(50,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(50);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -336,7 +343,8 @@ public class MediumServiceTest {
     @Test
     void exorcizarMedium2a1AmbasDerrotasConDesconexion(){
         dado.setModo(new ModoTrucado(5,90));
-        Espiritu castiel = new Angel(5,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(5);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -366,7 +374,8 @@ public class MediumServiceTest {
         dado.setModo(new ModoTrucado(5,40));
         espirituRecu.setNivelConexion(10);
         espirituService.actualizar(espirituRecu);
-        Espiritu castiel = new Angel(40,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -394,7 +403,8 @@ public class MediumServiceTest {
     @Test
     void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexion(){
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu castiel = new Angel(40,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
         espirituService.crear(castiel);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -422,7 +432,8 @@ public class MediumServiceTest {
     @Test
     void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexionDeAmbosLados(){
         dado.setModo(new ModoTrucado(5,40));
-        Espiritu castiel = new Angel(40,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
         espirituService.crear(castiel);
         espirituRecu2.setNivelConexion(20);
         espirituService.actualizar(espirituRecu2);
@@ -454,11 +465,13 @@ public class MediumServiceTest {
         dado.setModo(new ModoTrucado(5,40));
         espirituRecu.setNivelConexion(50);
         espirituService.actualizar(espirituRecu);
-        Espiritu castiel = new Angel(70,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(70);
         espirituService.crear(castiel);
         espirituRecu2.setNivelConexion(25);
         espirituService.actualizar(espirituRecu2);
-        Espiritu azael = new Demonio(35,"azael");
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -490,11 +503,13 @@ public class MediumServiceTest {
     @Test
     void exorcizarMedium2a2DerrotaAbsolutaSinYConDesconexion(){
         dado.setModo(new ModoTrucado(5,70));
-        Espiritu castiel = new Angel( 10,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(10);
         espirituService.crear(castiel);
         espirituRecu2.setNivelConexion(25);
         espirituService.actualizar(espirituRecu2);
-        Espiritu azael = new Demonio(35,"azael");
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -530,9 +545,11 @@ public class MediumServiceTest {
         espirituService.actualizar(espirituRecu);
         espirituRecu2.setNivelConexion(25);
         espirituService.actualizar(espirituRecu2);
-        Espiritu castiel = new Angel(5,"castiel");
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(5);
         espirituService.crear(castiel);
-        Espiritu azael = new Demonio(35,"azael");
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
         espirituService.crear(azael);
 
         espirituService.ubicarseEn(castiel.getId(),bernal.getId());
@@ -565,15 +582,20 @@ public class MediumServiceTest {
     void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYAngelicalesDeMas(){
         dado.setModo(new ModoTrucado(5,60));
 
-        Espiritu rika = new Angel(60,"Rika");
+        Espiritu rika = new Angel("Rika");
+        rika.setNivelConexion(60);
         espirituService.crear(rika);
-        Espiritu ivaar = new Angel(80,"Ivaar");
+        Espiritu ivaar = new Angel("Ivaar");
+        ivaar.setNivelConexion(80);
         espirituService.crear(ivaar);
-        Espiritu hana = new Angel(5,"Hana");
+        Espiritu hana = new Angel("Hana");
+        hana.setNivelConexion(5);
         espirituService.crear(hana);
-        Espiritu jeager = new Demonio(50,"Jeager");
+        Espiritu jeager = new Demonio("Jeager");
+        jeager.setNivelConexion(50);
         espirituService.crear(jeager);
-        Espiritu noroi = new Demonio(66,"Noroi");
+        Espiritu noroi = new Demonio("Noroi");
+        noroi.setNivelConexion(66);
         espirituService.crear(noroi);
 
         espirituService.ubicarseEn(rika.getId(),bernal.getId());

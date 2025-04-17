@@ -49,9 +49,9 @@ public class UbicacionServiceTest {
         ashenvale = new Ubicacion("Ashenvale");
         ubicacionService.crear(ashenvale);
 
-        espiritu1 = new Demonio(95, "Casper");
+        espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
-        espiritu2 = new Angel(100, "Marids");
+        espiritu2 = new Angel("Marids");
         espirituService.crear(espiritu2);
 
         medium1 = new Medium("lala", 100, 50);

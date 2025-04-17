@@ -17,7 +17,7 @@ public class MediumModeloTest {
 
     @BeforeEach
     void setUp(){
-        Casper = new Angel(0, "Casper");
+        Casper = new Angel("Casper");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
