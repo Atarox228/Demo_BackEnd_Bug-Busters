@@ -10,7 +10,14 @@ import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
 public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDAO;
@@ -23,50 +30,38 @@ public class EspirituServiceImpl implements EspirituService {
         this.ubicacionDAO = ubicacionDAO;
     }
 
+//    @Override
+//    public void crear(Espiritu espiritu) {
+//        HibernateTransactionRunner.runTrx(() -> {
+//            espirituDAO.guardar(espiritu);
+//            return null;
+//        });
+//    }
+
     @Override
     public void crear(Espiritu espiritu) {
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.guardar(espiritu);
-            return null;
-        });
+        this.espirituDAO.save(espiritu);
     }
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        if(espirituId == null){
-            throw new IdNoValidoException(espirituId);
-        }
-        return HibernateTransactionRunner.runTrx(() -> {
-            Espiritu espiritu = espirituDAO.recuperar(espirituId);
-            if(espiritu == null){
-                throw new IdNoValidoException(espirituId);
-            }
-            return espiritu;
-        });
+        return espirituDAO.findById(espirituId).orElseThrow(() -> new NoSuchElementException("Personaje not found with id: " + espirituId));
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> espirituDAO.recuperarTodos());
+        List<Espiritu> espiritus = espirituDAO.findAll();
+        return  espiritus;
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        if(espiritu.getId() == null){
-            throw new IdNoValidoException(espiritu.getId());
-        }
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.actualizar(espiritu);
-            return null;
-        });
+        espirituDAO.save(espiritu);
     }
 
     @Override
     public void eliminar(Espiritu espiritu) {
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.eliminar(espiritu);
-            return null;
-        });
+        espirituDAO.deleteById(espiritu.getId());
     }
 
     public Medium conectar(Long espirituId, Long mediumId) {
