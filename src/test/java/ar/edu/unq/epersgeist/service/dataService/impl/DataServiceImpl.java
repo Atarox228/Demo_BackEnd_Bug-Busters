@@ -1,9 +1,9 @@
-package ar.edu.unq.epersgeist.servicios.impl;
+package ar.edu.unq.epersgeist.service.dataService.impl;
 
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
-import ar.edu.unq.epersgeist.servicios.DataService;
+import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 public class DataServiceImpl implements DataService {
