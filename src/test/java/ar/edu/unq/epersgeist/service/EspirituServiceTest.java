@@ -1,11 +1,16 @@
-package ar.edu.unq.epersgeist;
+package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.service.dataService.DataService;
+import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
@@ -18,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceTest {
 
+    private DataService dataService;
     private EspirituService espirituService;
-    private MediumServiceImpl mediumService;
-    private UbicacionServiceImpl ubicacionService;
+    private MediumService mediumService;
+    private UbicacionService ubicacionService;
     private Espiritu Casper;
     private Espiritu Jinn;
     private Espiritu Oni;
@@ -33,8 +39,9 @@ public class EspirituServiceTest {
 
     @BeforeEach
     void setUp(){
+        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO(), new HibernateUbicacionDAO());
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 
         ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
         Bernal = new Ubicacion("Bernal");
@@ -42,11 +49,15 @@ public class EspirituServiceTest {
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
 
-        Casper = new Angel( 0, "Casper");
-        Oni = new Demonio(95, "Otakemaru");
-        Jinn = new Demonio(100, "Marids");
-        Anabelle = new Demonio(48, "Anabelle");
-        Volac = new Demonio(55, "Volac");
+        Casper = new Angel("Casper");
+        Oni = new Demonio("Otakemaru");
+        Oni.setNivelConexion(95);
+        Jinn = new Demonio("Marids");
+        Jinn.setNivelConexion(100);
+        Anabelle = new Demonio("Anabelle");
+        Anabelle.setNivelConexion(48);
+        Volac = new Demonio("Volac");
+        Volac.setNivelConexion(55);
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
@@ -233,12 +244,42 @@ public class EspirituServiceTest {
     }
 
     @Test
+    void obtenerEspiritusDemoniacosDePaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, -3, 10);
+        });
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosDeCantidadPorPaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 3, -10);
+        });
+    }
+
+    @Test
+    void obtenerEspiritusDemoniacosDeCantidadPorPaginaInvalidaYPaginaInvalida(){
+        espirituService.crear(Casper);
+        espirituService.crear(Oni);
+        assertThrows(PaginaInvalidaException.class,()->{
+            espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, -1, -10);
+        });
+    }
+
+    @Test
     void conectarConMediumExitoso(){
         mediumService.crear(medium);
         espirituService.crear(Casper);
 
-        mediumService.ubicarseEn(medium.getId(),Bernal.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
@@ -254,8 +295,12 @@ public class EspirituServiceTest {
         mediumService.crear(medium);
         espirituService.crear(Casper);
 
-        mediumService.ubicarseEn(medium.getId(),Quilmes.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Quilmes);
+        mediumService.actualizar(medium);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Quilmes.getId());
+//
 
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
@@ -269,9 +314,14 @@ public class EspirituServiceTest {
         mediumService.crear(medium);
         espirituService.crear(Casper);
         mediumService.crear(medium2);
-        mediumService.ubicarseEn(medium.getId(),Bernal.getId());
-        mediumService.ubicarseEn(medium2.getId(),Bernal.getId());
-        espirituService.ubicarseEn(Casper.getId(),Bernal.getId());
+        medium.setUbicacion(Bernal);
+        medium2.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+        mediumService.actualizar(medium2);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Bernal.getId());
+//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
@@ -282,9 +332,7 @@ public class EspirituServiceTest {
 
     @AfterEach
     void cleanUp() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
-        ubicacionService.eliminarTodo();
+        dataService.eliminarTodo();
     }
 
 }

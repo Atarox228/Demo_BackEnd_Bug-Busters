@@ -90,7 +90,7 @@ public class Medium implements Serializable {
     }
 
     public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {
-        if(angeles.size() == 0){
+        if(angeles.isEmpty()){
             throw new NoHayAngelesException();
         }
         List<Espiritu> angelicalesRestantes = angeles;

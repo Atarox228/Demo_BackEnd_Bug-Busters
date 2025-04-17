@@ -28,14 +28,9 @@ public abstract class Espiritu implements Serializable {
     @ManyToOne
     private Ubicacion ubicacion;
 
-    public Espiritu( @NonNull Integer nivelDeConexion, @NonNull String nombre) {
-        // esto es para setear el valor default en caso de que no pongan valor
-        // o pongan un valor no acorde al rango establecido
-        if(nivelDeConexion>=0 && nivelDeConexion<=100){
-            this.nivelConexion = nivelDeConexion;
-        } else {
-            this.nivelConexion = 0;
-        }
+    public Espiritu(@NonNull String nombre) {
+
+        this.nivelConexion = 0;
         this.nombre = nombre;
         this.medium = null;
     }
