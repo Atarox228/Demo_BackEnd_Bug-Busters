@@ -744,6 +744,38 @@ public class MediumServiceTest {
     }
 
     @Test
+    void invocarEspirituConIdMediumNull() {
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(null, espiritu2.getId());
+        });
+    }
+
+    @Test
+    void invocarEspirituConIdMediumInvalido() {
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(2025L, espiritu2.getId());
+        });
+    }
+
+    @Test
+    void invocarEspirituConIdEspirituNull() {
+        mediumRecu.setMana(100);
+        mediumService.actualizar(mediumRecu);
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(mediumRecu.getId(), null);
+        });
+    }
+
+    @Test
+    void invocarEspirituConIdEspirituInvalido() {
+        mediumRecu.setMana(100);
+        mediumService.actualizar(mediumRecu);
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(mediumRecu.getId(), 2025L);
+        });
+    }
+
+    @Test
     void espiritusDeMedium(){
         // Utilizo conectar pero solo para agregar espiritus al medium.
         espirituService.conectar(espiritu.getId(), medium2.getId());
@@ -760,6 +792,20 @@ public class MediumServiceTest {
         espirituService.conectar(espiritu.getId(), medium2.getId());
         espirituService.conectar(espiritu2.getId(), medium2.getId());
         assertEquals(2, (mediumService.espiritus(medium2.getId())).size());
+    }
+
+    @Test
+    void espiritusDeMediumConIdInvalida(){
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.espiritus(2025L);
+        });
+    }
+
+    @Test
+    void espiritusDeMediumConIdNull(){
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.espiritus(null);
+        });
     }
 
     @AfterEach

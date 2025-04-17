@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.Collection;
@@ -72,9 +73,13 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
+        if (mediumId == null || espirituId == null){
+            throw new IdNoValidoException();
+        }
         return HibernateTransactionRunner.runTrx(() -> {
             Medium medium = this.mediumDao.recuperar(mediumId);
             Espiritu espiritu = this.espirituDao.recuperar(espirituId);
+            if (medium == null || espiritu == null) {throw new IdNoValidoException(espirituId);}
             medium.invocar(espiritu);
             this.espirituDao.actualizar(espiritu);
             this.mediumDao.actualizar(medium);
@@ -84,7 +89,12 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public List<Espiritu> espiritus(Long idMedium) {
-        return HibernateTransactionRunner.runTrx(() -> mediumDao.obtenerEspiritus(idMedium));
+        if (idMedium == null) {throw new IdNoValidoException();}
+        return HibernateTransactionRunner.runTrx(() -> {
+                Medium medium = this.mediumDao.recuperar(idMedium);
+                if (medium == null) {throw new IdNoValidoException();}
+                return mediumDao.obtenerEspiritus(idMedium);
+        });
     }
 
 
