@@ -68,17 +68,17 @@ public class EspirituServiceImpl implements EspirituService {
             return null;
         });
     }
-
-    public Medium conectar(Long espirituId, Long mediumId) {
-        return HibernateTransactionRunner.runTrx(() -> {
-            Espiritu espiritu = this.espirituDAO.recuperar(espirituId);
-            Medium medium = this.mediumDAO.recuperar(mediumId);
-            medium.conectarseAEspiritu(espiritu);
-            this.espirituDAO.actualizar(espiritu);
-            this.mediumDAO.actualizar(medium);
-            return this.mediumDAO.recuperar(medium.getId());
-        });
-    }
+//
+//    public Medium conectar(Long espirituId, Long mediumId) {
+//        return HibernateTransactionRunner.runTrx(() -> {
+//            Espiritu espiritu = this.espirituDAO.recuperar(espirituId);
+//            Medium medium = this.mediumDAO.recuperar(mediumId);
+//            medium.conectarseAEspiritu(espiritu);
+//            this.espirituDAO.actualizar(espiritu);
+//            this.mediumDAO.actualizar(medium);
+//            return this.mediumDAO.recuperar(medium.getId());
+//        });
+//    }
 
     @Override
     public List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina) {

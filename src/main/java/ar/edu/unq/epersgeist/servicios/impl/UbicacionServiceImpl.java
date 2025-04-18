@@ -71,11 +71,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Espiritu> espiritusEn(Long ubicacionId) {
         return HibernateTransactionRunner.runTrx(() -> espirituDAO.espiritusEn(ubicacionId));
     }
-
+/*
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         return HibernateTransactionRunner.runTrx(() -> mediumDAO.mediumsSinEspiritusEn(ubicacionId));
     }
-
+*/
 
 }
