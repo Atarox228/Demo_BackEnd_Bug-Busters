@@ -21,7 +21,7 @@ public class MediumServiceImpl implements MediumService {
     public final MediumDAO mediumDAO;
     //public final EspirituDAO espirituDAO;
 
-    public MediumServiceImpl(MediumDAO mediumDAO) {
+    public MediumServiceImpl(MediumDAO mediumDAO /*, EspirituDAO espirituDAO*/) {
         this.mediumDAO = mediumDAO;
         //this.espirituDAO = espirituDAO;
     }
@@ -66,17 +66,38 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void exorcizar(long idMedium, long idMedium2) {
-
+        Medium medium = mediumDAO.findById(idMedium)
+                .orElseThrow(() -> new IdNoValidoException(idMedium));
+        Medium medium2 = mediumDAO.findById(idMedium2)
+                .orElseThrow(() -> new IdNoValidoException(idMedium2));
+        //List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
+        //List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
+        //medium.exorcizar(medium2, angeles, demonios);
+        mediumDAO.save(medium);
+        mediumDAO.save(medium2);
     }
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
+//        Medium medium = mediumDAO.findById(mediumId)
+//                .orElseThrow(() -> new IdNoValidoException(mediumId));
+//        Espiritu espiritu = espirituDAO.findById(mediumId)
+//                .orElseThrow(() -> new IdNoValidoException(mediumId));
+//
+//        medium.invocar(espiritu);
+//
+//        espirituDAO.save(espiritu); necesario?
+//        mediumDAO.save(medium); necesario?
+//
+//        return espirituDAO.findById(mediumId);
         return null;
     }
 
     @Override
     public List<Espiritu> espiritus(Long idMedium) {
-        return List.of();
+        mediumDAO.findById(idMedium)
+                .orElseThrow(() -> new IdNoValidoException(idMedium));
+        return mediumDAO.obtenerEspiritus(idMedium);
     }
 
     @Override
@@ -87,36 +108,55 @@ public class MediumServiceImpl implements MediumService {
         mediumDAO.save(medium);
     }
 
+
+
+
+
+
+
+
+
+
+
+
 /*
     public void exorcizar(long idMedium, long idMedium2){
-        Optional<Medium> medium1 = mediumDAO.findById(idMedium);
-        Optional<Medium> medium2 = mediumDAO.findById(idMedium2);
-        List<Espiritu> angeles = espirituDAO.recuperarEspiritusDeTipo(medium1.getId(), Angel.class);
-        List<Espiritu> demonios = espirituDAO.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
-        medium1.exorcizar(medium2, angeles, demonios);
-        espirituDAO.save(medium1);
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(idMedium);
+            Medium medium2 = mediumDao.recuperar(idMedium2);
+            List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
+            List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
+            medium.exorcizar(medium2, angeles, demonios);
+            mediumDao.actualizar(medium);
+            mediumDao.actualizar(medium2);
+            return null;
+        });
     }
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-        Optional<Medium> medium = mediumDAO.findById(mediumId);
-        Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
-        if (medium.isEmpty() || espiritu.isEmpty()) {
-            throw new NoSuchElementException("Medium o esíritu no encontrados");
+        if (mediumId == null || espirituId == null){
+            throw new IdNoValidoException();
         }
-        medium.invocar(espiritu);
-        espirituDAO.save(espiritu);
-        espirituDAO.save(medium);
-        return espirituDAO.findById(espirituId);
+        return HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = this.mediumDao.recuperar(mediumId);
+            Espiritu espiritu = this.espirituDao.recuperar(espirituId);
+            if (medium == null || espiritu == null) {throw new IdNoValidoException(espirituId);}
+            medium.invocar(espiritu);
+            this.espirituDao.actualizar(espiritu);
+            this.mediumDao.actualizar(medium);
+            return espirituDao.recuperar(espirituId);
+        });
     }
 
     @Override
     public List<Espiritu> espiritus(Long idMedium) {
-        Optional<Medium> medium = mediumDAO.findById(idMedium);
-        if (medium.isEmpty()) {
-            throw new NoSuchElementException("Medium o esíritu no encontrados");
-        }
-        return mediumDao.obtenerEspiritus(idMedium);
+        if (idMedium == null) {throw new IdNoValidoException();}
+        return HibernateTransactionRunner.runTrx(() -> {
+                Medium medium = this.mediumDao.recuperar(idMedium);
+                if (medium == null) {throw new IdNoValidoException();}
+                return mediumDao.obtenerEspiritus(idMedium);
+        });
     }
 */
 
