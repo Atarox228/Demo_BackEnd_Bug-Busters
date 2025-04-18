@@ -21,7 +21,7 @@ public class DataServiceImpl implements DataService {
         HibernateTransactionRunner.runTrx(() -> {
             espirituDAO.eliminarTodo();
             mediumDAO.eliminarTodo();
-            ubicacionDAO.eliminarTodo();
+            ubicacionDAO.deleteAll();
             return null;
         });
     }

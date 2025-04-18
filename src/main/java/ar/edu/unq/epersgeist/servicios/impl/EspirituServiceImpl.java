@@ -91,7 +91,7 @@ public class EspirituServiceImpl implements EspirituService {
     public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
         HibernateTransactionRunner.runTrx(() -> {
             Espiritu espiritu = espirituDAO.recuperar(idEspiritu);
-            Ubicacion ubicacion = ubicacionDAO.recuperar(idUbicacion);
+            Ubicacion ubicacion = ubicacionDAO.findById(idUbicacion).orElseThrow(() -> new IdNoValidoException(idUbicacion));;
             espiritu.setUbicacion(ubicacion);
             return null;
         });
