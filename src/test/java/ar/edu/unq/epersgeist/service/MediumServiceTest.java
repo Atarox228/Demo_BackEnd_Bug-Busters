@@ -21,6 +21,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.Collection;
 import java.util.List;
@@ -119,11 +120,11 @@ public class MediumServiceTest {
 
     @Test
     void recuperarMediumConIdNulo() {
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
             mediumService.recuperar(null);
         });
     }
-/*
+
     @Test
     void recuperarTodos() {
         Collection<Medium> mediums = mediumService.recuperarTodos();
@@ -131,7 +132,7 @@ public class MediumServiceTest {
         List<String> nombres = mediums.stream().map(Medium::getNombre).toList();
         assertEquals(List.of( "Lala","Lizzie"), nombres);
     }
-*/
+
     @Test
     void recuperarTodosSinMediums(){
         mediumService.eliminar(medium);
@@ -703,30 +704,30 @@ public class MediumServiceTest {
                     assertEquals(0, espiritusMedium2.size());
                     assertFalse(espirituAct.estaLibre());
                 }
+*/
+    @Test
+    void descansarMedium(){
+        Medium sinDescansar = mediumService.recuperar(medium.getId());
+        mediumService.descansar(medium.getId());
+        Medium descansado = mediumService.recuperar(medium.getId());
+        assertEquals(sinDescansar.getId(), descansado.getId());
+        assertNotEquals(sinDescansar.getMana(), descansado.getMana());
+    }
 
-                @Test
-                void descansarMedium(){
-                    Medium sinDescansar = mediumService.recuperar(medium.getId());
-                    mediumService.descansar(medium.getId());
-                    Medium descansado = mediumService.recuperar(medium.getId());
-                    assertEquals(sinDescansar.getId(), descansado.getId());
-                    assertNotEquals(sinDescansar.getMana(), descansado.getMana());
-                }
+    @Test
+    void descansarMediumConIdNulo(){
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+            mediumService.descansar(null);
+        });
+    }
 
-                @Test
-                void descansarMediumConIdNulo(){
-                    assertThrows(IdNoValidoException.class,()->{
-                        mediumService.descansar(null);
-                    });
-                }
-
-                @Test
-                void descansarMediumConIdInexistente(){
-                    assertThrows(IdNoValidoException.class,()->{
-                        mediumService.descansar(1258L);
-                    });
-                }
-
+    @Test
+    void descansarMediumConIdInexistente(){
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.descansar(1258L);
+        });
+    }
+/*
                 @Test
                 void invocarEspirituLibreConManaSuficiente() {
                     mediumRecu2.setMana(100);

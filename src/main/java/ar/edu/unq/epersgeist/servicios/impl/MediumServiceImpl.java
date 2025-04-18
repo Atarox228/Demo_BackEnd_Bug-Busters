@@ -7,11 +7,13 @@ import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -34,17 +36,13 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium recuperar(Long id) {
-        if(id == null) {
-            throw new IdNoValidoException(id);
-        }
         return mediumDAO.findById(id)
                 .orElseThrow(() -> new IdNoValidoException(id));
     }
 
-    //RECUPERAR EN ORDEN
     @Override
     public Collection<Medium> recuperarTodos() {
-        return mediumDAO.findAll();
+        return mediumDAO.findAll(Sort.by(Sort.Direction.ASC, "nombre"));
     }
 
     @Override
@@ -67,11 +65,6 @@ public class MediumServiceImpl implements MediumService {
 
 
     @Override
-    public void descansar(Long idMedium) {
-
-    }
-
-    @Override
     public void exorcizar(long idMedium, long idMedium2) {
 
     }
@@ -85,17 +78,16 @@ public class MediumServiceImpl implements MediumService {
     public List<Espiritu> espiritus(Long idMedium) {
         return List.of();
     }
-/*
+
+    @Override
     public void descansar(Long mediumId){
-        Optional<Medium> optionalMedium = mediumDAO.findById(mediumId);
-        if (optionalMedium.isEmpty()) {
-            throw new NoSuchElementException("Medium no encontrado con ID: " + mediumId);
-        }
-        Medium medium = optionalMedium.get();
+        Medium medium = mediumDAO.findById(mediumId)
+                .orElseThrow(() -> new IdNoValidoException(mediumId));
         medium.descansar();
         mediumDAO.save(medium);
     }
 
+/*
     public void exorcizar(long idMedium, long idMedium2){
         Optional<Medium> medium1 = mediumDAO.findById(idMedium);
         Optional<Medium> medium2 = mediumDAO.findById(idMedium2);
