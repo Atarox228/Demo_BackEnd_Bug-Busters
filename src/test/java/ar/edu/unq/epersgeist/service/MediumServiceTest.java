@@ -1,15 +1,10 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.impl.*;
 import jakarta.persistence.OptimisticLockException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
@@ -47,10 +42,10 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
-        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-        ubicacionService  = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
+//        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
+//        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
+//        ubicacionService  = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
+//        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
         bernal = new Ubicacion("Bernal");
         ubicacionService.crear(bernal);
         medium = new Medium("Lizzie",150,100);

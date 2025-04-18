@@ -2,8 +2,11 @@ package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
 //public interface EspirituDAO {
@@ -21,7 +24,9 @@ import java.util.List;
 //    List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipoEspiritu);
 //
 //}
-
+@Repository
 public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
-
+    @Query("SELECT e FROM Espiritu e WHERE TYPE(e) = Demonio")
+    Page<Espiritu> findDemonios(Pageable pageable);
 }
+

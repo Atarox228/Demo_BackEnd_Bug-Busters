@@ -6,10 +6,12 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
+@Service
 public class MediumServiceImpl implements MediumService {
 
     private final EspirituDAO espirituDao;
@@ -22,75 +24,80 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void crear(Medium medium) {
-        HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.guardar(medium);
-            return null;
-        });
+//        HibernateTransactionRunner.runTrx(() -> {
+//            mediumDao.guardar(medium);
+//            return null;
+//        });
+
     }
 
     @Override
     public Medium recuperar(Long id) {
-        if (id == null) {
-            throw new IdNoValidoException(id);
-        }
-        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(id));
+//        if (id == null) {
+//            throw new IdNoValidoException(id);
+//        }
+//        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(id));
+    return null;
     }
 
     @Override
-    public Collection<Medium> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(mediumDao::recuperarTodos);
+    public Collection<Medium> recuperarTodos(){
+//        return HibernateTransactionRunner.runTrx(mediumDao::recuperarTodos);
+        return null;
     }
 
     public void eliminar(Medium medium) {
-        HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.eliminar(medium);
-            return null;
-        });
+//        HibernateTransactionRunner.runTrx(() -> {
+//            mediumDao.eliminar(medium);
+//            return null;
+//        });
     }
 
     @Override
     public void actualizar(Medium medium) {
-        HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.actualizar(medium);
-            return null;
-        });
+//        HibernateTransactionRunner.runTrx(() -> {
+//            mediumDao.actualizar(medium);
+//            return null;
+//        });
     }
 
     public void descansar(Long mediumId){
-        if (mediumId == null) {throw new IdNoValidoException(mediumId);}
-        HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(mediumId);
-            if (medium == null) {throw new IdNoValidoException(mediumId);}
-            medium.descansar();
-            mediumDao.actualizar(medium);
-            return null;
-        });
+//        if (mediumId == null) {throw new IdNoValidoException(mediumId);}
+//        HibernateTransactionRunner.runTrx(() -> {
+//            Medium medium = mediumDao.recuperar(mediumId);
+//            if (medium == null) {throw new IdNoValidoException(mediumId);}
+//            medium.descansar();
+//            mediumDao.actualizar(medium);
+//            return null;
+//        });
     }
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-        if (mediumId == null || espirituId == null){
-            throw new IdNoValidoException();
-        }
-        return HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = this.mediumDao.recuperar(mediumId);
-            Espiritu espiritu = this.espirituDao.recuperar(espirituId);
-            if (medium == null || espiritu == null) {throw new IdNoValidoException(espirituId);}
-            medium.invocar(espiritu);
-            this.espirituDao.actualizar(espiritu);
-            this.mediumDao.actualizar(medium);
-            return espirituDao.recuperar(espirituId);
-        });
+//        if (mediumId == null || espirituId == null){
+//            throw new IdNoValidoException();
+//        }
+//        return HibernateTransactionRunner.runTrx(() -> {
+//            Medium medium = this.mediumDao.recuperar(mediumId);
+//            Espiritu espiritu = this.espirituDao.recuperar(espirituId);
+//            if (medium == null || espiritu == null) {throw new IdNoValidoException(espirituId);}
+//            medium.invocar(espiritu);
+//            this.espirituDao.actualizar(espiritu);
+//            this.mediumDao.actualizar(medium);
+//            return espirituDao.recuperar(espirituId);
+//        });
+        return null;
     }
 
     @Override
     public List<Espiritu> espiritus(Long idMedium) {
-        if (idMedium == null) {throw new IdNoValidoException();}
-        return HibernateTransactionRunner.runTrx(() -> {
-                Medium medium = this.mediumDao.recuperar(idMedium);
-                if (medium == null) {throw new IdNoValidoException();}
-                return mediumDao.obtenerEspiritus(idMedium);
-        });
+//        if (idMedium == null) {throw new IdNoValidoException();}
+//        return HibernateTransactionRunner.runTrx(() -> {
+//                Medium medium = this.mediumDao.recuperar(idMedium);
+//                if (medium == null) {throw new IdNoValidoException();}
+//                return mediumDao.obtenerEspiritus(idMedium);
+//        });
+        return null;
     }
 
 
@@ -106,16 +113,16 @@ public class MediumServiceImpl implements MediumService {
 
 
    public void exorcizar(long idMedium, long idMedium2){
-        HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(idMedium);
-            Medium medium2 = mediumDao.recuperar(idMedium2);
-            List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
-            List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
-            medium.exorcizar(medium2, angeles, demonios);
-            mediumDao.actualizar(medium);
-            mediumDao.actualizar(medium2);
-            return null;
-        });
+//        HibernateTransactionRunner.runTrx(() -> {
+//            Medium medium = mediumDao.recuperar(idMedium);
+//            Medium medium2 = mediumDao.recuperar(idMedium2);
+//            List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
+//            List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
+//            medium.exorcizar(medium2, angeles, demonios);
+//            mediumDao.actualizar(medium);
+//            mediumDao.actualizar(medium2);
+//            return null;
+//        });
 
     }
 }
