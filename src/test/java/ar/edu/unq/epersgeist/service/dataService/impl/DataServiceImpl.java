@@ -17,13 +17,9 @@ public class DataServiceImpl implements DataService {
         this.mediumDAO = mediumDao;
         this.ubicacionDAO = ubicacionDAO;
     }
-
     public void eliminarTodo(){
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDAO.eliminarTodo();
+            espirituDAO.deleteAll();
             mediumDAO.deleteAll();
-            ubicacionDAO.eliminarTodo();
-            return null;
-        });
+            ubicacionDAO.deleteAll();
     }
 }

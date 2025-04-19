@@ -1,9 +1,6 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-//import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 //import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.servicios.EspirituService;

@@ -1,12 +1,7 @@
 //package ar.edu.unq.epersgeist.service;
 //
 //import ar.edu.unq.epersgeist.modelo.*;
-//import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-//import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-//import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 //import ar.edu.unq.epersgeist.service.dataService.DataService;
-//import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-//import ar.edu.unq.epersgeist.servicios.impl.*;
 //import ar.edu.unq.epersgeist.servicios.EspirituService;
 //import ar.edu.unq.epersgeist.servicios.MediumService;
 //import ar.edu.unq.epersgeist.servicios.UbicacionService;
@@ -40,10 +35,10 @@
 //
 //    @BeforeEach
 //    void prepare() {
-//        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
-//        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-//        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-//        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
+////        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
+////        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
+////        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
+////        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 //
 //        fellwood = new Ubicacion("Fellwood");
 //        ubicacionService.crear(fellwood);
