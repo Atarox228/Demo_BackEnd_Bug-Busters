@@ -19,8 +19,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -29,15 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 
-
-@SpringBootTest
 @SpringBootTest
 public class UbicacionServiceTest {
 
     private DataService dataService;
 
-
-    @Autowired
     @Autowired
     private UbicacionService ubicacionService;
     private MediumService mediumService;
@@ -52,29 +46,16 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-//        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
-////        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-//        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
 //        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 //        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
 ////        ubicacionService = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
 //        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-//        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 
         fellwood = new Ubicacion("Fellwood");
         ubicacionService.crear(fellwood);
         ashenvale = new Ubicacion("Ashenvale");
         ubicacionService.crear(ashenvale);
 
-//        espiritu1 = new Demonio( "Casper");
-//        espirituService.crear(espiritu1);
-//        espiritu2 = new Angel("Marids");
-//        espirituService.crear(espiritu2);
-//
-//        medium1 = new Medium("lala", 100, 50);
-//        mediumService.crear(medium1);
-//        medium2 = new Medium("lolo", 100, 60);
-//        mediumService.crear(medium2);
 //        espiritu1 = new Demonio( "Casper");
 //        espirituService.crear(espiritu1);
 //        espiritu2 = new Angel("Marids");
@@ -94,7 +75,6 @@ public class UbicacionServiceTest {
     @Test
     void crearMismaUbicacionDosVeces(){
         assertThrows(IdNoValidoException.class, () -> {
-            assertThrows(IdNoValidoException.class, () -> {
             ubicacionService.crear(fellwood);
         });
     }
@@ -107,7 +87,6 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarUbicacionNoPersistida(){
-        assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(1L);});
             assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(1L);});
     }
 
@@ -123,9 +102,6 @@ public class UbicacionServiceTest {
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        assertThrows(IdNoValidoException.class,()->{
-            ubicacionService.recuperar(idEliminado);
-        });
             assertThrows(IdNoValidoException.class,()->{
                 ubicacionService.recuperar(idEliminado);
             });
@@ -135,27 +111,13 @@ public class UbicacionServiceTest {
     @Test
     void eliminarMismaUbicacionDosVeces() {
         Long idEliminado = fellwood.getId();
-            Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
         ubicacionService.eliminar(fellwood);   //DEBERIA DAR ERROR AL ELIMINAR ALGO ELIMINADO?¿
         assertThrows(IdNoValidoException.class, () -> {
             ubicacionService.recuperar(idEliminado);
-                    ubicacionService.eliminar(fellwood);   //DEBERIA DAR ERROR AL ELIMINAR ALGO ELIMINADO?¿
-                    assertThrows(IdNoValidoException.class, () -> {
-                        ubicacionService.recuperar(idEliminado);
         });
     }
 
-//    @Test
-//    void eliminarUbicacionConEspiritus(){
-//        espiritu1.setUbicacion(fellwood);
-//        espirituService.actualizar(espiritu1);
-//        Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId());
-//        assertThrows(ConstraintViolationException.class, () -> {
-//          ubicacionService.eliminar(ubicacion);
-//        });
-//
-//    }
 //    @Test
 //    void eliminarUbicacionConEspiritus(){
 //        espiritu1.setUbicacion(fellwood);
@@ -212,8 +174,6 @@ public class UbicacionServiceTest {
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
         ubicacionService.actualizar(fellwood);
-        assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(fellwood.getId());});
-        //Probar otra manera, o si es valido
                 assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(fellwood.getId());});
                 //Probar otra manera, o si es valido
     }
@@ -237,7 +197,6 @@ public class UbicacionServiceTest {
     void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
         assertThrows(DataIntegrityViolationException.class, () -> {  //CAMBIE LA EXCEPTION
-        assertThrows(DataIntegrityViolationException.class, () -> {  //CAMBIE LA EXCEPTION
             ubicacionService.actualizar(fellwood);
         });
     }
@@ -249,13 +208,6 @@ public class UbicacionServiceTest {
 
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
-        ubicacionService.clearAll();
-        assertThrows(IdNoValidoException.class,()->{
-            ubicacionService.recuperar(ubi1Id);
-        });
-        assertThrows(IdNoValidoException.class,()->{
-            ubicacionService.recuperar(ubi2Id);
-        });
                     ubicacionService.clearAll();
                     assertThrows(IdNoValidoException.class,()->{
                         ubicacionService.recuperar(ubi1Id);
@@ -371,7 +323,6 @@ public class UbicacionServiceTest {
 
     @AfterEach
     void cleanUp() {
-        ubicacionService.clearAll();
         ubicacionService.clearAll();
     }
 }
