@@ -22,13 +22,13 @@ import java.util.List;
 public class UbicacionServiceImpl implements UbicacionService {
 
     private final UbicacionDAO ubicacionDAO;
-//    private final MediumDAO mediumDAO;
-//    private final EspirituDAO espirituDAO;
+    private final MediumDAO mediumDAO;
+    private final EspirituDAO espirituDAO;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO){
+    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
         this.ubicacionDAO = ubicacionDAO;
-//        this.mediumDAO = mediumDAO;
-//        this.espirituDAO = espirituDAO;
+        this.mediumDAO = mediumDAO;
+        this.espirituDAO = espirituDAO;
     }
 
     @Override
@@ -71,15 +71,15 @@ public class UbicacionServiceImpl implements UbicacionService {
         ubicacionDAO.deleteAll();
     }
 
-//    @Override
-//    public List<Espiritu> espiritusEn(Long ubicacionId) {
-//        return espirituDAO.espiritusEn(ubicacionId);
-//    }
-//
-//    @Override
-//    public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-//        return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
-//    }
+    @Override
+    public List<Espiritu> espiritusEn(Long ubicacionId) {
+        return espirituDAO.espiritusEn(ubicacionId);
+    }
+
+    @Override
+    public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
+        return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
+    }
 
 
 }

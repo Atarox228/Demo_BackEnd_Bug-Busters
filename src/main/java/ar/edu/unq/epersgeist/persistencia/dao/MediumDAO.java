@@ -16,4 +16,7 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
     @Query("from Espiritu e where e.medium.id = :mediumId")
     List<Espiritu> obtenerEspiritus(@Param("mediumId") Long mediumId);
 
+    @Query(
+            "SELECT m FROM Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) and m.ubicacion.id = :ubicacionId")
+    List<Medium> mediumsSinEspiritusEn(@Param("ubicacionId")Long ubicacionId);
 }
