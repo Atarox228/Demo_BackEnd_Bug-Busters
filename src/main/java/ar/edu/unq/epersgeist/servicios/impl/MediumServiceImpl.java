@@ -82,16 +82,16 @@ public class MediumServiceImpl implements MediumService {
     public Optional<Espiritu> invocar(Long mediumId, Long espirituId) {
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new IdNoValidoException(mediumId));
-        Espiritu espiritu = espirituDAO.findById(mediumId)
-                .orElseThrow(() -> new IdNoValidoException(mediumId));
+        Espiritu espiritu = espirituDAO.findById(espirituId)
+                .orElseThrow(() -> new IdNoValidoException(espirituId));
 
         medium.invocar(espiritu);
 
-        //necesario?
+        //necesario? cascade
         espirituDAO.save(espiritu);
         mediumDAO.save(medium);
 
-        return espirituDAO.findById(mediumId);
+        return espirituDAO.findById(espirituId);
     }
 
     @Override

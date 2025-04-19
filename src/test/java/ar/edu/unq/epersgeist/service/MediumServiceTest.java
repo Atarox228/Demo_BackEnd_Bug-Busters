@@ -726,32 +726,34 @@ public class MediumServiceTest {
         });
     }
 
-//    @Test
-//    void invocarEspirituLibreConManaSuficiente() {
-//        mediumRecu2.setMana(100);
-//        mediumService.actualizar(mediumRecu2);
-//        Ubicacion quilmes = new Ubicacion(("Quilmes"));
-//        ubicacionService.crear(quilmes);
-//        espiritu2.setUbicacion(quilmes);
-//        espirituService.actualizar(espiritu2);
-//        Espiritu espirituAntes = espirituService.recuperar(espiritu2.getId());
-//
-//        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
-//        assertNotEquals(espirituInvocado.get().getMedium(), espirituAntes.getMedium());
-//        assertNotEquals(espirituInvocado.get().getUbicacion(), espirituAntes.getUbicacion());
-//    }
+    @Test
+    void invocarEspirituLibreConManaSuficiente() {
+        mediumRecu2.setMana(100);
+        mediumService.actualizar(mediumRecu2);
 
+        Ubicacion quilmes = new Ubicacion(("Quilmes"));
+        ubicacionService.crear(quilmes);
+        espiritu2.setUbicacion(quilmes);
 
+        espirituService.actualizar(espiritu2);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu2.getId());
 
-//    @Test
-//    void invocarEspirituLibreEnMismaUbicacion() {
-//        mediumRecu2.setMana(100);
-//        mediumService.actualizar(mediumRecu2);
-//
-//        Espiritu espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
-//        assertNotEquals(espirituInvocado.getMedium(), espirituRecu2.getMedium());
-//        assertEquals(espirituInvocado.getUbicacion(), espirituRecu2.getUbicacion());
-//    }
+        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
+
+        assertTrue(espirituInvocado.isPresent());
+        assertNotEquals(espirituInvocado.get().getMedium(), espirituAntes.getMedium());
+        assertNotEquals(espirituInvocado.get().getUbicacion(), espirituAntes.getUbicacion());
+    }
+
+    @Test
+    void invocarEspirituLibreEnMismaUbicacion() {
+        mediumRecu2.setMana(100);
+        mediumService.actualizar(mediumRecu2);
+
+        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
+        assertNotEquals(espirituInvocado.get().getMedium(), espirituRecu2.getMedium());
+        assertEquals(espirituInvocado.get().getUbicacion(), espirituRecu2.getUbicacion());
+    }
 
 //    @Test
 //    void invocarEspirituNoLibre() {
