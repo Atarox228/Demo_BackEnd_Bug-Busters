@@ -54,22 +54,22 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
-        //dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
-        //espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-        //ubicacionService  = new UbicacionServiceImpl(new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-        //mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
         //bernal = new Ubicacion("Bernal");
         //ubicacionService.crear(bernal);
+
         medium = new Medium("Lizzie",150,100);
         mediumService.crear(medium);
+
         medium2 = new Medium("Lala", 100, 50);
         mediumService.crear(medium2);
-        //espiritu = new Angel("Casper");
-        //espiritu.setNivelConexion(5);
-        //espirituService.crear(espiritu);
-        //espiritu2 = new Demonio("Ghosty");
-        //espiritu2.setNivelConexion(40);
-        //espirituService.crear(espiritu2);
+
+//        espiritu = new Angel("Casper");
+//        espiritu.setNivelConexion(5);
+//        espirituService.crear(espiritu);
+//
+//        espiritu2 = new Demonio("Ghosty");
+//        espiritu2.setNivelConexion(40);
+//        espirituService.crear(espiritu2);
 
         //espiritu.setUbicacion(bernal);
         //espirituService.actualizar(espiritu);
@@ -205,505 +205,505 @@ public class MediumServiceTest {
     }
 
 /*
-                @Test
-                void exorcizarMedium1a1Victorioso(){
-                    dado.setModo(new ModoTrucado(6,60));
-                    espirituRecu = espirituService.recuperar(espiritu.getId());
-                    espirituRecu.setNivelConexion(80);
-                    espirituService.actualizar(espirituRecu);
+    @Test
+    void exorcizarMedium1a1Victorioso(){
+        dado.setModo(new ModoTrucado(6,60));
+        espirituRecu = espirituService.recuperar(espiritu.getId());
+        espirituRecu.setNivelConexion(80);
+        espirituService.actualizar(espirituRecu);
 
-                    espirituService.conectar(espirituRecu.getId(), medium.getId());
-                    espirituService.conectar(espiritu2.getId(), medium2.getId());
-
-                    mediumService.exorcizar(medium.getId(), medium2.getId());
+        espirituService.conectar(espirituRecu.getId(), medium.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
 
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(0, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYangelicalesDeMas(){
-                    dado.setModo(new ModoTrucado(6,60));
-                    espirituRecu.setNivelConexion(80);
-                    espirituService.actualizar(espirituRecu);
-
-                    Espiritu azael = new Demonio("Azael");
-                    azael.setNivelConexion(40);
-                    espirituService.crear(azael);
-                    Espiritu castiel = new Angel( "Castiel");
-                    castiel.setNivelConexion(40);
-                    espirituService.crear(castiel);
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(0, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYangelicalesDeMas(){
+        dado.setModo(new ModoTrucado(6,60));
+        espirituRecu.setNivelConexion(80);
+        espirituService.actualizar(espirituRecu);
+
+        Espiritu azael = new Demonio("Azael");
+        azael.setNivelConexion(40);
+        espirituService.crear(azael);
+        Espiritu castiel = new Angel( "Castiel");
+        castiel.setNivelConexion(40);
+        espirituService.crear(castiel);
 
-                    azael.setUbicacion(bernal);
-                    espirituService.actualizar(azael);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espirituRecu.getId(), medium.getId());
-                    espirituService.conectar(espiritu2.getId(), medium2.getId());
-                    espirituService.conectar(azael.getId(), medium.getId());
-                    espirituService.conectar(castiel.getId(), medium2.getId());
-
-                    mediumService.exorcizar(medium.getId(), medium2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-                    Espiritu azaelAct = espirituService.recuperar(azael.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertFalse(azaelAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium1a1DerrotaSinDesconexion(){
-                    dado.setModo(new ModoTrucado(6,60));
-
-                    espirituRecu.setNivelConexion(40);
-                    espirituService.actualizar(espirituRecu);
-
-                    espirituService.conectar(espirituRecu.getId(), medium.getId());
-                    espirituService.conectar(espiritu2.getId(), medium2.getId());
-
-                    mediumService.exorcizar(medium.getId(), medium2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium1a1DerrotaConDesconexion(){
-
-                    dado.setModo(new ModoTrucado(6,60));
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), medium2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), medium2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-
-                    assertEquals(0, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertTrue(espirituAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1Victoria(){
-                    dado.setModo(new ModoTrucado(5,10));
-                    espirituRecu.setNivelConexion(30);
-                    espirituService.actualizar(espirituRecu);
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(50);
-                    espirituService.crear(castiel);
-
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(0, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1AmbasDerrotasSinDesconexion(){
-                    dado.setModo(new ModoTrucado(5,90));
-                    espirituRecu.setNivelConexion(30);
-                    espirituService.actualizar(espirituRecu);
-                    Espiritu kyu = new Angel("Kyu");
-                    kyu.setNivelConexion(30);
-                    espirituService.crear(kyu);
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(50);
-                    espirituService.crear(castiel);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-
-                    espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1AmbasDerrotasConDesconexion(){
-                    dado.setModo(new ModoTrucado(5,90));
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(5);
-                    espirituService.crear(castiel);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(0, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertTrue(espirituAct.estaLibre());
-                    assertTrue(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1UnaDerrotaYUnaVictoriaSinDesconexion(){
-                    dado.setModo(new ModoTrucado(5,40));
-                    espirituRecu.setNivelConexion(10);
-                    espirituService.actualizar(espirituRecu);
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(40);
-                    espirituService.crear(castiel);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexion(){
-                    dado.setModo(new ModoTrucado(5,40));
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(40);
-                    espirituService.crear(castiel);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertTrue(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexionDeAmbosLados(){
-                    dado.setModo(new ModoTrucado(5,40));
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(40);
-                    espirituService.crear(castiel);
-                    espirituRecu2.setNivelConexion(20);
-                    espirituService.actualizar(espirituRecu2);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(0, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertTrue(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a2VictoriaAbsoluta(){
-                    dado.setModo(new ModoTrucado(5,40));
-                    espirituRecu.setNivelConexion(50);
-                    espirituService.actualizar(espirituRecu);
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(70);
-                    espirituService.crear(castiel);
-                    espirituRecu2.setNivelConexion(25);
-                    espirituService.actualizar(espirituRecu2);
-                    Espiritu azael = new Demonio("azael");
-                    azael.setNivelConexion(35);
-                    espirituService.crear(azael);
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-                    azael.setUbicacion(bernal);
-                    espirituService.actualizar(azael);
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
-                    espirituService.conectar(azael.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-                    Espiritu azaelAct = espirituService.recuperar(azael.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(0, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                    assertTrue(azaelAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a2DerrotaAbsolutaSinYConDesconexion(){
-                    dado.setModo(new ModoTrucado(5,70));
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(10);
-                    espirituService.crear(castiel);
-                    espirituRecu2.setNivelConexion(25);
-                    espirituService.actualizar(espirituRecu2);
-                    Espiritu azael = new Demonio("azael");
-                    azael.setNivelConexion(35);
-                    espirituService.crear(azael);
-
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-                    azael.setUbicacion(bernal);
-                    espirituService.actualizar(azael);
-
-                    espirituService.conectar(espiritu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
-                    espirituService.conectar(azael.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-                    Espiritu azaelAct = espirituService.recuperar(azael.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(2, espiritusMedium2.size());
-                    assertFalse(espiritu2Act.estaLibre());
-                    assertTrue(espirituAct.estaLibre());
-                    assertFalse(castielAct.estaLibre());
-                    assertFalse(azaelAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium2a2UnaVictoriaYUnaDerrotaConDesconexionDeAmbosLados(){
-                    dado.setModo(new ModoTrucado(5,70));
-                    espirituRecu.setNivelConexion(70);
-                    espirituService.actualizar(espirituRecu);
-                    espirituRecu2.setNivelConexion(25);
-                    espirituService.actualizar(espirituRecu2);
-                    Espiritu castiel = new Angel("castiel");
-                    castiel.setNivelConexion(5);
-                    espirituService.crear(castiel);
-                    Espiritu azael = new Demonio("azael");
-                    azael.setNivelConexion(35);
-                    espirituService.crear(azael);
-
-                    castiel.setUbicacion(bernal);
-                    espirituService.actualizar(castiel);
-                    azael.setUbicacion(bernal);
-                    espirituService.actualizar(azael);
-
-                    espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
-                    espirituService.conectar(castiel.getId(), mediumRecu.getId());
-                    espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
-                    espirituService.conectar(azael.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
-                    Espiritu castielAct = espirituService.recuperar(castiel.getId());
-                    Espiritu azaelAct = espirituService.recuperar(azael.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertTrue(espiritu2Act.estaLibre());
-                    assertFalse(espirituAct.estaLibre());
-                    assertTrue(castielAct.estaLibre());
-                    assertFalse(azaelAct.estaLibre());
-                }
-
-                @Test
-                void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYAngelicalesDeMas(){
-                    dado.setModo(new ModoTrucado(5,60));
-
-                    Espiritu rika = new Angel("Rika");
-                    rika.setNivelConexion(60);
-                    espirituService.crear(rika);
-                    Espiritu ivaar = new Angel("Ivaar");
-                    ivaar.setNivelConexion(80);
-                    espirituService.crear(ivaar);
-                    Espiritu hana = new Angel("Hana");
-                    hana.setNivelConexion(5);
-                    espirituService.crear(hana);
-                    Espiritu jeager = new Demonio("Jeager");
-                    jeager.setNivelConexion(50);
-                    espirituService.crear(jeager);
-                    Espiritu noroi = new Demonio("Noroi");
-                    noroi.setNivelConexion(66);
-                    espirituService.crear(noroi);
-
-                    rika.setUbicacion(bernal);
-                    espirituService.actualizar(rika);
-                    ivaar.setUbicacion(bernal);
-                    espirituService.actualizar(ivaar);
-                    hana.setUbicacion(bernal);
-                    espirituService.actualizar(hana);
-                    jeager.setUbicacion(bernal);
-                    espirituService.actualizar(jeager);
-                    noroi.setUbicacion(bernal);
-                    espirituService.actualizar(noroi);
-
-                    espirituService.conectar(rika.getId(), mediumRecu.getId());
-                    espirituService.conectar(ivaar.getId(), mediumRecu.getId());
-                    espirituService.conectar(hana.getId(), mediumRecu.getId());
-                    espirituService.conectar(jeager.getId(), mediumRecu2.getId());
-                    espirituService.conectar(noroi.getId(), mediumRecu2.getId());
-
-                    mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
-
-                    Espiritu jeagerAct = espirituService.recuperar(jeager.getId());
-                    Espiritu ivaarAct = espirituService.recuperar(ivaar.getId());
-                    Espiritu rikaAct = espirituService.recuperar(rika.getId());
-                    Espiritu hanaAct = espirituService.recuperar(hana.getId());
-                    Espiritu noroiAct = espirituService.recuperar(noroi.getId());
-
-                    assertEquals(2, espiritusMedium1.size());
-                    assertEquals(1, espiritusMedium2.size());
-                    assertTrue(jeagerAct.estaLibre());
-                    assertFalse(noroiAct.estaLibre());
-                    assertTrue(hanaAct.estaLibre());
-                    assertFalse(ivaarAct.estaLibre());
-                    assertFalse(rikaAct.estaLibre());
-                }
-
-                @Test
-                void noHayAngelesException(){
-                    assertThrows(NoHayAngelesException.class,()->{
-                        mediumService.exorcizar(medium.getId(), medium2.getId());
-                    });
-                }
-
-               @Test
-                void noHayDemonios(){
-                    espirituService.conectar(espiritu.getId(), medium.getId());
-                    Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
-
-                    mediumService.exorcizar(medium.getId(), medium2.getId());
-
-                    List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
-                    List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
-
-                    assertEquals(1, espiritusMedium1.size());
-                    assertEquals(0, espiritusMedium2.size());
-                    assertFalse(espirituAct.estaLibre());
-                }
+        azael.setUbicacion(bernal);
+        espirituService.actualizar(azael);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espirituRecu.getId(), medium.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+        espirituService.conectar(azael.getId(), medium.getId());
+        espirituService.conectar(castiel.getId(), medium2.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        Espiritu azaelAct = espirituService.recuperar(azael.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertFalse(azaelAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium1a1DerrotaSinDesconexion(){
+        dado.setModo(new ModoTrucado(6,60));
+
+        espirituRecu.setNivelConexion(40);
+        espirituService.actualizar(espirituRecu);
+
+        espirituService.conectar(espirituRecu.getId(), medium.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium1a1DerrotaConDesconexion(){
+
+        dado.setModo(new ModoTrucado(6,60));
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), medium2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+
+        assertEquals(0, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertTrue(espirituAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1Victoria(){
+        dado.setModo(new ModoTrucado(5,10));
+        espirituRecu.setNivelConexion(30);
+        espirituService.actualizar(espirituRecu);
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(50);
+        espirituService.crear(castiel);
+
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(0, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1AmbasDerrotasSinDesconexion(){
+        dado.setModo(new ModoTrucado(5,90));
+        espirituRecu.setNivelConexion(30);
+        espirituService.actualizar(espirituRecu);
+        Espiritu kyu = new Angel("Kyu");
+        kyu.setNivelConexion(30);
+        espirituService.crear(kyu);
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(50);
+        espirituService.crear(castiel);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+
+        espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1AmbasDerrotasConDesconexion(){
+        dado.setModo(new ModoTrucado(5,90));
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(5);
+        espirituService.crear(castiel);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(0, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertTrue(espirituAct.estaLibre());
+        assertTrue(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaSinDesconexion(){
+        dado.setModo(new ModoTrucado(5,40));
+        espirituRecu.setNivelConexion(10);
+        espirituService.actualizar(espirituRecu);
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
+        espirituService.crear(castiel);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexion(){
+        dado.setModo(new ModoTrucado(5,40));
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
+        espirituService.crear(castiel);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espiritu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espiritu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertTrue(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a1UnaDerrotaYUnaVictoriaConDesconexionDeAmbosLados() {
+        dado.setModo(new ModoTrucado(5, 40));
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(40);
+        espirituService.crear(castiel);
+        espirituRecu2.setNivelConexion(20);
+        espirituService.actualizar(espirituRecu2);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(0, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertTrue(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a2VictoriaAbsoluta(){
+        dado.setModo(new ModoTrucado(5,40));
+        espirituRecu.setNivelConexion(50);
+        espirituService.actualizar(espirituRecu);
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(70);
+        espirituService.crear(castiel);
+        espirituRecu2.setNivelConexion(25);
+        espirituService.actualizar(espirituRecu2);
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
+        espirituService.crear(azael);
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+        azael.setUbicacion(bernal);
+        espirituService.actualizar(azael);
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
+        espirituService.conectar(azael.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+        Espiritu azaelAct = espirituService.recuperar(azael.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(0, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+        assertTrue(azaelAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a2DerrotaAbsolutaSinYConDesconexion(){
+        dado.setModo(new ModoTrucado(5,70));
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(10);
+        espirituService.crear(castiel);
+        espirituRecu2.setNivelConexion(25);
+        espirituService.actualizar(espirituRecu2);
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
+        espirituService.crear(azael);
+
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+        azael.setUbicacion(bernal);
+        espirituService.actualizar(azael);
+
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
+        espirituService.conectar(azael.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+        Espiritu azaelAct = espirituService.recuperar(azael.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(2, espiritusMedium2.size());
+        assertFalse(espiritu2Act.estaLibre());
+        assertTrue(espirituAct.estaLibre());
+        assertFalse(castielAct.estaLibre());
+        assertFalse(azaelAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium2a2UnaVictoriaYUnaDerrotaConDesconexionDeAmbosLados(){
+        dado.setModo(new ModoTrucado(5,70));
+        espirituRecu.setNivelConexion(70);
+        espirituService.actualizar(espirituRecu);
+        espirituRecu2.setNivelConexion(25);
+        espirituService.actualizar(espirituRecu2);
+        Espiritu castiel = new Angel("castiel");
+        castiel.setNivelConexion(5);
+        espirituService.crear(castiel);
+        Espiritu azael = new Demonio("azael");
+        azael.setNivelConexion(35);
+        espirituService.crear(azael);
+
+        castiel.setUbicacion(bernal);
+        espirituService.actualizar(castiel);
+        azael.setUbicacion(bernal);
+        espirituService.actualizar(azael);
+
+        espirituService.conectar(espirituRecu.getId(), mediumRecu.getId());
+        espirituService.conectar(castiel.getId(), mediumRecu.getId());
+        espirituService.conectar(espirituRecu2.getId(), mediumRecu2.getId());
+        espirituService.conectar(azael.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu espiritu2Act = espirituService.recuperar(espirituRecu2.getId());
+        Espiritu espirituAct = espirituService.recuperar(espirituRecu.getId());
+        Espiritu castielAct = espirituService.recuperar(castiel.getId());
+        Espiritu azaelAct = espirituService.recuperar(azael.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertTrue(espiritu2Act.estaLibre());
+        assertFalse(espirituAct.estaLibre());
+        assertTrue(castielAct.estaLibre());
+        assertFalse(azaelAct.estaLibre());
+    }
+
+    @Test
+    void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYAngelicalesDeMas(){
+        dado.setModo(new ModoTrucado(5,60));
+
+        Espiritu rika = new Angel("Rika");
+        rika.setNivelConexion(60);
+        espirituService.crear(rika);
+        Espiritu ivaar = new Angel("Ivaar");
+        ivaar.setNivelConexion(80);
+        espirituService.crear(ivaar);
+        Espiritu hana = new Angel("Hana");
+        hana.setNivelConexion(5);
+        espirituService.crear(hana);
+        Espiritu jeager = new Demonio("Jeager");
+        jeager.setNivelConexion(50);
+        espirituService.crear(jeager);
+        Espiritu noroi = new Demonio("Noroi");
+        noroi.setNivelConexion(66);
+        espirituService.crear(noroi);
+
+        rika.setUbicacion(bernal);
+        espirituService.actualizar(rika);
+        ivaar.setUbicacion(bernal);
+        espirituService.actualizar(ivaar);
+        hana.setUbicacion(bernal);
+        espirituService.actualizar(hana);
+        jeager.setUbicacion(bernal);
+        espirituService.actualizar(jeager);
+        noroi.setUbicacion(bernal);
+        espirituService.actualizar(noroi);
+
+        espirituService.conectar(rika.getId(), mediumRecu.getId());
+        espirituService.conectar(ivaar.getId(), mediumRecu.getId());
+        espirituService.conectar(hana.getId(), mediumRecu.getId());
+        espirituService.conectar(jeager.getId(), mediumRecu2.getId());
+        espirituService.conectar(noroi.getId(), mediumRecu2.getId());
+
+        mediumService.exorcizar(mediumRecu.getId(), mediumRecu2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(mediumRecu.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(mediumRecu2.getId());
+
+        Espiritu jeagerAct = espirituService.recuperar(jeager.getId());
+        Espiritu ivaarAct = espirituService.recuperar(ivaar.getId());
+        Espiritu rikaAct = espirituService.recuperar(rika.getId());
+        Espiritu hanaAct = espirituService.recuperar(hana.getId());
+        Espiritu noroiAct = espirituService.recuperar(noroi.getId());
+
+        assertEquals(2, espiritusMedium1.size());
+        assertEquals(1, espiritusMedium2.size());
+        assertTrue(jeagerAct.estaLibre());
+        assertFalse(noroiAct.estaLibre());
+        assertTrue(hanaAct.estaLibre());
+        assertFalse(ivaarAct.estaLibre());
+        assertFalse(rikaAct.estaLibre());
+    }
+
+    @Test
+    void noHayAngelesException(){
+        assertThrows(NoHayAngelesException.class,()->{
+            mediumService.exorcizar(medium.getId(), medium2.getId());
+        });
+    }
+
+    @Test
+    void noHayDemonios(){
+        espirituService.conectar(espiritu.getId(), medium.getId());
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId());
+
+        mediumService.exorcizar(medium.getId(), medium2.getId());
+
+        List<Espiritu> espiritusMedium1 = mediumService.espiritus(medium.getId());
+        List<Espiritu> espiritusMedium2 = mediumService.espiritus(medium2.getId());
+
+        assertEquals(1, espiritusMedium1.size());
+        assertEquals(0, espiritusMedium2.size());
+        assertFalse(espirituAct.estaLibre());
+    }
 */
     @Test
     void descansarMedium(){
