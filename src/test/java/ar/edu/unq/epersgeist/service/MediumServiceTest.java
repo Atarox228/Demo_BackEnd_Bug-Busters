@@ -766,50 +766,50 @@ public class MediumServiceTest {
 //        assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(mediumRecu.getId(), espiritu.getId()));
 //    }
 
-//    @Test
-//    void invocarEspirituSinMana() {
-//        Medium mediumSinMana = new Medium("Nomana", 100, 0);
-//        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
-//        mediumService.crear(mediumSinMana);
-//        mediumSinMana.setUbicacion(bernal);
-//        mediumService.actualizar(mediumSinMana);
-//        mediumService.mover(mediumSinMana.getId(),bernal.getId());
-//        Espiritu espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
-//        assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
-//        assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
-//    }
+    @Test
+    void invocarEspirituSinMana() {
+        Medium mediumSinMana = new Medium("Nomana", 100, 0);
+        Espiritu espirituAntes = espirituService.recuperar(espiritu.getId());
+        mediumService.crear(mediumSinMana);
+        mediumSinMana.setUbicacion(bernal);
+        mediumService.actualizar(mediumSinMana);
+        //mediumService.mover(mediumSinMana.getId(),bernal.getId());
+        Optional<Espiritu> espirituNoInvocado = mediumService.invocar(mediumSinMana.getId(), espiritu.getId());
+        assertEquals(espirituNoInvocado.get().getMedium(), espirituAntes.getMedium());
+        assertEquals(espirituNoInvocado.get().getUbicacion(), espirituAntes.getUbicacion());
+    }
 
-//    @Test
-//    void invocarEspirituConIdMediumNull() {
-//        assertThrows(IdNoValidoException.class,()->{
-//            mediumService.invocar(null, espiritu2.getId());
-//        });
-//    }
+    @Test
+    void invocarEspirituConIdMediumNull() {
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+            mediumService.recuperar(null);
+        });
+    }
 
-//    @Test
-//    void invocarEspirituConIdMediumInvalido() {
-//        assertThrows(IdNoValidoException.class,()->{
-//            mediumService.invocar(2025L, espiritu2.getId());
-//        });
-//    }
-//
-//    @Test
-//    void invocarEspirituConIdEspirituNull() {
-//        mediumRecu.setMana(100);
-//        mediumService.actualizar(mediumRecu);
-//        assertThrows(IdNoValidoException.class,()->{
-//            mediumService.invocar(mediumRecu.getId(), null);
-//        });
-//    }
+    @Test
+    void invocarEspirituConIdMediumInvalido() {
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(2025L, espiritu2.getId());
+        });
+    }
 
-//    @Test
-//    void invocarEspirituConIdEspirituInvalido() {
-//        mediumRecu.setMana(100);
-//        mediumService.actualizar(mediumRecu);
-//        assertThrows(IdNoValidoException.class,()->{
-//            mediumService.invocar(mediumRecu.getId(), 2025L);
-//        });
-//    }
+    @Test
+    void invocarEspirituConIdEspirituNull() {
+        mediumRecu.setMana(100);
+        mediumService.actualizar(mediumRecu);
+        assertThrows(InvalidDataAccessApiUsageException.class,()->{
+            mediumService.invocar(mediumRecu.getId(), null);
+        });
+    }
+
+    @Test
+    void invocarEspirituConIdEspirituInvalido() {
+        mediumRecu.setMana(100);
+        mediumService.actualizar(mediumRecu);
+        assertThrows(IdNoValidoException.class,()->{
+            mediumService.invocar(mediumRecu.getId(), 2025L);
+        });
+    }
 
     @Test
     void espiritusDeMedium(){
