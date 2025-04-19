@@ -2,15 +2,10 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-//import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.impl.*;
-import jakarta.persistence.OptimisticLockException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +17,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,9 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MediumServiceTest {
 
     private DataService dataService;
+
     @Autowired
     private MediumService mediumService;
+
+    @Autowired
     private UbicacionService ubicacionService;
+
+    @Autowired
     private EspirituService espirituService;
     private Medium medium;
     private Medium medium2;
@@ -51,8 +52,8 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
-        //bernal = new Ubicacion("Bernal");
-        //ubicacionService.crear(bernal);
+        bernal = new Ubicacion("Bernal");
+        ubicacionService.crear(bernal);
 
         medium = new Medium("Lizzie",150,100);
         mediumService.crear(medium);
@@ -60,33 +61,33 @@ public class MediumServiceTest {
         medium2 = new Medium("Lala", 100, 50);
         mediumService.crear(medium2);
 
-//        espiritu = new Angel("Casper");
-//        espiritu.setNivelConexion(5);
-//        espirituService.crear(espiritu);
-//
-//        espiritu2 = new Demonio("Ghosty");
-//        espiritu2.setNivelConexion(40);
-//        espirituService.crear(espiritu2);
+        espiritu = new Angel("Casper");
+        espiritu.setNivelConexion(5);
+        espirituService.crear(espiritu);
 
-        //espiritu.setUbicacion(bernal);
-        //espirituService.actualizar(espiritu);
-        //espiritu2.setUbicacion(bernal);
-        //espirituService.actualizar(espiritu2);
-        //espirituRecu = espirituService.recuperar(espiritu.getId());
-        //espirituRecu2 = espirituService.recuperar(espiritu2.getId());
-        //medium.setUbicacion(bernal);
-        //medium2.setUbicacion(bernal);
-        //mediumService.actualizar(medium);
-        //mediumService.actualizar(medium2);
-//        mediumService.mover(medium.getId(),bernal.getId());
-//        mediumService.mover(medium2.getId(),bernal.getId());
-        //mediumRecu = mediumService.recuperar(medium.getId());
-        //mediumRecu.setMana(0);
-        //mediumService.actualizar(mediumRecu);
-        //mediumRecu2 = mediumService.recuperar(medium2.getId());
-        //mediumRecu2.setMana(0);
-        //mediumService.actualizar(mediumRecu2);
-        //this.dado = Dado.getInstance();
+        espiritu2 = new Demonio("Ghosty");
+        espiritu2.setNivelConexion(40);
+        espirituService.crear(espiritu2);
+
+        espiritu.setUbicacion(bernal);
+        espirituService.actualizar(espiritu);
+        espiritu2.setUbicacion(bernal);
+        espirituService.actualizar(espiritu2);
+        espirituRecu = espirituService.recuperar(espiritu.getId());
+        espirituRecu2 = espirituService.recuperar(espiritu2.getId());
+        medium.setUbicacion(bernal);
+        medium2.setUbicacion(bernal);
+        mediumService.actualizar(medium);
+        mediumService.actualizar(medium2);
+        //mediumService.mover(medium.getId(),bernal.getId());
+        //mediumService.mover(medium2.getId(),bernal.getId());
+        mediumRecu = mediumService.recuperar(medium.getId());
+        mediumRecu.setMana(0);
+        mediumService.actualizar(mediumRecu);
+        mediumRecu2 = mediumService.recuperar(medium2.getId());
+        mediumRecu2.setMana(0);
+        mediumService.actualizar(mediumRecu2);
+        this.dado = Dado.getInstance();
     }
 
     @Test
@@ -735,10 +736,12 @@ public class MediumServiceTest {
 //        espirituService.actualizar(espiritu2);
 //        Espiritu espirituAntes = espirituService.recuperar(espiritu2.getId());
 //
-//        Espiritu espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
-//        assertNotEquals(espirituInvocado.getMedium(), espirituAntes.getMedium());
-//        assertNotEquals(espirituInvocado.getUbicacion(), espirituAntes.getUbicacion());
+//        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
+//        assertNotEquals(espirituInvocado.get().getMedium(), espirituAntes.getMedium());
+//        assertNotEquals(espirituInvocado.get().getUbicacion(), espirituAntes.getUbicacion());
 //    }
+
+
 
 //    @Test
 //    void invocarEspirituLibreEnMismaUbicacion() {
@@ -806,24 +809,24 @@ public class MediumServiceTest {
 //        });
 //    }
 
-//    @Test
-//    void espiritusDeMedium(){
-//        // Utilizo conectar pero solo para agregar espiritus al medium.
-//        espirituService.conectar(espiritu.getId(), medium2.getId());
-//        assertEquals(1, (mediumService.espiritus(medium2.getId())).size());
-//    }
+    @Test
+    void espiritusDeMedium(){
+        //Utilizo conectar pero solo para agregar espiritus al medium.
+        espirituService.conectar(espiritu.getId(), medium2.getId());
+        assertEquals(1, (mediumService.espiritus(medium2.getId())).size());
+    }
 
     @Test
     void espiritusDeMediumSinEspiritus(){
         assertEquals(0, (mediumService.espiritus(medium2.getId())).size());
     }
 
-//    @Test
-//    void espiritusDeMediumConVariosEspiritus(){
-//        espirituService.conectar(espiritu.getId(), medium2.getId());
-//        espirituService.conectar(espiritu2.getId(), medium2.getId());
-//        assertEquals(2, (mediumService.espiritus(medium2.getId())).size());
-//    }
+    @Test
+    void espiritusDeMediumConVariosEspiritus(){
+        espirituService.conectar(espiritu.getId(), medium2.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+        assertEquals(2, (mediumService.espiritus(medium2.getId())).size());
+    }
 
     @Test
     void espiritusDeMediumConIdInvalida(){
@@ -841,8 +844,10 @@ public class MediumServiceTest {
 
     @AfterEach
     void cleanUp() {
+        espirituService.eliminarTodo();
         mediumService.eliminarTodo();
-        //dado.setModo(new ModoRandom())
+        ubicacionService.clearAll();
+        //dado.setModo(new ModoRandom());
     }
 }
 

@@ -2,14 +2,10 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import jakarta.persistence.OptimisticLockException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

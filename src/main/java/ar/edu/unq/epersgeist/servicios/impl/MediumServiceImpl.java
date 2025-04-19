@@ -3,27 +3,28 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class MediumServiceImpl implements MediumService {
     public final MediumDAO mediumDAO;
-    //public final EspirituDAO espirituDAO;
+    public final EspirituDAO espirituDAO;
+    public final UbicacionDAO ubicacionDAO;
 
-    public MediumServiceImpl(MediumDAO mediumDAO /*, EspirituDAO espirituDAO*/) {
+    public MediumServiceImpl(MediumDAO mediumDAO, EspirituDAO espirituDAO, UbicacionDAO ubicacionDAO) {
         this.mediumDAO = mediumDAO;
-        //this.espirituDAO = espirituDAO;
+        this.espirituDAO = espirituDAO;
+        this.ubicacionDAO = ubicacionDAO;
     }
 
     @Override
@@ -78,19 +79,19 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public Espiritu invocar(Long mediumId, Long espirituId) {
-//        Medium medium = mediumDAO.findById(mediumId)
-//                .orElseThrow(() -> new IdNoValidoException(mediumId));
-//        Espiritu espiritu = espirituDAO.findById(mediumId)
-//                .orElseThrow(() -> new IdNoValidoException(mediumId));
-//
-//        medium.invocar(espiritu);
-//
-//        espirituDAO.save(espiritu); necesario?
-//        mediumDAO.save(medium); necesario?
-//
-//        return espirituDAO.findById(mediumId);
-        return null;
+    public Optional<Espiritu> invocar(Long mediumId, Long espirituId) {
+        Medium medium = mediumDAO.findById(mediumId)
+                .orElseThrow(() -> new IdNoValidoException(mediumId));
+        Espiritu espiritu = espirituDAO.findById(mediumId)
+                .orElseThrow(() -> new IdNoValidoException(mediumId));
+
+        medium.invocar(espiritu);
+
+        //necesario?
+        espirituDAO.save(espiritu);
+        mediumDAO.save(medium);
+
+        return espirituDAO.findById(mediumId);
     }
 
     @Override
@@ -148,17 +149,9 @@ public class MediumServiceImpl implements MediumService {
             return espirituDao.recuperar(espirituId);
         });
     }
-
-    @Override
-    public List<Espiritu> espiritus(Long idMedium) {
-        if (idMedium == null) {throw new IdNoValidoException();}
-        return HibernateTransactionRunner.runTrx(() -> {
-                Medium medium = this.mediumDao.recuperar(idMedium);
-                if (medium == null) {throw new IdNoValidoException();}
-                return mediumDao.obtenerEspiritus(idMedium);
-        });
-    }
 */
+
+
 
 //    public void mover(Long mediumId, Long ubicacionId) {
 //        HibernateTransactionRunner.runTrx(() -> {

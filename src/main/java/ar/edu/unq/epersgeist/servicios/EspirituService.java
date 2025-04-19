@@ -13,7 +13,7 @@ public interface EspirituService {
     void eliminar(Espiritu espiritu);
     void eliminarTodo();
     void actualizar(Espiritu espiritu);
-    //Medium conectar(Long espirituId, Long mediumId);
+    Medium conectar(Long espirituId, Long mediumId);
     List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina);
     void ubicarseEn(Long idEspiritu, Long idUbicacion);
 }
