@@ -92,11 +92,11 @@ public class EspirituServiceImpl implements EspirituService {
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
         return espirituDAO.findDemonios(pageable).getContent();
     }
-
-    public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
-        Optional<Espiritu> espiritu = espirituDAO.findById(idEspiritu);
-        Optional<Ubicacion> ubicacion = ubicacionDAO.findById(idUbicacion);
-        espiritu.get().setUbicacion(ubicacion.get());
-        espirituDAO.save(espiritu.get());
-    }
+//
+//    public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
+//        Optional<Espiritu> espiritu = espirituDAO.findById(idEspiritu);
+//        Optional<Ubicacion> ubicacion = ubicacionDAO.findById(idUbicacion);
+//        espiritu.get().setUbicacion(ubicacion.get());
+//        espirituDAO.save(espiritu.get());
+//    }
 }
