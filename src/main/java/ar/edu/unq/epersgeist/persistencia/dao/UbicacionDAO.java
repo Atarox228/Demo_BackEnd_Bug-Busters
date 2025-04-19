@@ -2,10 +2,13 @@ package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import java.util.Collection;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+public interface UbicacionDAO {
+    void guardar(Ubicacion ubicacion);
+    Ubicacion recuperar(Long ubicacionId);
+    void eliminar(Ubicacion ubicacion);
+    Collection<Ubicacion> recuperarTodos();
+    void eliminarTodo();
 
-@Repository
-public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
+    void actualizar(Ubicacion ubicacion);
 }

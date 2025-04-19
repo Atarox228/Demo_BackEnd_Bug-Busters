@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface MediumService {
 
@@ -16,9 +15,8 @@ public interface MediumService {
     void actualizar(Medium medium);
     void descansar(Long idMedium);
     void exorcizar(long idMedium, long idMedium2);
-    Optional<Espiritu> invocar(Long mediumId, Long espirituId);
+    Espiritu invocar(Long mediumId, Long espirituId);
     List<Espiritu> espiritus(Long idMedium);
-    void eliminarTodo();
 //    void mover(Long mediumId, Long ubicacionId);
     // Comento mover, ya que lo podriamos utilizar en el TP3
 }

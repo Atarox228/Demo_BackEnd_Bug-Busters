@@ -9,77 +9,73 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.Collection;
 import java.util.List;
 
-
-@Service
-@Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
     private final UbicacionDAO ubicacionDAO;
-//    private final MediumDAO mediumDAO;
-//    private final EspirituDAO espirituDAO;
+    private final MediumDAO mediumDAO;
+    private final EspirituDAO espirituDAO;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO){
+    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO){
         this.ubicacionDAO = ubicacionDAO;
-//        this.mediumDAO = mediumDAO;
-//        this.espirituDAO = espirituDAO;
+        this.mediumDAO = mediumDAO;
+        this.espirituDAO = espirituDAO;
     }
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        if (ubicacion.getId() != null) {
-            throw new IdNoValidoException(null);
-        }
-        ubicacionDAO.save(ubicacion);
+        HibernateTransactionRunner.runTrx(() -> {
+            ubicacionDAO.guardar(ubicacion);
+            return null;
+        });
     }
 
     @Override
     public Ubicacion recuperar(Long ubicacionId) {
         if (ubicacionId == null) {
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException(ubicacionId);
         }
-        return ubicacionDAO.findById(ubicacionId).orElseThrow(() -> new IdNoValidoException(ubicacionId));
+        return HibernateTransactionRunner.runTrx(() -> ubicacionDAO.recuperar(ubicacionId));
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        ubicacionDAO.delete(ubicacion);
+
+        HibernateTransactionRunner.runTrx(() -> {
+            ubicacionDAO.eliminar(ubicacion);
+            return null;
+        });
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
         if(ubicacion.getId() == null){
-            throw new IdNoValidoException(null); //
+            throw new IdNoValidoException(null);
         }
-//        ubicacionDAO.findById(ubicacion.getId()).orElseThrow(() -> new IdNoValidoException(ubicacion.getId()));
-        ubicacionDAO.save(ubicacion);
+        HibernateTransactionRunner.runTrx(() -> {
+            ubicacionDAO.actualizar(ubicacion);
+            return null;
+        });
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return ubicacionDAO.findAll();
+        return HibernateTransactionRunner.runTrx(() -> ubicacionDAO.recuperarTodos());
     }
 
     @Override
-    public void clearAll() {
-        ubicacionDAO.deleteAll();
+    public List<Espiritu> espiritusEn(Long ubicacionId) {
+        return HibernateTransactionRunner.runTrx(() -> espirituDAO.espiritusEn(ubicacionId));
     }
 
-//    @Override
-//    public List<Espiritu> espiritusEn(Long ubicacionId) {
-//        return espirituDAO.espiritusEn(ubicacionId);
-//    }
-//
-//    @Override
-//    public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-//        return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
-//    }
+    @Override
+    public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
+        return HibernateTransactionRunner.runTrx(() -> mediumDAO.mediumsSinEspiritusEn(ubicacionId));
+    }
 
 
 }
