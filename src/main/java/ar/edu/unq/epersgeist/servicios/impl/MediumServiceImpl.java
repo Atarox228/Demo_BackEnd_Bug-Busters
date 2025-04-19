@@ -64,16 +64,15 @@ public class MediumServiceImpl implements MediumService {
         mediumDAO.save(medium);
     }
 
-
     @Override
     public void exorcizar(long idMedium, long idMedium2) {
         Medium medium = mediumDAO.findById(idMedium)
                 .orElseThrow(() -> new IdNoValidoException(idMedium));
         Medium medium2 = mediumDAO.findById(idMedium2)
                 .orElseThrow(() -> new IdNoValidoException(idMedium2));
-        //List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
-        //List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
-        //medium.exorcizar(medium2, angeles, demonios);
+        List<Espiritu> angeles = espirituDAO.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
+        List<Espiritu> demonios = espirituDAO.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
+        medium.exorcizar(medium2, angeles, demonios);
         mediumDAO.save(medium);
         mediumDAO.save(medium2);
     }
@@ -84,6 +83,7 @@ public class MediumServiceImpl implements MediumService {
                 .orElseThrow(() -> new IdNoValidoException(mediumId));
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new IdNoValidoException(espirituId));
+
 
         medium.invocar(espiritu);
 
@@ -131,22 +131,6 @@ public class MediumServiceImpl implements MediumService {
             mediumDao.actualizar(medium);
             mediumDao.actualizar(medium2);
             return null;
-        });
-    }
-
-    @Override
-    public Espiritu invocar(Long mediumId, Long espirituId) {
-        if (mediumId == null || espirituId == null){
-            throw new IdNoValidoException();
-        }
-        return HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = this.mediumDao.recuperar(mediumId);
-            Espiritu espiritu = this.espirituDao.recuperar(espirituId);
-            if (medium == null || espiritu == null) {throw new IdNoValidoException(espirituId);}
-            medium.invocar(espiritu);
-            this.espirituDao.actualizar(espiritu);
-            this.mediumDao.actualizar(medium);
-            return espirituDao.recuperar(espirituId);
         });
     }
 */

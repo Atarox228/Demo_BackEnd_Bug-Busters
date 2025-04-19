@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -31,10 +33,8 @@ public class MediumServiceTest {
 
     @Autowired
     private MediumService mediumService;
-
     @Autowired
     private UbicacionService ubicacionService;
-
     @Autowired
     private EspirituService espirituService;
     private Medium medium;
@@ -48,18 +48,26 @@ public class MediumServiceTest {
     private Espiritu espirituRecu2;
     private Ubicacion bernal;
 
-
-
     @BeforeEach
     void setUp() {
         bernal = new Ubicacion("Bernal");
         ubicacionService.crear(bernal);
 
         medium = new Medium("Lizzie",150,100);
+        medium.setUbicacion(bernal);
         mediumService.crear(medium);
 
         medium2 = new Medium("Lala", 100, 50);
+        medium2.setUbicacion(bernal);
         mediumService.crear(medium2);
+
+        mediumRecu = mediumService.recuperar(medium.getId());
+        mediumRecu.setMana(0);
+        mediumService.actualizar(mediumRecu);
+
+        mediumRecu2 = mediumService.recuperar(medium2.getId());
+        mediumRecu2.setMana(0);
+        mediumService.actualizar(mediumRecu2);
 
         espiritu = new Angel("Casper");
         espiritu.setNivelConexion(5);
@@ -67,26 +75,18 @@ public class MediumServiceTest {
 
         espiritu2 = new Demonio("Ghosty");
         espiritu2.setNivelConexion(40);
+        espiritu2.setUbicacion(bernal);
         espirituService.crear(espiritu2);
 
         espiritu.setUbicacion(bernal);
         espirituService.actualizar(espiritu);
-        espiritu2.setUbicacion(bernal);
-        espirituService.actualizar(espiritu2);
+
         espirituRecu = espirituService.recuperar(espiritu.getId());
         espirituRecu2 = espirituService.recuperar(espiritu2.getId());
-        medium.setUbicacion(bernal);
-        medium2.setUbicacion(bernal);
-        mediumService.actualizar(medium);
-        mediumService.actualizar(medium2);
+
         //mediumService.mover(medium.getId(),bernal.getId());
         //mediumService.mover(medium2.getId(),bernal.getId());
-        mediumRecu = mediumService.recuperar(medium.getId());
-        mediumRecu.setMana(0);
-        mediumService.actualizar(mediumRecu);
-        mediumRecu2 = mediumService.recuperar(medium2.getId());
-        mediumRecu2.setMana(0);
-        mediumService.actualizar(mediumRecu2);
+
         this.dado = Dado.getInstance();
     }
 
@@ -202,7 +202,7 @@ public class MediumServiceTest {
         });
     }
 
-/*
+
     @Test
     void exorcizarMedium1a1Victorioso(){
         dado.setModo(new ModoTrucado(6,60));
@@ -702,7 +702,7 @@ public class MediumServiceTest {
         assertEquals(0, espiritusMedium2.size());
         assertFalse(espirituAct.estaLibre());
     }
-*/
+
     @Test
     void descansarMedium(){
         Medium sinDescansar = mediumService.recuperar(medium.getId());
@@ -755,16 +755,16 @@ public class MediumServiceTest {
         assertEquals(espirituInvocado.get().getUbicacion(), espirituRecu2.getUbicacion());
     }
 
-//    @Test
-//    void invocarEspirituNoLibre() {
-//        mediumRecu.setMana(100);
-//        mediumService.actualizar(mediumRecu);
-//        mediumRecu2.setMana(100);
-//        mediumService.actualizar(mediumRecu2);
-//
-//        mediumService.invocar(mediumRecu2.getId(), espiritu.getId());
-//        assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(mediumRecu.getId(), espiritu.getId()));
-//    }
+    @Test
+    void invocarEspirituNoLibre() {
+        mediumRecu.setMana(100);
+        mediumService.actualizar(mediumRecu);
+        mediumRecu2.setMana(100);
+        mediumService.actualizar(mediumRecu2);
+
+        mediumService.invocar(mediumRecu2.getId(), espiritu.getId());
+        assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(mediumRecu.getId(), espiritu.getId()));
+    }
 
     @Test
     void invocarEspirituSinMana() {

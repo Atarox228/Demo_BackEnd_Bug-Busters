@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -28,5 +29,8 @@ import java.util.List;
 public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     @Query("SELECT e FROM Espiritu e WHERE TYPE(e) = Demonio")
     Page<Espiritu> findDemonios(Pageable pageable);
+
+    @Query("from Espiritu e where e.medium.id = :id and type(e) = :tipo")
+    List<Espiritu> recuperarEspiritusDeTipo(@Param("id") Long id, @Param("tipo") Class<? extends Espiritu> tipo);
 }
 
