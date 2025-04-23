@@ -6,10 +6,11 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface UbicacionService {
     void crear(Ubicacion ubicacion);
-    Ubicacion recuperar(Long ubicacionId);
+    Optional<Ubicacion> recuperar(Long ubicacionId);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
