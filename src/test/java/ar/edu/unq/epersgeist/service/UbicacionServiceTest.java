@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,50 +81,42 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarUbicacion(){
-        Ubicacion ubicacion2 = ubicacionService.recuperar(fellwood.getId());
-        assertEquals(fellwood.getNombre(), ubicacion2.getNombre());
+        Optional<Ubicacion> ubicacion2 = ubicacionService.recuperar(fellwood.getId());
+        assertEquals(fellwood.getNombre(), ubicacion2.get().getNombre());
     }
 
     @Test
     void recuperarUbicacionNoPersistida(){
-            assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(1L);});
+            assertEquals(Optional.empty(), ubicacionService.recuperar(1L));
     }
 
     @Test
     void recuperarUbicacionNula(){
-        assertThrows(IdNoValidoException.class,()->{
-            ubicacionService.recuperar(null);
-        });
-
+        assertEquals(Optional.empty(), ubicacionService.recuperar(null));
     }
 
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-            assertThrows(IdNoValidoException.class,()->{
-                ubicacionService.recuperar(idEliminado);
-            });
-
+        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
     }
 
     @Test
     void eliminarMismaUbicacionDosVeces() {
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        ubicacionService.eliminar(fellwood);   //DEBERIA DAR ERROR AL ELIMINAR ALGO ELIMINADO?¿
-        assertThrows(IdNoValidoException.class, () -> {
-            ubicacionService.recuperar(idEliminado);
-        });
+        ubicacionService.eliminar(fellwood);
+        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
     }
 
     @Test
     void eliminarUbicacionConEspiritus(){
         espiritu1.setUbicacion(fellwood);
         espirituService.actualizar(espiritu1);
-        Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId());
+        Optional<Ubicacion> ubicacion = ubicacionService.recuperar(fellwood.getId());
         assertThrows(DataIntegrityViolationException.class, () -> {      // DEBERIA SER OTRO ERROR?¿
-          ubicacionService.eliminar(ubicacion);
+          ubicacionService.eliminar(ubicacion.get());
         });
 
     }
@@ -150,8 +143,8 @@ public class UbicacionServiceTest {
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
         ubicacionService.actualizar(fellwood);
-        Ubicacion ubiCambiada = ubicacionService.recuperar(fellwood.getId());
-        assertNotEquals(nombrePre , ubiCambiada.getNombre());
+        Optional<Ubicacion> ubiCambiada = ubicacionService.recuperar(fellwood.getId());
+        assertNotEquals(nombrePre , ubiCambiada.get().getNombre());
     }
 
     @Test
@@ -173,8 +166,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
         ubicacionService.actualizar(fellwood);
-                assertThrows(IdNoValidoException.class, () -> {ubicacionService.recuperar(fellwood.getId());});
-                //Probar otra manera, o si es valido
+        assertEquals(Optional.empty(), ubicacionService.recuperar(fellwood.getId()));
     }
 
     @Test
@@ -185,11 +177,11 @@ public class UbicacionServiceTest {
         ashenvale.setNombre("Ardenweald");
         ubicacionService.actualizar(fellwood);
         ubicacionService.actualizar(ashenvale);
-        Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId());
-        Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId());
+        Optional<Ubicacion> ubiCambiada1 = ubicacionService.recuperar(fellwood.getId());
+        Optional<Ubicacion> ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId());
 
-        assertNotEquals(nombrePre1 , ubiCambiada1.getNombre());
-        assertNotEquals(nombrePre2 , ubiCambiada2.getNombre());
+        assertNotEquals(nombrePre1 , ubiCambiada1.get().getNombre());
+        assertNotEquals(nombrePre2 , ubiCambiada2.get().getNombre());
     }
 
     @Test
@@ -201,19 +193,15 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void eliminarTodasLasUbicaciones(){
+    void eliminarTodasLasUbicaciones() {
         Long ubi1Id = fellwood.getId();
         Long ubi2Id = ashenvale.getId();
 
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
-                    ubicacionService.clearAll();
-                    assertThrows(IdNoValidoException.class,()->{
-                        ubicacionService.recuperar(ubi1Id);
-                    });
-                    assertThrows(IdNoValidoException.class,()->{
-                        ubicacionService.recuperar(ubi2Id);
-                    });
+        ubicacionService.clearAll();
+        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi1Id));
+        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi2Id));
     }
 
     @Test
