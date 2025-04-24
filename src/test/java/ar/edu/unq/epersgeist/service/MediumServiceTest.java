@@ -50,7 +50,7 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
-        bernal = new Ubicacion("Bernal");
+        bernal = new Cementerio("Bernal", 100);
         ubicacionService.crear(bernal);
 
         medium = new Medium("Lizzie",150,100);
@@ -731,7 +731,7 @@ public class MediumServiceTest {
         mediumRecu2.setMana(100);
         mediumService.actualizar(mediumRecu2);
 
-        Ubicacion quilmes = new Ubicacion(("Quilmes"));
+        Ubicacion quilmes = new Cementerio("Quilmes", 100);
         ubicacionService.crear(quilmes);
         espiritu2.setUbicacion(quilmes);
 

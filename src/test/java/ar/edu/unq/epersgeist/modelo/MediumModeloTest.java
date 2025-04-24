@@ -22,8 +22,8 @@ public class MediumModeloTest {
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
 
-        Bernal = new Ubicacion("Bernal");
-        Quilmes = new Ubicacion("Quilmes");
+        Bernal = new Cementerio("Bernal", 100);
+        Quilmes = new Cementerio("Quilmes", 100);
     }
 
 

@@ -19,7 +19,7 @@ public class EspirituModeloTest {
 
         medium = new Medium("lala", 100, 50);
 
-        Bernal = new Ubicacion("Bernal");
+        Bernal = new Cementerio("Bernal", 100);
     }
 
 

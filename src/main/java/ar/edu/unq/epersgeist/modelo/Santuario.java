@@ -1,7 +1,15 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import lombok.NonNull;
+import jakarta.persistence.Entity;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+
+@Entity
 public class Santuario extends Ubicacion{
 
     public Santuario (@NonNull String nombre, @NonNull Integer flujoEnergia) {

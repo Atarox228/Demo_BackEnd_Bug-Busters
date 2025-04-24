@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 
 @Entity
 public class Cementerio extends Ubicacion{

@@ -10,7 +10,7 @@ import java.io.Serializable;
 @ToString @EqualsAndHashCode
 
 @Entity
-public class Ubicacion implements Serializable{
+public abstract class Ubicacion implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,15 +22,9 @@ public class Ubicacion implements Serializable{
         this.flujoEnergia = flujoEnergia;
     }
 
-    public boolean permiteInvocarTipo(TipoEspiritu tipo){
-        return true;
-    }
+    public abstract boolean permiteInvocarTipo(TipoEspiritu tipo);
 
-    public boolean puedeRecuperarse(Espiritu espiritu){
-        return true;
-    }
+    public abstract boolean puedeRecuperarse(Espiritu espiritu);
 
-    public Integer valorDeRecuperacion(){
-        return 0;
-    }
+    public abstract Integer valorDeRecuperacion();
 }

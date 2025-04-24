@@ -51,9 +51,9 @@ public class UbicacionServiceTest {
     @BeforeEach
     void prepare() {
 
-        fellwood = new Ubicacion("Fellwood");
+        fellwood = new Cementerio("Fellwood", 50);
         ubicacionService.crear(fellwood);
-        ashenvale = new Ubicacion("Ashenvale");
+        ashenvale = new Santuario("Ashenvale",100);
         ubicacionService.crear(ashenvale);
 
         espiritu1 = new Demonio( "Casper");
@@ -123,7 +123,7 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarTodasLasUbicaciones(){
-        Ubicacion ardenweald = new Ubicacion("Ardenweald");
+        Ubicacion ardenweald = new Cementerio("Ardenweald",100);
         ubicacionService.crear(ardenweald);
         Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(3, cantidadList);
@@ -149,7 +149,7 @@ public class UbicacionServiceTest {
 
     @Test
     void actualizarUbicacionNoRegistrada(){
-        Ubicacion ardenweald = new Ubicacion("Ardenweald");
+        Ubicacion ardenweald = new Cementerio("Ardenweald", 100);
         assertThrows(IdNoValidoException.class, () -> {
             ubicacionService.actualizar(ardenweald);
         });

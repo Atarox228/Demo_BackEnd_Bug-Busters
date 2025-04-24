@@ -43,8 +43,8 @@ public class EspirituServiceTest {
     @BeforeEach
     void setUp(){
 
-        Bernal = new Ubicacion("Bernal");
-        Quilmes = new Ubicacion("Quilmes");
+        Bernal = new Cementerio("Bernal", 100);
+        Quilmes = new Cementerio("Quilmes", 100);
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
 
