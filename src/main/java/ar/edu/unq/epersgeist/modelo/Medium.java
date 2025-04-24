@@ -63,12 +63,14 @@ public class Medium implements Serializable {
 
 
     public void descansar() {
-        this.aumentarMana(15);
-        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        this.aumentarMana(this.ubicacion.getFlujoEnergia() / 2);
+        espiritus.stream()
+                .filter(espiritu -> this.ubicacion.puedeRecuperarse(espiritu))
+                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacion()));
     }
 
     public void aumentarMana(Integer mana) {
-        this.setMana(Math.min(this.getMana() + 15, manaMax));
+        this.setMana(Math.min(this.getMana() + mana, manaMax));
     }
 
     public void reducirMana(Integer mana) {
@@ -77,14 +79,15 @@ public class Medium implements Serializable {
 
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            this.verificarSiEstaLibre(espiritu);
+            this.verificarSiPuedeInvocar(espiritu);
             this.reducirMana(10);
             espiritu.invocarme(this,this.ubicacion);
         }
     }
 
-    private void verificarSiEstaLibre(Espiritu espiritu) {
-        if (!espiritu.estaLibre()) {
+    private void verificarSiPuedeInvocar(Espiritu espiritu) {
+        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
+        if (! espiritu.estaLibre() && ! this.ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
             throw new EspirituNoLibreException(espiritu);
         }
     }
