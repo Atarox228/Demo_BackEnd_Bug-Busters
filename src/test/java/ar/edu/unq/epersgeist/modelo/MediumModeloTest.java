@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediumModeloTest {
     private Espiritu Casper;
+    private Demonio Demonio;
     private Medium medium;
     private Medium medium2;
     private Ubicacion Bernal;
@@ -18,6 +19,7 @@ public class MediumModeloTest {
     @BeforeEach
     void setUp(){
         Casper = new Angel("Casper");
+        Demonio = new Demonio("Demonio");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
@@ -78,14 +80,30 @@ public class MediumModeloTest {
 
     @Test
     void descansarAumentaMana() {
+        medium.setUbicacion(Bernal);
         Integer mana = medium.getMana();
         medium.descansar();
         Integer nuevoMana = medium.getMana();
-        assertEquals(mana + 15, nuevoMana);
+        assertEquals(100, nuevoMana);
+    }
+
+    @Test
+    void descansarEnCementerioConDemonio() {
+        medium.setUbicacion(Bernal);
+        medium.invocar(Demonio);
+        medium.conectarseAEspiritu(Demonio);
+        Integer mana = medium.getMana();
+        medium.descansar();
+        assertEquals(1, medium.getEspiritus().size());
+        assertTrue(medium.getEspiritus().contains(Demonio));
+        assertEquals(medium,  Demonio.getMedium());
+        assertEquals(90, medium.getMana());
+        assertEquals(100, Demonio.getNivelConexion());
     }
 
     @Test
     void descansarNoAumentaMana() {
+        medium.setUbicacion(Bernal);
         medium.setMana(medium.getManaMax());
         Integer mana = medium.getMana();
         medium.descansar();
@@ -115,9 +133,9 @@ public class MediumModeloTest {
     @Test
     void invocacionFallidaPorEspirituOcupado() {
         medium.setUbicacion(Bernal);
-        medium.setUbicacion(Quilmes);
-        medium.invocar(Casper);
-        assertThrows(EspirituNoLibreException.class, () -> medium.invocar(Casper));
+        Casper.setUbicacion(Bernal);
+        medium.conectarseAEspiritu(Casper);
+        assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));
     }
 
 

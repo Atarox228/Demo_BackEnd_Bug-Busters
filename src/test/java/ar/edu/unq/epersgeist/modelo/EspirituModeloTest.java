@@ -40,7 +40,6 @@ public class EspirituModeloTest {
         angel.setUbicacion(null);
         angel.setMedium(null);
         angel.invocarme(medium, Bernal);
-        assertEquals(medium, angel.getMedium());
         assertEquals(Bernal, angel.getUbicacion());
   }
 

@@ -712,6 +712,21 @@ public class MediumServiceTest {
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
 
+//    @Test
+//    void descansarMediumConDemonioEnCementerio(){
+//        Medium sinDescansar = mediumService.recuperar(medium.getId());
+//        //espiritu2 (Demonio) - espiritu (Angel)
+//        espirituService.conectar(espiritu2.getId(), medium.getId());
+//        mediumService.descansar(medium.getId());
+//        Medium descansado = mediumService.recuperar(medium.getId());
+//        assertEquals(sinDescansar.getId(), descansado.getId());
+//        assertEquals(descansado.getEspiritus().size(), 1);
+//        assertEquals(descansado.getMana(), 150);
+//        assertNotEquals(sinDescansar.getMana(), descansado.getMana());
+//    }
+
+
+
     @Test
     void descansarMediumConIdNulo(){
         assertThrows(InvalidDataAccessApiUsageException.class, () -> {
@@ -741,8 +756,11 @@ public class MediumServiceTest {
         Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
 
         assertTrue(espirituInvocado.isPresent());
-        assertNotEquals(espirituInvocado.get().getMedium(), espirituAntes.getMedium());
-        assertNotEquals(espirituInvocado.get().getUbicacion(), espirituAntes.getUbicacion());
+        assertNotEquals(espirituInvocado.get().getUbicacion(), espirituAntes.getMedium());
+        assertEquals(espirituInvocado.get().getUbicacion(), mediumRecu2.getUbicacion());
+        System.out.println(espirituAntes.getUbicacion().getId());
+        System.out.println(espirituInvocado.get().getUbicacion().getId());
+        assertNotEquals(espirituInvocado.get().getUbicacion().getId(), espirituAntes.getUbicacion().getId());
     }
 
     @Test
@@ -751,9 +769,24 @@ public class MediumServiceTest {
         mediumService.actualizar(mediumRecu2);
 
         Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
-        assertNotEquals(espirituInvocado.get().getMedium(), espirituRecu2.getMedium());
         assertEquals(espirituInvocado.get().getUbicacion(), espirituRecu2.getUbicacion());
     }
+
+//    @Test
+//    void invocarDemonioLibreEnCementerio() {
+//        Cementerio cementerio = new Cementerio("cementerio", 100);
+//        ubicacionService.crear(cementerio);
+//        mediumRecu2.setMana(100);
+//        mediumRecu2.setUbicacion(cementerio);
+//        mediumService.actualizar(mediumRecu2);
+//        espiritu2.setNivelConexion(10);
+//        espiritu2.setUbicacion(bernal);
+//        espirituService.actualizar(espiritu2);
+//        assertNotEquals(mediumRecu2.getUbicacion().getId(), espiritu2.getUbicacion().getId());
+//        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu2.getId());
+//        assertEquals(mediumRecu2.getUbicacion().getId(), espirituInvocado.get().getUbicacion().getId());
+//        assertEquals(espirituInvocado.get().getMedium().getId(), mediumRecu2.getId());
+//    }
 
     @Test
     void invocarEspirituNoLibre() {
@@ -763,6 +796,7 @@ public class MediumServiceTest {
         mediumService.actualizar(mediumRecu2);
 
         mediumService.invocar(mediumRecu2.getId(), espiritu.getId());
+        espirituService.conectar(espiritu.getId(), mediumRecu.getId());
         assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(mediumRecu.getId(), espiritu.getId()));
     }
 

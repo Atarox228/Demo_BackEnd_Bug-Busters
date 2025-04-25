@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import org.hibernate.annotations.Check;
 
@@ -77,6 +78,7 @@ public class Medium implements Serializable {
         this.setMana(Math.max(this.getMana() - mana, 0));
     }
 
+    @Transactional
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
             this.verificarSiPuedeInvocar(espiritu);
