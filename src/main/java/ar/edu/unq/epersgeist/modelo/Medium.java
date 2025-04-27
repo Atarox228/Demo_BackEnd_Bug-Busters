@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
     @ManyToOne
@@ -89,8 +90,12 @@ public class Medium implements Serializable {
 
     private void verificarSiPuedeInvocar(Espiritu espiritu) {
         //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
-        if (! espiritu.estaLibre() && ! this.ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+        if (! espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
+        }
+
+        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
         }
     }
 

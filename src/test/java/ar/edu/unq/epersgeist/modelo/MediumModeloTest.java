@@ -92,7 +92,6 @@ public class MediumModeloTest {
         medium.setUbicacion(Bernal);
         medium.invocar(Demonio);
         medium.conectarseAEspiritu(Demonio);
-        medium.conectarseAEspiritu(Demonio);
         medium.descansar();
         assertEquals(1, medium.getEspiritus().size());
         assertTrue(medium.getEspiritus().contains(Demonio));
@@ -130,7 +129,7 @@ public class MediumModeloTest {
     void invocacionExitosa() {
         medium.setUbicacion(Bernal);
         Integer mana = medium.getMana();
-        medium.invocar(Casper);
+        medium.invocar(Demonio);
         Integer nuevoMana = medium.getMana();
         assertEquals(mana - 10, nuevoMana);
     }
