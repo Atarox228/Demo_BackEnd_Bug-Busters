@@ -75,9 +75,16 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void invocarme(Medium medium, Ubicacion ubicacion)  {
-        this.medium = medium;
         this.ubicacion = ubicacion;
     }
 
     public abstract TipoEspiritu getTipo();
+
+    public void moverseACementerio(Ubicacion ubicacion) {
+        setUbicacion(ubicacion);
+    }
+
+    public void moverseASantuario(Ubicacion ubicacion) {
+        setUbicacion(ubicacion);
+    }
 }

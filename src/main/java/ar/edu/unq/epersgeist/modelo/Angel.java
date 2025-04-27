@@ -19,4 +19,10 @@ public final class Angel extends Espiritu {
     public TipoEspiritu getTipo() {
         return TipoEspiritu.ANGELICAL;
     }
+
+    @Override
+    public void moverseACementerio(Ubicacion ubicacion) {
+        setUbicacion(ubicacion);
+        reducirConexionYdesvincularSiEsNecesario(5);
+    }
 }

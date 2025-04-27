@@ -1,9 +1,11 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import org.hibernate.annotations.Check;
 
@@ -30,9 +32,10 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
+    @Setter
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -63,29 +66,37 @@ public class Medium implements Serializable {
 
 
     public void descansar() {
-        this.aumentarMana(15);
-        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
+        espiritus.stream()
+                .filter(espiritu -> this.ubicacion.puedeRecuperarse(espiritu))
+                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacionEspiritu()));
     }
 
     public void aumentarMana(Integer mana) {
-        this.setMana(Math.min(this.getMana() + 15, manaMax));
+        this.setMana(Math.min(this.getMana() + mana, manaMax));
     }
 
     public void reducirMana(Integer mana) {
         this.setMana(Math.max(this.getMana() - mana, 0));
     }
 
+    @Transactional
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            this.verificarSiEstaLibre(espiritu);
+            this.verificarSiPuedeInvocar(espiritu);
             this.reducirMana(10);
             espiritu.invocarme(this,this.ubicacion);
         }
     }
 
-    private void verificarSiEstaLibre(Espiritu espiritu) {
-        if (!espiritu.estaLibre()) {
+    private void verificarSiPuedeInvocar(Espiritu espiritu) {
+        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
+        if (! espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
+        }
+
+        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
         }
     }
 
@@ -118,5 +129,19 @@ public class Medium implements Serializable {
         }else{
             this.mana = mana;
         }
+    }
+
+    public void moverseA(Ubicacion ubicacion) {
+        ubicacion.mover(this);
+    }
+
+    public void moverASantuario(Santuario santuario) {
+        setUbicacion(santuario);
+        espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
+    }
+
+    public void moverACementerio(Cementerio cementerio) {
+        setUbicacion(cementerio);
+        espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
     }
 }

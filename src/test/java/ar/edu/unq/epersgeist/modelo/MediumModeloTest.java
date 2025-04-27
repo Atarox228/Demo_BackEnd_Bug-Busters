@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediumModeloTest {
     private Espiritu Casper;
+    private Demonio Demonio;
     private Medium medium;
     private Medium medium2;
     private Ubicacion Bernal;
@@ -18,12 +19,13 @@ public class MediumModeloTest {
     @BeforeEach
     void setUp(){
         Casper = new Angel("Casper");
+        Demonio = new Demonio("Demonio");
 
         medium = new Medium("lala", 100, 50);
         medium2 = new Medium("lolo", 100, 60);
 
-        Bernal = new Ubicacion("Bernal");
-        Quilmes = new Ubicacion("Quilmes");
+        Bernal = new Cementerio("Bernal", 100);
+        Quilmes = new Cementerio("Quilmes", 100);
     }
 
 
@@ -78,14 +80,44 @@ public class MediumModeloTest {
 
     @Test
     void descansarAumentaMana() {
+        medium.setUbicacion(Bernal);
         Integer mana = medium.getMana();
         medium.descansar();
         Integer nuevoMana = medium.getMana();
-        assertEquals(mana + 15, nuevoMana);
+        assertEquals(100, nuevoMana);
+    }
+
+    @Test
+    void descansarEnCementerioConDemonio() {
+        medium.setUbicacion(Bernal);
+        medium.invocar(Demonio);
+        medium.conectarseAEspiritu(Demonio);
+        medium.descansar();
+        assertEquals(1, medium.getEspiritus().size());
+        assertTrue(medium.getEspiritus().contains(Demonio));
+        assertEquals(medium,  Demonio.getMedium());
+        assertEquals(90, medium.getMana());
+        assertEquals(100, Demonio.getNivelConexion());
+    }
+
+    @Test
+    void descansarEnSantuarioConAngel() {
+        Santuario santuario = new Santuario("santuario", 50);
+        Casper.setNivelConexion(10);
+        medium.setUbicacion(santuario);
+        medium.invocar(Casper);
+        medium.conectarseAEspiritu(Casper);
+        medium.descansar();
+        assertEquals(1, medium.getEspiritus().size());
+        assertTrue(medium.getEspiritus().contains(Casper));
+        assertEquals(medium,  Casper.getMedium());
+        //assertEquals(90, medium.getMana());
+        assertEquals(68, Casper.getNivelConexion());
     }
 
     @Test
     void descansarNoAumentaMana() {
+        medium.setUbicacion(Bernal);
         medium.setMana(medium.getManaMax());
         Integer mana = medium.getMana();
         medium.descansar();
@@ -97,7 +129,7 @@ public class MediumModeloTest {
     void invocacionExitosa() {
         medium.setUbicacion(Bernal);
         Integer mana = medium.getMana();
-        medium.invocar(Casper);
+        medium.invocar(Demonio);
         Integer nuevoMana = medium.getMana();
         assertEquals(mana - 10, nuevoMana);
     }
@@ -115,9 +147,9 @@ public class MediumModeloTest {
     @Test
     void invocacionFallidaPorEspirituOcupado() {
         medium.setUbicacion(Bernal);
-        medium.setUbicacion(Quilmes);
-        medium.invocar(Casper);
-        assertThrows(EspirituNoLibreException.class, () -> medium.invocar(Casper));
+        Casper.setUbicacion(Bernal);
+        medium.conectarseAEspiritu(Casper);
+        assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));
     }
 
 

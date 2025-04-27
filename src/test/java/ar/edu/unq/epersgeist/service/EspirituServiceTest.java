@@ -43,8 +43,8 @@ public class EspirituServiceTest {
     @BeforeEach
     void setUp(){
 
-        Bernal = new Ubicacion("Bernal");
-        Quilmes = new Ubicacion("Quilmes");
+        Bernal = new Cementerio("Bernal", 100);
+        Quilmes = new Cementerio("Quilmes", 100);
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
 
@@ -284,7 +284,7 @@ public class EspirituServiceTest {
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
         Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(mediumConectado.getEspiritus().size(),1);
+        assertEquals(1, mediumConectado.getEspiritus().size());
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelConexion());
     }

@@ -1,0 +1,38 @@
+package ar.edu.unq.epersgeist.modelo;
+
+import jakarta.persistence.Entity;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+
+@Entity
+public class Santuario extends Ubicacion{
+
+    public Santuario (@NonNull String nombre, @NonNull Integer flujoEnergia) {
+        super(nombre,flujoEnergia);
+    }
+
+    @Override
+    public boolean permiteInvocarTipo(TipoEspiritu tipo){
+        return tipo == TipoEspiritu.ANGELICAL;
+    }
+
+    @Override
+    public boolean puedeRecuperarse(Espiritu espiritu){
+        return espiritu.getTipo() == TipoEspiritu.ANGELICAL;
+    }
+
+    @Override
+    public Integer valorDeRecuperacionMedium(){
+        return (int) Math.floor(this.getFlujoEnergia() * 1.5) ;
+    }
+
+    @Override
+    public void mover(Medium medium) {
+        medium.moverASantuario(this);
+    }
+}

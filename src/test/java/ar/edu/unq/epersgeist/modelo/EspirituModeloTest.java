@@ -11,15 +11,20 @@ public class EspirituModeloTest {
     private Espiritu demonio;
     private Medium medium;
     private Ubicacion Bernal;
+    private Ubicacion cementerio;
+    private Ubicacion santuario;
 
     @BeforeEach
     void setUp(){
         angel = new Angel("Gabriel");
+        angel.setNivelConexion(15);
+
         demonio = new Demonio("Lucifer");
+        demonio.setNivelConexion(15);
 
         medium = new Medium("lala", 100, 50);
 
-        Bernal = new Ubicacion("Bernal");
+        Bernal = new Cementerio("Bernal", 100);
     }
 
 
@@ -40,8 +45,30 @@ public class EspirituModeloTest {
         angel.setUbicacion(null);
         angel.setMedium(null);
         angel.invocarme(medium, Bernal);
-        assertEquals(medium, angel.getMedium());
         assertEquals(Bernal, angel.getUbicacion());
   }
 
+    @Test
+    void movimientoDeDemonioASantuarioPierde10DeConexion() {
+        demonio.moverseASantuario(santuario);
+        assertEquals(demonio.getNivelConexion(), 5);
+    }
+
+    @Test
+    void movimientoDeAngelACementerioPierde5DeConexion() {
+        angel.moverseACementerio(cementerio);
+        assertEquals(angel.getNivelConexion(), 10);
+    }
+
+    @Test
+    void movimientoDeDemonioACementerioNoPierdeConexion() {
+        demonio.moverseACementerio(cementerio);
+        assertEquals(demonio.getNivelConexion(), 15);
+    }
+
+    @Test
+    void movimientoDeAngelASantuarioNoPierdeConexion() {
+        angel.moverseASantuario(cementerio);
+        assertEquals(angel.getNivelConexion(), 15);
+    }
 }

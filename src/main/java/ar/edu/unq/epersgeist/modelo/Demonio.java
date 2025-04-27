@@ -19,4 +19,10 @@ public final class Demonio extends Espiritu {
     public TipoEspiritu getTipo() {
         return TipoEspiritu.DEMONIACO;
     }
+
+    @Override
+    public void moverseASantuario(Ubicacion ubicacion) {
+        setUbicacion(ubicacion);
+        reducirConexionYdesvincularSiEsNecesario(10);
+    }
 }
