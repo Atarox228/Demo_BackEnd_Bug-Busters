@@ -13,7 +13,7 @@ import java.util.Collection;
 @Repository
 public interface MediumDAO extends JpaRepository<Medium, Long> {
 
-    @Query("from Espiritu e where e.medium.id = :mediumId")
+    @Query("from Espiritu e where e.medium.id = :mediumId order by e.nombre asc")
     List<Espiritu> obtenerEspiritus(@Param("mediumId") Long mediumId);
 
     @Query(

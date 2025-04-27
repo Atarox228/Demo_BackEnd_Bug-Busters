@@ -71,5 +71,4 @@ public class EspirituModeloTest {
         angel.moverseASantuario(cementerio);
         assertEquals(angel.getNivelConexion(), 15);
     }
-
 }
