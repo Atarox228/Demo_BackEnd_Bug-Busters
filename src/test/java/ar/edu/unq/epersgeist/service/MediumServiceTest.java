@@ -737,18 +737,6 @@ public class MediumServiceTest {
         assertEquals(68, descansadoEspiritu.getNivelConexion());
     }
 
-    //    Santuario santuario = new Santuario("santuario", 50);
-//        Casper.setNivelConexion(10);
-//        medium.setUbicacion(santuario);
-//        medium.invocar(Casper);
-//        medium.conectarseAEspiritu(Casper);
-//        medium.descansar();
-//    assertEquals(1, medium.getEspiritus().size());
-//    assertTrue(medium.getEspiritus().contains(Casper));
-//    assertEquals(medium,  Casper.getMedium());
-//    //assertEquals(90, medium.getMana());
-//    assertEquals(68, Casper.getNivelConexion());
-
     @Test
     void descansarMediumConAngelEnSantuario(){
         Santuario santuario = new Santuario("santuario", 30);
