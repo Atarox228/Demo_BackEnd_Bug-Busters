@@ -35,6 +35,7 @@ public class Medium implements Serializable {
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
+    @Setter
     @ManyToOne
     private Ubicacion ubicacion;
 
@@ -135,12 +136,12 @@ public class Medium implements Serializable {
     }
 
     public void moverASantuario(Santuario santuario) {
-        setUbicacion(ubicacion);
-        espiritus.forEach(espiritu -> espiritu.moverseASantuario(ubicacion));
+        setUbicacion(santuario);
+        espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
     }
 
     public void moverACementerio(Cementerio cementerio) {
-        setUbicacion(ubicacion);
-        espiritus.forEach(espiritu -> espiritu.moverseACementerio(ubicacion));
+        setUbicacion(cementerio);
+        espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
     }
 }

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
@@ -1064,14 +1065,14 @@ public class MediumServiceTest {
         assertNull(angelRecuperado.getMedium());
         assertNotEquals(angelRecuperado.getNivelConexion(), espiritu.getNivelConexion());
     }
-/*
+
     @Test
     void movimientoDeMediumAMismaUbicacion() {
         assertThrows(MovimientoInvalidoException.class, () -> {
             mediumService.mover(medium2.getId(), bernal.getId());
         });
     }
-*/
+
     @Test
     void movimientoDeMediumConIdInexistente() {
         assertThrows(IdNoValidoException.class,() -> {
