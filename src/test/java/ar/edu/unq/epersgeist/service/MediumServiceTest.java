@@ -846,6 +846,37 @@ public class MediumServiceTest {
     }
 
     @Test
+    void invocarAngelLibreEnSantuario() {
+        Santuario santuario = new Santuario("santuario", 100);
+        ubicacionService.crear(santuario);
+        mediumRecu2.setMana(100);
+        mediumRecu2.setUbicacion(santuario);
+        mediumService.actualizar(mediumRecu2);
+        espiritu.setNivelConexion(10);
+        espiritu.setUbicacion(bernal);
+        espirituService.actualizar(espiritu);
+        assertNotEquals(mediumRecu2.getUbicacion().getId(), espiritu.getUbicacion().getId());
+        Optional<Espiritu> espirituInvocado = mediumService.invocar(mediumRecu2.getId(), espiritu.getId());
+        assertEquals(mediumRecu2.getUbicacion().getId(), espirituInvocado.get().getUbicacion().getId());
+    }
+
+    @Test
+    void invocacacionFallidaDemonioEnSantuario() {
+        Cementerio cementerio = new Cementerio("cementerio", 100);
+        ubicacionService.crear(cementerio);
+        mediumRecu2.setMana(100);
+        mediumRecu2.setUbicacion(cementerio);
+        mediumService.actualizar(mediumRecu2);
+        espiritu2.setNivelConexion(10);
+        espiritu2.setUbicacion(bernal);
+        espirituService.actualizar(espiritu2);
+        assertNotEquals(mediumRecu2.getUbicacion().getId(), espiritu2.getUbicacion().getId());
+        assertThrows(InvocacionFallidaPorUbicacionException.class, () -> {
+            mediumService.invocar(mediumRecu2.getId(), espiritu.getId());
+        });
+    }
+
+    @Test
     void invocarEspirituNoLibre() {
         mediumRecu.setMana(100);
         mediumService.actualizar(mediumRecu);
