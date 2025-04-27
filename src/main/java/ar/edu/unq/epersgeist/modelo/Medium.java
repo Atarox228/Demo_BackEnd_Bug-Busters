@@ -64,10 +64,10 @@ public class Medium implements Serializable {
 
 
     public void descansar() {
-        this.aumentarMana(this.ubicacion.getFlujoEnergia() / 2);
+        this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
         espiritus.stream()
                 .filter(espiritu -> this.ubicacion.puedeRecuperarse(espiritu))
-                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacion()));
+                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacionEspiritu()));
     }
 
     public void aumentarMana(Integer mana) {

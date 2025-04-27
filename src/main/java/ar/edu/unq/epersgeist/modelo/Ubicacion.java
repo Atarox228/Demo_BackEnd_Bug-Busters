@@ -26,5 +26,9 @@ public abstract class Ubicacion implements Serializable{
 
     public abstract boolean puedeRecuperarse(Espiritu espiritu);
 
-    public abstract Integer valorDeRecuperacion();
+    public abstract Integer valorDeRecuperacionMedium();
+
+    public Integer valorDeRecuperacionEspiritu(){
+        return this.flujoEnergia;
+    }
 }

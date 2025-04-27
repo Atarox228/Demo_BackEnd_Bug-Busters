@@ -284,7 +284,7 @@ public class EspirituServiceTest {
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
         Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(mediumConectado.getEspiritus().size(),1);
+        assertEquals(1, mediumConectado.getEspiritus().size());
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelConexion());
     }

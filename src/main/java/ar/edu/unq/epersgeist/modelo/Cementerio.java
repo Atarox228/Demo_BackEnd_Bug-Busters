@@ -28,7 +28,8 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
-    public Integer valorDeRecuperacion(){
-         return this.getFlujoEnergia();
+    public Integer valorDeRecuperacionMedium(){
+         return this.getFlujoEnergia() / 2;
     }
+
 }
