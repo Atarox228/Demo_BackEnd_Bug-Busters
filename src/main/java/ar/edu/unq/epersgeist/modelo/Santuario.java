@@ -31,4 +31,8 @@ public class Santuario extends Ubicacion{
         return (int) Math.floor(this.getFlujoEnergia() * 1.5) ;
     }
 
+    @Override
+    public void mover(Medium medium) {
+        medium.moverASantuario(this);
+    }
 }

@@ -19,6 +19,5 @@ public interface MediumService {
     Optional<Espiritu> invocar(Long mediumId, Long espirituId);
     List<Espiritu> espiritus(Long idMedium);
     void eliminarTodo();
-//    void mover(Long mediumId, Long ubicacionId);
-    // Comento mover, ya que lo podriamos utilizar en el TP3
+    void mover(Long mediumId, Long ubicacionId);
 }

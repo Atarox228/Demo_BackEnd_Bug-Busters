@@ -32,4 +32,8 @@ public class Cementerio extends Ubicacion{
          return this.getFlujoEnergia() / 2;
     }
 
+    @Override
+    public void mover(Medium medium) {
+        medium.moverACementerio(this);
+    }
 }

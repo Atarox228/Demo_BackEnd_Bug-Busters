@@ -31,4 +31,6 @@ public abstract class Ubicacion implements Serializable{
     public Integer valorDeRecuperacionEspiritu(){
         return this.flujoEnergia;
     }
+
+    public abstract void mover(Medium medium);
 }

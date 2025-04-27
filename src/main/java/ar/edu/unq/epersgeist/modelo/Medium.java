@@ -129,4 +129,18 @@ public class Medium implements Serializable {
             this.mana = mana;
         }
     }
+
+    public void moverseA(Ubicacion ubicacion) {
+        ubicacion.mover(this);
+    }
+
+    public void moverASantuario(Santuario santuario) {
+        setUbicacion(ubicacion);
+        espiritus.forEach(espiritu -> espiritu.moverseASantuario(ubicacion));
+    }
+
+    public void moverACementerio(Cementerio cementerio) {
+        setUbicacion(ubicacion);
+        espiritus.forEach(espiritu -> espiritu.moverseACementerio(ubicacion));
+    }
 }
