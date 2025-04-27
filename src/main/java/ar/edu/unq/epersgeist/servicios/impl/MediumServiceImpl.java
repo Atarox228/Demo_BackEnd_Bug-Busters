@@ -37,9 +37,8 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public Medium recuperar(Long id) {
-        return mediumDAO.findById(id)
-                .orElseThrow(() -> new IdNoValidoException(id));
+    public Optional <Medium> recuperar(Long id) {
+        return mediumDAO.findById(id);
     }
 
     @Override

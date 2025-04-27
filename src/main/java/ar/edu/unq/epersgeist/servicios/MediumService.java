@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MediumService {
 
     void crear(Medium medium);
-    Medium recuperar(Long id);
+    Optional <Medium> recuperar(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void actualizar(Medium medium);
