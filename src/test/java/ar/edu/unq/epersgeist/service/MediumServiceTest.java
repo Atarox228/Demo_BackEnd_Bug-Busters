@@ -737,17 +737,29 @@ public class MediumServiceTest {
         assertEquals(68, descansadoEspiritu.getNivelConexion());
     }
 
-    //    Santuario santuario = new Santuario("santuario", 50);
-//        Casper.setNivelConexion(10);
-//        medium.setUbicacion(santuario);
-//        medium.invocar(Casper);
-//        medium.conectarseAEspiritu(Casper);
-//        medium.descansar();
-//    assertEquals(1, medium.getEspiritus().size());
-//    assertTrue(medium.getEspiritus().contains(Casper));
-//    assertEquals(medium,  Casper.getMedium());
-//    //assertEquals(90, medium.getMana());
-//    assertEquals(68, Casper.getNivelConexion());
+    @Test
+    void descansarMediumConAngelEnCementerio(){
+        Cementerio cementerio = new Cementerio("cementerio", 50);
+        ubicacionService.crear(cementerio);
+        espiritu.setNivelConexion(10);
+        espiritu.setUbicacion(cementerio);
+        medium.setUbicacion(cementerio);
+        medium.setMana(50);
+        mediumService.actualizar(medium);
+        espirituService.actualizar(espiritu);
+        espirituService.conectar(espiritu.getId(), medium.getId());
+        Espiritu espirituNoDescansado = espirituService.recuperar(espiritu.getId());
+        Optional<Medium> mediumNoDescansado = mediumService.recuperar(medium.getId());
+        assertEquals(50, mediumNoDescansado.get().getMana());
+        mediumService.descansar(medium.getId());
+        Optional<Medium> mediumDescansado = mediumService.recuperar(medium.getId());
+        Espiritu espirituDescansado = espirituService.recuperar(espiritu.getId());
+
+        assertEquals(espirituDescansado.getMedium().getId(), mediumDescansado.get().getId());
+        assertEquals(espirituNoDescansado.getNivelConexion(), espirituDescansado.getNivelConexion());
+        assertNotEquals(mediumNoDescansado.get().getMana(), mediumDescansado.get().getMana());
+        assertEquals(75, mediumDescansado.get().getMana());
+    }
 
     @Test
     void descansarMediumConAngelEnSantuario(){
@@ -770,6 +782,31 @@ public class MediumServiceTest {
         assertEquals(85, descansadoMedium.get().getMana());
         assertEquals(48, descansadoEspiritu.getNivelConexion());
     }
+
+    @Test
+    void descansarMediumConDemonioEnSantuario(){
+        Santuario santuario = new Santuario("santuario", 30);
+        ubicacionService.crear(santuario);
+        espiritu2.setNivelConexion(10);
+        espiritu2.setUbicacion(santuario);
+        medium.setUbicacion(santuario);
+        medium.setMana(50);
+        mediumService.actualizar(medium);
+        espirituService.actualizar(espiritu2);
+        espirituService.conectar(espiritu2.getId(), medium.getId());
+        Espiritu espirituNoDescansado = espirituService.recuperar(espiritu2.getId());
+        Optional<Medium> mediumNoDescansado = mediumService.recuperar(medium.getId());
+        assertEquals(50, mediumNoDescansado.get().getMana());
+        mediumService.descansar(medium.getId());
+        Optional<Medium> mediumDescansado = mediumService.recuperar(medium.getId());
+        Espiritu espirituDescansado = espirituService.recuperar(espiritu2.getId());
+
+        assertEquals(espirituDescansado.getMedium().getId(), mediumDescansado.get().getId());
+        assertEquals(espirituNoDescansado.getNivelConexion(), espirituDescansado.getNivelConexion());
+        assertNotEquals(mediumNoDescansado.get().getMana(), mediumDescansado.get().getMana());
+        assertEquals(95, mediumDescansado.get().getMana());
+    }
+
 
     @Test
     void descansarMediumConIdNulo(){
