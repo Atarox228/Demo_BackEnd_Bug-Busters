@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -8,18 +9,12 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 
 @Entity
 public class Cementerio extends Ubicacion{
 
     public Cementerio(@NonNull String nombre, @NonNull Integer flujoEnergia) {
         super(nombre,flujoEnergia);
-    }
-
-    @Override
-    public boolean permiteInvocarTipo(TipoEspiritu tipo){
-        return tipo == TipoEspiritu.DEMONIACO;
     }
 
     @Override
@@ -33,7 +28,17 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
-    public void mover(Medium medium) {
+    public void moverMedium(Medium medium) {
         medium.moverACementerio(this);
+    }
+
+    @Override
+    public void invocarEspirituDemoniaco(Demonio demonio) {
+        demonio.moverseACementerio(this);
+    }
+
+    @Override
+    public void invocarEspirituAngelical(Angel angel) {
+        throw new InvocacionFallidaPorUbicacionException(angel, this);
     }
 }

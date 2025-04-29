@@ -9,8 +9,6 @@ public class EspirituModeloTest {
 
     private Espiritu angel;
     private Espiritu demonio;
-    private Medium medium;
-    private Ubicacion Bernal;
     private Ubicacion cementerio;
     private Ubicacion santuario;
 
@@ -22,9 +20,8 @@ public class EspirituModeloTest {
         demonio = new Demonio("Lucifer");
         demonio.setNivelConexion(15);
 
-        medium = new Medium("lala", 100, 50);
-
-        Bernal = new Cementerio("Bernal", 100);
+        santuario = new Santuario("santuario", 15);
+        cementerio = new Cementerio("cementerio", 15);
     }
 
 
@@ -40,13 +37,6 @@ public class EspirituModeloTest {
 
     @Test
     void verificarPorDemonioCuandoEsAngel() {assertNotEquals(demonio.getTipo(), TipoEspiritu.ANGELICAL);}
-    @Test
-    void invocarme() {
-        angel.setUbicacion(null);
-        angel.setMedium(null);
-        angel.invocarme(medium, Bernal);
-        assertEquals(Bernal, angel.getUbicacion());
-  }
 
     @Test
     void movimientoDeDemonioASantuarioPierde10DeConexion() {

@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -7,18 +9,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 
 @Entity
 public class Santuario extends Ubicacion{
 
     public Santuario (@NonNull String nombre, @NonNull Integer flujoEnergia) {
         super(nombre,flujoEnergia);
-    }
-
-    @Override
-    public boolean permiteInvocarTipo(TipoEspiritu tipo){
-        return tipo == TipoEspiritu.ANGELICAL;
     }
 
     @Override
@@ -32,7 +28,17 @@ public class Santuario extends Ubicacion{
     }
 
     @Override
-    public void mover(Medium medium) {
+    public void moverMedium(Medium medium) {
         medium.moverASantuario(this);
+    }
+
+    @Override
+    public void invocarEspirituDemoniaco(Demonio demonio) {
+        throw new InvocacionFallidaPorUbicacionException(demonio, this);
+    }
+
+    @Override
+    public void invocarEspirituAngelical(Angel angel) {
+        angel.moverseASantuario(this);
     }
 }

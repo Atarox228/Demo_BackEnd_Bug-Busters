@@ -151,6 +151,4 @@ public class MediumModeloTest {
         medium.conectarseAEspiritu(Casper);
         assertThrows(NoSePuedenConectarException.class, () -> medium.conectarseAEspiritu(Casper));
     }
-
-
 }

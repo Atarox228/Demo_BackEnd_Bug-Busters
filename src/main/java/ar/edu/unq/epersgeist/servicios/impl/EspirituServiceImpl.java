@@ -8,12 +8,8 @@ import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -78,7 +74,6 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
         Optional<Medium> medium = mediumDAO.findById(mediumId);
         medium.get().conectarseAEspiritu(espiritu.get());
-        espirituDAO.save(espiritu.get());
         mediumDAO.save(medium.get());
         return mediumDAO.findById(mediumId).get();
     }
@@ -92,11 +87,4 @@ public class EspirituServiceImpl implements EspirituService {
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
         return espirituDAO.findDemonios(pageable).getContent();
     }
-//
-//    public void ubicarseEn(Long idEspiritu, Long idUbicacion) {
-//        Optional<Espiritu> espiritu = espirituDAO.findById(idEspiritu);
-//        Optional<Ubicacion> ubicacion = ubicacionDAO.findById(idUbicacion);
-//        espiritu.get().setUbicacion(ubicacion.get());
-//        espirituDAO.save(espiritu.get());
-//    }
 }

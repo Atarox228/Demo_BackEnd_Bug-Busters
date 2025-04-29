@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class EspirituServiceTest {
 
-//    @Autowired
-//    private DataService dataService;
     @Autowired
     private EspirituService espirituService;
     @Autowired
