@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 
 @Entity
 public class Santuario extends Ubicacion{

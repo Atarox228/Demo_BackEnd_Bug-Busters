@@ -138,7 +138,15 @@ public class MediumServiceTest {
         mediumService.eliminar(medium);
         assertFalse(mediumService.recuperar(mediumId).isPresent());
     }
-
+/*
+    @Test
+    void eliminarMediumYaEliminado(){
+        mediumService.eliminar(medium);
+        assertThrows(OptimisticLockException.class, () -> {
+            mediumService.eliminar(medium);
+        });
+    }
+*/
     @Test
     void eliminarTodosLosMediums() {
         Long mediumId = medium.getId();
@@ -184,6 +192,7 @@ public class MediumServiceTest {
     @Test
     void exorcizarMedium1a1Victorioso(){
         dado.setModo(new ModoTrucado(6,60));
+        espiritu = espirituService.recuperar(espiritu.getId());
         espiritu.setNivelConexion(80);
         espirituService.actualizar(espiritu);
 
@@ -990,7 +999,7 @@ public class MediumServiceTest {
         assertEquals(santuario.getNombre(), actualizado.get().getUbicacion().getNombre());
         assertEquals(santuario.getNombre(), demonioRecuperado.getUbicacion().getNombre());
         assertNull(demonioRecuperado.getMedium());
-        assertNotEquals(demonioRecuperado.getNivelConexion(), espiritu2.getNivelConexion());
+        assertEquals(demonioRecuperado.getNivelConexion(), 0);
     }
 
     @Test
@@ -1058,5 +1067,7 @@ public class MediumServiceTest {
         espirituService.eliminarTodo();
         mediumService.eliminarTodo();
         ubicacionService.clearAll();
+        //dado.setModo(new ModoRandom());
     }
 }
+

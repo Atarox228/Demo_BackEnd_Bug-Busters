@@ -74,7 +74,6 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
         Optional<Medium> medium = mediumDAO.findById(mediumId);
         medium.get().conectarseAEspiritu(espiritu.get());
-        espirituDAO.save(espiritu.get());
         mediumDAO.save(medium.get());
         return mediumDAO.findById(mediumId).get();
     }

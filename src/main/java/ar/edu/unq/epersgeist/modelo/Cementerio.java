@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 
 @Entity
 public class Cementerio extends Ubicacion{

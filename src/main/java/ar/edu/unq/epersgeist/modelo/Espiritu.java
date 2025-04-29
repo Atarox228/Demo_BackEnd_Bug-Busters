@@ -60,6 +60,7 @@ public abstract class Espiritu implements Serializable {
     public void reducirConexionYdesvincularSiEsNecesario(int i) {
         this.nivelConexion = Math.max(this.nivelConexion - i, 0);
         if (nivelConexion == 0) {
+            medium.desconectarse(this);
             this.medium = null;
         }
     }

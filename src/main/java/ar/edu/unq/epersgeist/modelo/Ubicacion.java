@@ -35,4 +35,5 @@ public abstract class Ubicacion implements Serializable{
     public abstract void invocarEspirituDemoniaco(Demonio demonio);
 
     public abstract void invocarEspirituAngelical(Angel angel);
+
 }
