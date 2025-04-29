@@ -22,8 +22,6 @@ public abstract class Ubicacion implements Serializable{
         this.flujoEnergia = flujoEnergia;
     }
 
-    public abstract boolean permiteInvocarTipo(TipoEspiritu tipo);
-
     public abstract boolean puedeRecuperarse(Espiritu espiritu);
 
     public abstract Integer valorDeRecuperacionMedium();
@@ -32,5 +30,9 @@ public abstract class Ubicacion implements Serializable{
         return this.flujoEnergia;
     }
 
-    public abstract void mover(Medium medium);
+    public abstract void moverMedium(Medium medium);
+
+    public abstract void invocarEspirituDemoniaco(Demonio demonio);
+
+    public abstract void invocarEspirituAngelical(Angel angel);
 }

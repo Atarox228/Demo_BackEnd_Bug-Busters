@@ -10,7 +10,6 @@ import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -83,14 +82,8 @@ public class MediumServiceImpl implements MediumService {
                 .orElseThrow(() -> new IdNoValidoException(mediumId));
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new IdNoValidoException(espirituId));
-
-
         medium.invocar(espiritu);
-
-        //necesario? cascade
-        espirituDAO.save(espiritu);
         mediumDAO.save(medium);
-
         return espirituDAO.findById(espirituId);
     }
 

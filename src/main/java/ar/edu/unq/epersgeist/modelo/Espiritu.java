@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import java.io.Serializable;
+
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -29,7 +31,6 @@ public abstract class Espiritu implements Serializable {
     private Ubicacion ubicacion;
 
     public Espiritu(@NonNull String nombre) {
-
         this.nivelConexion = 0;
         this.nombre = nombre;
         this.medium = null;
@@ -44,17 +45,6 @@ public abstract class Espiritu implements Serializable {
 
     public boolean estaLibre(){
         return this.medium == null;
-    }
-
-    @Override
-    public String toString() {
-        return "Espiritu{" +
-                "id=" + id +
-                ", nivelConexion=" + nivelConexion +
-                ", nombre='" + nombre + '\'' +
-                ", medium= " + medium.getNombre() +
-                ", ubicacion= " + ubicacion.getNombre() +
-                '}';
     }
 
     public int getProbDefensa() {
@@ -74,8 +64,10 @@ public abstract class Espiritu implements Serializable {
         }
     }
 
-    public void invocarme(Medium medium, Ubicacion ubicacion)  {
-        this.ubicacion = ubicacion;
+    public void invocarseA(Ubicacion ubicacion) {
+        if (!estaLibre()) {
+            throw new EspirituNoLibreException(this);
+        }
     }
 
     public abstract TipoEspiritu getTipo();

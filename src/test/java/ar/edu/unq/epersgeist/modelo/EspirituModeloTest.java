@@ -40,13 +40,13 @@ public class EspirituModeloTest {
 
     @Test
     void verificarPorDemonioCuandoEsAngel() {assertNotEquals(demonio.getTipo(), TipoEspiritu.ANGELICAL);}
-    @Test
-    void invocarme() {
-        angel.setUbicacion(null);
-        angel.setMedium(null);
-        angel.invocarme(medium, Bernal);
-        assertEquals(Bernal, angel.getUbicacion());
-  }
+//    @Test
+//    void invocarme() {
+//        angel.setUbicacion(null);
+//        angel.setMedium(null);
+//        angel.invocarme(medium, Bernal);
+//        assertEquals(Bernal, angel.getUbicacion());
+//  }
 
     @Test
     void movimientoDeDemonioASantuarioPierde10DeConexion() {

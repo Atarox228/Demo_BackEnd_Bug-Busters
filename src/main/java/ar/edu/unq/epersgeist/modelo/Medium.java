@@ -1,14 +1,10 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
 import lombok.*;
 import org.hibernate.annotations.Check;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -40,14 +36,9 @@ public class Medium implements Serializable {
     private Ubicacion ubicacion;
 
     public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
-        if (manaMax >= mana) {
-            this.mana = mana;
-        } else {
-            this.mana = manaMax;
-        }
+        this.mana = (manaMax >= mana) ? mana : manaMax;
         this.nombre = nombre;
         this.manaMax = manaMax;
-
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -64,7 +55,6 @@ public class Medium implements Serializable {
         return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
-
     public void descansar() {
         this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
         espiritus.stream()
@@ -80,23 +70,10 @@ public class Medium implements Serializable {
         this.setMana(Math.max(this.getMana() - mana, 0));
     }
 
-    @Transactional
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            this.verificarSiPuedeInvocar(espiritu);
+            espiritu.invocarseA(this.ubicacion);
             this.reducirMana(10);
-            espiritu.invocarme(this,this.ubicacion);
-        }
-    }
-
-    private void verificarSiPuedeInvocar(Espiritu espiritu) {
-        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
-        if (! espiritu.estaLibre()) {
-            throw new EspirituNoLibreException(espiritu);
-        }
-
-        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
-            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
         }
     }
 
@@ -132,16 +109,15 @@ public class Medium implements Serializable {
     }
 
     public void moverseA(Ubicacion ubicacion) {
-        ubicacion.mover(this);
+        setUbicacion(ubicacion);
+        ubicacion.moverMedium(this);
     }
 
     public void moverASantuario(Santuario santuario) {
-        setUbicacion(santuario);
         espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
     }
 
     public void moverACementerio(Cementerio cementerio) {
-        setUbicacion(cementerio);
         espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
     }
 }
