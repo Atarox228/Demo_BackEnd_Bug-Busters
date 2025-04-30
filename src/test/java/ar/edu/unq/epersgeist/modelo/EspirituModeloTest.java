@@ -38,27 +38,4 @@ public class EspirituModeloTest {
     @Test
     void verificarPorDemonioCuandoEsAngel() {assertNotEquals(demonio.getTipo(), TipoEspiritu.ANGELICAL);}
 
-    @Test
-    void movimientoDeDemonioASantuarioPierde10DeConexion() {
-        demonio.moverseASantuario(santuario);
-        assertEquals(demonio.getNivelConexion(), 5);
-    }
-
-    @Test
-    void movimientoDeAngelACementerioPierde5DeConexion() {
-        angel.moverseACementerio(cementerio);
-        assertEquals(angel.getNivelConexion(), 10);
-    }
-
-    @Test
-    void movimientoDeDemonioACementerioNoPierdeConexion() {
-        demonio.moverseACementerio(cementerio);
-        assertEquals(demonio.getNivelConexion(), 15);
-    }
-
-    @Test
-    void movimientoDeAngelASantuarioNoPierdeConexion() {
-        angel.moverseASantuario(cementerio);
-        assertEquals(angel.getNivelConexion(), 15);
-    }
 }

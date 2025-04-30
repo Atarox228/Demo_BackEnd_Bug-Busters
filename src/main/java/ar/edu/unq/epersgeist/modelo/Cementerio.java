@@ -29,11 +29,6 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
-    public void moverMedium(Medium medium) {
-        medium.moverACementerio(this);
-    }
-
-    @Override
     public void moverAEspiritu(Espiritu espiritu){
         espiritu.setUbicacion(this);
         if(espiritu.getTipo() == TipoEspiritu.ANGELICAL){
@@ -41,13 +36,8 @@ public class Cementerio extends Ubicacion{
         }
     }
 
-    @Override
-    public void invocarEspirituDemoniaco(Demonio demonio) {
-        demonio.moverseACementerio(this);
+    public boolean permiteInvocarTipo(TipoEspiritu tipo){
+        return tipo == TipoEspiritu.DEMONIACO;
     }
 
-    @Override
-    public void invocarEspirituAngelical(Angel angel) {
-        throw new InvocacionFallidaPorUbicacionException(angel, this);
-    }
 }
