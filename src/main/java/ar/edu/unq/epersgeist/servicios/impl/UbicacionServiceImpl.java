@@ -55,7 +55,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         if(ubicacion.getId() == null){
             throw new IdNoValidoException(null); //
         }
-//        ubicacionDAO.findById(ubicacion.getId()).orElseThrow(() -> new IdNoValidoException(ubicacion.getId()));
         ubicacionDAO.save(ubicacion);
     }
 
