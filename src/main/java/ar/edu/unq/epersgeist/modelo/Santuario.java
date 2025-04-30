@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 @ToString
 
 @Entity
+@DiscriminatorValue("SANTUARIO")
 public class Santuario extends Ubicacion{
 
     public Santuario (@NonNull String nombre, @NonNull Integer flujoEnergia) {

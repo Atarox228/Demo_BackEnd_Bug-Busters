@@ -11,6 +11,7 @@ import java.io.Serializable;
 @ToString
 
 @Entity
+@DiscriminatorValue("CEMENTERIO")
 public class Cementerio extends Ubicacion{
 
     public Cementerio(@NonNull String nombre, @NonNull Integer flujoEnergia) {
