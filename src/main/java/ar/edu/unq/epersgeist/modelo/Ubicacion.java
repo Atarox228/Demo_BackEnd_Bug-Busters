@@ -9,6 +9,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
 
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "tipo_ubicacion", discriminatorType = DiscriminatorType.STRING)
+
 @Entity
 public abstract class Ubicacion implements Serializable{
     @Id

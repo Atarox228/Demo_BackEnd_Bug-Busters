@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @EqualsAndHashCode
 
-@Entity
 public class ReporteSantuarioMasCorrupto implements Serializable {
 
     @Id
