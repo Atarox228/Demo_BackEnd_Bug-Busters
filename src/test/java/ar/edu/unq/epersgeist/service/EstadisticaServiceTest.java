@@ -47,9 +47,9 @@ public class EstadisticaServiceTest {
 
     @BeforeEach
     public void prepare() {
-        santuario = new Ubicacion("Santuario");
-        fellwood = new Ubicacion("Fellwood");
-        ashenvale = new Ubicacion("Ashenvale");
+        santuario = new Santuario("Catolistres", 50);
+        fellwood = new Santuario("Fellwood", 100);
+        ashenvale = new Cementerio("Ashenvale", 80);
         ubicacionService.crear(santuario);
         ubicacionService.crear(fellwood);
         ubicacionService.crear(ashenvale);
@@ -118,7 +118,7 @@ public class EstadisticaServiceTest {
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio2.getId(), medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
-        assertEquals("Santuario", reporteCorrupto.getSantuario());
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
         assertEquals(medium1, reporteCorrupto.getMedium());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
@@ -194,7 +194,7 @@ public class EstadisticaServiceTest {
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
-        assertEquals("Santuario", reporteCorrupto.getSantuario());
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
         assertEquals(medium1, reporteCorrupto.getMedium());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
@@ -211,7 +211,7 @@ public class EstadisticaServiceTest {
         mediumService.actualizar(medium1);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
-        assertEquals("Santuario", reporteCorrupto.getSantuario());
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
         assertEquals(medium1, reporteCorrupto.getMedium());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());

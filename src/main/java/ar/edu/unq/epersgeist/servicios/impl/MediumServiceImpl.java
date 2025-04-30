@@ -6,10 +6,10 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +36,8 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public Medium recuperar(Long id) {
-        return mediumDAO.findById(id)
-                .orElseThrow(() -> new IdNoValidoException(id));
+    public Optional <Medium> recuperar(Long id) {
+        return mediumDAO.findById(id);
     }
 
     @Override
@@ -83,14 +82,8 @@ public class MediumServiceImpl implements MediumService {
                 .orElseThrow(() -> new IdNoValidoException(mediumId));
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new IdNoValidoException(espirituId));
-
-
         medium.invocar(espiritu);
-
-        //necesario? cascade
-        espirituDAO.save(espiritu);
         mediumDAO.save(medium);
-
         return espirituDAO.findById(espirituId);
     }
 
@@ -109,42 +102,15 @@ public class MediumServiceImpl implements MediumService {
         mediumDAO.save(medium);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-    public void exorcizar(long idMedium, long idMedium2){
-        HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(idMedium);
-            Medium medium2 = mediumDao.recuperar(idMedium2);
-            List<Espiritu> angeles = espirituDao.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
-            List<Espiritu> demonios = espirituDao.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
-            medium.exorcizar(medium2, angeles, demonios);
-            mediumDao.actualizar(medium);
-            mediumDao.actualizar(medium2);
-            return null;
-        });
+    @Override
+    public void mover(Long mediumId, Long ubicacionId) {
+        Medium medium = mediumDAO.findById(mediumId)
+                .orElseThrow(() -> new IdNoValidoException(mediumId));
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new IdNoValidoException(ubicacionId));
+        if (medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
+        medium.moverseA(ubicacion);
+        ubicacionDAO.save(ubicacion);
+        mediumDAO.save(medium);
     }
-*/
-
-
-
-//    public void mover(Long mediumId, Long ubicacionId) {
-//        HibernateTransactionRunner.runTrx(() -> {
-//            Medium medium = mediumDao.recuperar(mediumId);
-//            Ubicacion ubicacion = ubicacionDao.recuperar(ubicacionId);
-//            medium.setUbicacion(ubicacion);
-//            return null;
-//        });
-//    }
-    // Comento mover a que podriamos utilizarlo en el TP3
-
 }

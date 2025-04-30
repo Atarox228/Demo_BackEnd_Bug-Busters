@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MediumService {
 
     void crear(Medium medium);
-    Medium recuperar(Long id);
+    Optional <Medium> recuperar(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void actualizar(Medium medium);
@@ -19,6 +19,5 @@ public interface MediumService {
     Optional<Espiritu> invocar(Long mediumId, Long espirituId);
     List<Espiritu> espiritus(Long idMedium);
     void eliminarTodo();
-//    void mover(Long mediumId, Long ubicacionId);
-    // Comento mover, ya que lo podriamos utilizar en el TP3
+    void mover(Long mediumId, Long ubicacionId);
 }

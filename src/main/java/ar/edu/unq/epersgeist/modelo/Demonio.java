@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -18,5 +19,17 @@ public final class Demonio extends Espiritu {
     @Override
     public TipoEspiritu getTipo() {
         return TipoEspiritu.DEMONIACO;
+    }
+
+    @Override
+    public void moverseASantuario(Ubicacion ubicacion) {
+        super.moverseASantuario(ubicacion);
+        reducirConexionYdesvincularSiEsNecesario(10);
+    }
+
+    @Override
+    public void invocarseA(Ubicacion ubicacion) {
+        super.invocarseA(ubicacion);
+        ubicacion.invocarEspirituDemoniaco(this);
     }
 }
