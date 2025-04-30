@@ -7,7 +7,6 @@ import ar.edu.unq.epersgeist.servicios.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +34,7 @@ public class EstadisticaServiceTest {
 
 
     private Ubicacion fellwood;
-    private Ubicacion ashenvale;
+    private Ubicacion cementerio;
     private Espiritu demonio1;
     private Espiritu demonio2;
     private Medium medium1;
@@ -49,10 +49,10 @@ public class EstadisticaServiceTest {
     public void prepare() {
         santuario = new Santuario("Catolistres", 50);
         fellwood = new Santuario("Fellwood", 100);
-        ashenvale = new Cementerio("Ashenvale", 80);
+        cementerio = new Cementerio("Ashenvale", 80);
         ubicacionService.crear(santuario);
         ubicacionService.crear(fellwood);
-        ubicacionService.crear(ashenvale);
+        ubicacionService.crear(cementerio);
 
         demonio1 = new Demonio( "Casper");
         demonio2 = new Demonio("Marids");
@@ -73,6 +73,22 @@ public class EstadisticaServiceTest {
         medium2 = new Medium("Ernesto", 150, 30);
         mediumService.crear(medium1);
         mediumService.crear(medium2);
+    }
+
+    //Para no repetir codigo
+    private void ubicacionesDeEspiritusYMediums() {
+        demonio1.setUbicacion(santuario);
+        demonio2.setUbicacion(santuario);
+        demonio3.setUbicacion(fellwood);
+        demonio4.setUbicacion(fellwood);
+        espirituService.actualizar(demonio1);
+        espirituService.actualizar(demonio2);
+        espirituService.actualizar(demonio3);
+        espirituService.actualizar(demonio4);
+        medium1.setUbicacion(santuario);
+        medium2.setUbicacion(fellwood);
+        mediumService.actualizar(medium1);
+        mediumService.actualizar(medium2);
     }
 
     @Test
@@ -107,101 +123,74 @@ public class EstadisticaServiceTest {
     }
 
     @Test
-    @Transactional // DUDAS ACA, DE SI SE PUEDE PONER
     void santuarioConDemoniosConMediumConDemonios() {
-        demonio1.setUbicacion(santuario);
-        demonio2.setUbicacion(santuario);
-        espirituService.actualizar(demonio1);
-        espirituService.actualizar(demonio2);
-        medium1.setUbicacion(santuario);
-        mediumService.actualizar(medium1);
+        ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio2.getId(), medium1.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(medium1, reporteCorrupto.getMedium());
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
 
     @Test
-    @Transactional
     void masDeUnSantuarioConMismaCantidadDeDemonios() {
-        demonio1.setUbicacion(santuario);
-        demonio2.setUbicacion(santuario);
-        demonio3.setUbicacion(fellwood);
-        demonio4.setUbicacion(fellwood);
-        espirituService.actualizar(demonio1);
-        espirituService.actualizar(demonio2);
-        espirituService.actualizar(demonio3);
-        espirituService.actualizar(demonio4);
-        medium1.setUbicacion(santuario);
-        medium2.setUbicacion(fellwood);
-        mediumService.actualizar(medium1);
-        mediumService.actualizar(medium2);
+        ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio4.getId(), medium2.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
-        assertEquals("Fellwood", reporteCorrupto.getSantuario());
-        // ACA SE DEMUESTRA QUE ELIJE POR ORDEN ALFABETICO YA QUE UNO ES F Y EL OTRO S
-        assertEquals(medium2, reporteCorrupto.getMedium());
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
+        // ACA SE DEMUESTRA QUE ELIJE POR ORDEN ALFABETICO YA QUE UNO ES C Y EL OTRO F
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
-        assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
+        assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
 
+
+
     @Test
-    @Transactional
     void masDeUnSantuarioConMediumsDeMismaCantDemonios() {
-        demonio1.setUbicacion(santuario);
-        demonio2.setUbicacion(santuario);
-        demonio3.setUbicacion(fellwood);
-        demonio4.setUbicacion(fellwood);
-        espirituService.actualizar(demonio1);
-        espirituService.actualizar(demonio2);
-        espirituService.actualizar(demonio3);
-        espirituService.actualizar(demonio4);
-        medium1.setUbicacion(santuario);
-        medium2.setUbicacion(fellwood);
-        mediumService.actualizar(medium1);
-        mediumService.actualizar(medium2);
+        ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
-        assertEquals("Fellwood", reporteCorrupto.getSantuario());
-        assertEquals(medium2, reporteCorrupto.getMedium());
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
 
     @Test
-    @Transactional
     void santuarioCon2Demonios2AngelesyOtroCon1Demonio() {
-        demonio1.setUbicacion(santuario);
+        ubicacionesDeEspiritusYMediums();
         demonio2.setUbicacion(fellwood);
-        demonio3.setUbicacion(fellwood);
-        espirituService.actualizar(demonio1);
+        demonio4.setUbicacion(cementerio);
         espirituService.actualizar(demonio2);
-        espirituService.actualizar(demonio3);
+        espirituService.actualizar(demonio4);
         angel1.setUbicacion(fellwood);
         angel2.setUbicacion(fellwood);
         espirituService.actualizar(angel1);
         espirituService.actualizar(angel2);
-        medium1.setUbicacion(santuario);
-        medium2.setUbicacion(fellwood);
-        mediumService.actualizar(medium1);
-        mediumService.actualizar(medium2);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(medium1, reporteCorrupto.getMedium());
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
 
     @Test
-    @Transactional
     void santuarioCon1Angely1Demonio() {
         demonio1.setUbicacion(santuario);
         angel1.setUbicacion(santuario);
@@ -210,12 +199,48 @@ public class EstadisticaServiceTest {
         medium1.setUbicacion(santuario);
         mediumService.actualizar(medium1);
         espirituService.conectar(demonio1.getId(), medium1.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(medium1, reporteCorrupto.getMedium());
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
+    }
 
+    @Test 
+    void cementerioCon2DemoniosySantuarioCon1Demonio() {
+        demonio1.setUbicacion(cementerio);
+        demonio2.setUbicacion(cementerio);
+        demonio3.setUbicacion(santuario);
+        espirituService.actualizar(demonio1);
+        espirituService.actualizar(demonio2);
+        espirituService.actualizar(demonio3);
+        medium1.setUbicacion(cementerio);
+        medium2.setUbicacion(santuario);
+        mediumService.actualizar(medium1);
+        mediumService.actualizar(medium2);
+        espirituService.conectar(demonio1.getId(), medium1.getId());
+        espirituService.conectar(demonio3.getId(), medium2.getId());
+        Optional<Medium> mediumEsperado = mediumService.recuperar(medium2.getId());
+        ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
+        assertEquals("Catolistres", reporteCorrupto.getSantuario());
+        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
+        assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
+    }
+
+    @Test
+    void ubicacionCementerioSinSantuario() {
+        demonio1.setUbicacion(cementerio);
+        espirituService.actualizar(demonio1);
+        medium1.setUbicacion(cementerio);
+        mediumService.actualizar(medium1);
+        espirituService.conectar(demonio1.getId(), medium1.getId());
+        assertThrows(NoHaySantuariosConDemoniosException.class, () -> {
+            estadisticaService.santuarioCorrupto();
+        });
     }
 
     @AfterEach

@@ -11,7 +11,9 @@ import java.util.stream.Stream;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
+@EqualsAndHashCode
 
 @Entity
 public class ReporteSantuarioMasCorrupto implements Serializable {
@@ -32,18 +34,6 @@ public class ReporteSantuarioMasCorrupto implements Serializable {
         this.cantDemoniosTotal = cantDemoniosTotal;
         this.cantDemoniosLibres = cantDemoniosLibres;
     }
-
-//    public Integer obtenerCantDemonios(List<Espiritu> espiritus) {
-//        Stream<Espiritu> espiritusDemoniacos = espiritus.stream().
-//                                                filter(e -> e.getTipo() == TipoEspiritu.DEMONIACO);
-//        return espiritusDemoniacos.toList().size();
-//    }
-
-//    public Integer obtenerDemoniosLibres(List<Espiritu> espiritus) {
-//        Stream<Espiritu> espiritusDemoniacos = espiritus.stream().
-//                filter(e -> e.getTipo() == TipoEspiritu.DEMONIACO && e.estaLibre());
-//        return espiritusDemoniacos.toList().size();
-//    }
 }
 
 
