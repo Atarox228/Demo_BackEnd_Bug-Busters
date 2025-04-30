@@ -28,11 +28,6 @@ public class Cementerio extends Ubicacion{
          return this.getFlujoEnergia() / 2;
     }
 
-//    @Override
-//    public void moverMedium(Medium medium) {
-//        medium.moverACementerio(this);
-//    }
-
     @Override
     public void moverAEspiritu(Espiritu espiritu){
         espiritu.setUbicacion(this);
@@ -45,13 +40,4 @@ public class Cementerio extends Ubicacion{
         return tipo == TipoEspiritu.DEMONIACO;
     }
 
-//    @Override
-//    public void invocarEspirituDemoniaco(Demonio demonio) {
-//        demonio.moverseACementerio(this);
-//    }
-
-//    @Override
-//    public void invocarEspirituAngelical(Angel angel) {
-//        throw new InvocacionFallidaPorUbicacionException(angel, this);
-//    }
 }

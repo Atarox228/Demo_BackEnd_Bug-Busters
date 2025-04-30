@@ -29,11 +29,6 @@ public class Santuario extends Ubicacion{
         return (int) Math.floor(this.getFlujoEnergia() * 1.5) ;
     }
 
-//    @Override
-//    public void moverMedium(Medium medium) {
-//        medium.moverASantuario(this);
-//    }
-
     @Override
     public void moverAEspiritu(Espiritu espiritu){
         espiritu.setUbicacion(this);
@@ -46,13 +41,4 @@ public class Santuario extends Ubicacion{
         return tipo == TipoEspiritu.ANGELICAL;
     }
 
-//    @Override
-//    public void invocarEspirituDemoniaco(Demonio demonio) {
-//        throw new InvocacionFallidaPorUbicacionException(demonio, this);
-//    }
-
-//    @Override
-//    public void invocarEspirituAngelical(Angel angel) {
-//        angel.moverseASantuario(this);
-//    }
 }

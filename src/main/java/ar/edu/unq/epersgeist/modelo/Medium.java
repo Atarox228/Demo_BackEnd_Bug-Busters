@@ -72,14 +72,6 @@ public class Medium implements Serializable {
         this.setMana(Math.max(this.getMana() - mana, 0));
     }
 
-//    public void invocar(Espiritu espiritu) {
-//        if (this.mana > 10) {
-//            espiritu.invocarseA(this.ubicacion);
-//            this.reducirMana(10);
-//        }
-//    }
-
-    //@Transactional
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
             this.verificarSiPuedeInvocar(espiritu);
@@ -130,14 +122,6 @@ public class Medium implements Serializable {
         setUbicacion(ubicacion);
         espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
     }
-
-//    public void moverASantuario(Santuario santuario) {
-//        espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
-//    }
-//
-//    public void moverACementerio(Cementerio cementerio) {
-//        espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
-//    }
 
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);
