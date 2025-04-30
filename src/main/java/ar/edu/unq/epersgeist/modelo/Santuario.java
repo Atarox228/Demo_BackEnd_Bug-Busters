@@ -42,6 +42,10 @@ public class Santuario extends Ubicacion{
         }
     }
 
+    public boolean permiteInvocarTipo(TipoEspiritu tipo){
+        return tipo == TipoEspiritu.ANGELICAL;
+    }
+
 //    @Override
 //    public void invocarEspirituDemoniaco(Demonio demonio) {
 //        throw new InvocacionFallidaPorUbicacionException(demonio, this);

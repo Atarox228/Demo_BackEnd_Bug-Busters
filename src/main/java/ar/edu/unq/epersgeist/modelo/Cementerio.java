@@ -41,6 +41,10 @@ public class Cementerio extends Ubicacion{
         }
     }
 
+    public boolean permiteInvocarTipo(TipoEspiritu tipo){
+        return tipo == TipoEspiritu.DEMONIACO;
+    }
+
 //    @Override
 //    public void invocarEspirituDemoniaco(Demonio demonio) {
 //        demonio.moverseACementerio(this);

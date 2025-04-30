@@ -66,9 +66,10 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void invocarseA(Ubicacion ubicacion) {
-        if (!estaLibre()) {
-            throw new EspirituNoLibreException(this);
-        }
+//        if (!estaLibre()) {
+//            throw new EspirituNoLibreException(this);
+//        }
+        this.ubicacion = ubicacion;
     }
 
     public abstract TipoEspiritu getTipo();

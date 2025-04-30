@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
@@ -70,10 +72,30 @@ public class Medium implements Serializable {
         this.setMana(Math.max(this.getMana() - mana, 0));
     }
 
+//    public void invocar(Espiritu espiritu) {
+//        if (this.mana > 10) {
+//            espiritu.invocarseA(this.ubicacion);
+//            this.reducirMana(10);
+//        }
+//    }
+
+    //@Transactional
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            espiritu.invocarseA(this.ubicacion);
+            this.verificarSiPuedeInvocar(espiritu);
             this.reducirMana(10);
+            espiritu.invocarseA(this.ubicacion);
+        }
+    }
+
+    private void verificarSiPuedeInvocar(Espiritu espiritu) {
+        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
+        if (! espiritu.estaLibre()) {
+            throw new EspirituNoLibreException(espiritu);
+        }
+
+        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
         }
     }
 
