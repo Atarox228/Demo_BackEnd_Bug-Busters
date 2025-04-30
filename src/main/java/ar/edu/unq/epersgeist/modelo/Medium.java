@@ -104,9 +104,9 @@ public class Medium implements Serializable {
         this.mana = (mana > this.manaMax) ? this.manaMax : mana;
     }
 
-    public void moverseA(Ubicacion ubicacion) {
+    public void moverseA(Ubicacion ubicacion){
         setUbicacion(ubicacion);
-        ubicacion.moverMedium(this);
+        espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
     }
 
     public void moverASantuario(Santuario santuario) {

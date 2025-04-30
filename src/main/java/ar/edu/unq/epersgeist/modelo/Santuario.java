@@ -35,6 +35,14 @@ public class Santuario extends Ubicacion{
     }
 
     @Override
+    public void moverAEspiritu(Espiritu espiritu){
+        espiritu.setUbicacion(this);
+        if(espiritu.getTipo() == TipoEspiritu.DEMONIACO){
+            espiritu.reducirConexionYdesvincularSiEsNecesario(10);
+        }
+    }
+
+    @Override
     public void invocarEspirituDemoniaco(Demonio demonio) {
         throw new InvocacionFallidaPorUbicacionException(demonio, this);
     }
