@@ -35,6 +35,8 @@ public abstract class Ubicacion implements Serializable{
 
     public abstract void moverMedium(Medium medium);
 
+    public abstract void moverAEspiritu(Espiritu espiritu);
+
     public abstract void invocarEspirituDemoniaco(Demonio demonio);
 
     public abstract void invocarEspirituAngelical(Angel angel);

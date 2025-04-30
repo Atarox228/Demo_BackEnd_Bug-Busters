@@ -34,6 +34,14 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
+    public void moverAEspiritu(Espiritu espiritu){
+        espiritu.setUbicacion(this);
+        if(espiritu.getTipo() == TipoEspiritu.ANGELICAL){
+            espiritu.reducirConexionYdesvincularSiEsNecesario(5);
+        }
+    }
+
+    @Override
     public void invocarEspirituDemoniaco(Demonio demonio) {
         demonio.moverseACementerio(this);
     }
