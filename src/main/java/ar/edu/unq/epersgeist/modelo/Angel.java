@@ -21,15 +21,15 @@ public final class Angel extends Espiritu {
         return TipoEspiritu.ANGELICAL;
     }
 
-    @Override
-    public void moverseACementerio(Ubicacion ubicacion) {
-        super.moverseACementerio(ubicacion);
-        reducirConexionYdesvincularSiEsNecesario(5);
-    }
+//    @Override
+//    public void moverseACementerio(Ubicacion ubicacion) {
+//        super.moverseACementerio(ubicacion);
+//        reducirConexionYdesvincularSiEsNecesario(5);
+//    }
 
-    @Override
-    public void invocarseA(Ubicacion ubicacion) {
-        super.invocarseA(ubicacion);
-        ubicacion.invocarEspirituAngelical(this);
-    }
+//    @Override
+//    public void invocarseA(Ubicacion ubicacion) {
+//        super.invocarseA(ubicacion);
+//        ubicacion.invocarEspirituAngelical(this);
+//    }
 }

@@ -109,13 +109,13 @@ public class Medium implements Serializable {
         espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
     }
 
-    public void moverASantuario(Santuario santuario) {
-        espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
-    }
-
-    public void moverACementerio(Cementerio cementerio) {
-        espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
-    }
+//    public void moverASantuario(Santuario santuario) {
+//        espiritus.forEach(espiritu -> espiritu.moverseASantuario(santuario));
+//    }
+//
+//    public void moverACementerio(Cementerio cementerio) {
+//        espiritus.forEach(espiritu -> espiritu.moverseACementerio(cementerio));
+//    }
 
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);

@@ -73,11 +73,11 @@ public abstract class Espiritu implements Serializable {
 
     public abstract TipoEspiritu getTipo();
 
-    public void moverseACementerio(Ubicacion ubicacion) {
-        setUbicacion(ubicacion);
-    }
-
-    public void moverseASantuario(Ubicacion ubicacion) {
-        setUbicacion(ubicacion);
-    }
+//    public void moverseACementerio(Ubicacion ubicacion) {
+//        setUbicacion(ubicacion);
+//    }
+//
+//    public void moverseASantuario(Ubicacion ubicacion) {
+//        setUbicacion(ubicacion);
+//    }
 }

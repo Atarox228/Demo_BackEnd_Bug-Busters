@@ -33,12 +33,12 @@ public abstract class Ubicacion implements Serializable{
         return this.flujoEnergia;
     }
 
-    public abstract void moverMedium(Medium medium);
+    //public abstract void moverMedium(Medium medium);
 
     public abstract void moverAEspiritu(Espiritu espiritu);
 
-    public abstract void invocarEspirituDemoniaco(Demonio demonio);
-
-    public abstract void invocarEspirituAngelical(Angel angel);
+//    public abstract void invocarEspirituDemoniaco(Demonio demonio);
+//
+//    public abstract void invocarEspirituAngelical(Angel angel);
 
 }
