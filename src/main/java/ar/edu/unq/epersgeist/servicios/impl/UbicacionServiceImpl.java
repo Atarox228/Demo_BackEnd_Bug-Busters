@@ -8,13 +8,11 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -40,11 +38,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public Ubicacion recuperar(Long ubicacionId) {
+    public Optional<Ubicacion> recuperar(Long ubicacionId) {
         if (ubicacionId == null) {
-            throw new IdNoValidoException(null);
+            return Optional.empty();
         }
-        return ubicacionDAO.findById(ubicacionId).orElseThrow(() -> new IdNoValidoException(ubicacionId));
+        return ubicacionDAO.findById(ubicacionId);
     }
 
     @Override
@@ -57,7 +55,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         if(ubicacion.getId() == null){
             throw new IdNoValidoException(null); //
         }
-//        ubicacionDAO.findById(ubicacion.getId()).orElseThrow(() -> new IdNoValidoException(ubicacion.getId()));
         ubicacionDAO.save(ubicacion);
     }
 

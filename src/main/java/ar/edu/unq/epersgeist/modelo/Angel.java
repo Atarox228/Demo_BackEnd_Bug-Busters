@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -19,4 +20,5 @@ public final class Angel extends Espiritu {
     public TipoEspiritu getTipo() {
         return TipoEspiritu.ANGELICAL;
     }
+
 }

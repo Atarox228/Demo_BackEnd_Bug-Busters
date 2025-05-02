@@ -1,12 +1,12 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -30,21 +30,17 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
+    @Setter
     @ManyToOne
     private Ubicacion ubicacion;
 
     public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
-        if (manaMax >= mana) {
-            this.mana = mana;
-        } else {
-            this.mana = manaMax;
-        }
+        this.mana = (manaMax >= mana) ? mana : manaMax;
         this.nombre = nombre;
         this.manaMax = manaMax;
-
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -56,19 +52,20 @@ public class Medium implements Serializable {
         espiritu.setMedium(this);
     }
 
-
-    public boolean puedeConectarse( Espiritu espiritu){
+    public boolean puedeConectarse(Espiritu espiritu){
         return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
-
     public void descansar() {
-        this.aumentarMana(15);
-        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
+        espiritus.stream()
+                .filter(espiritu -> this.ubicacion.puedeRecuperarse(espiritu))
+                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacionEspiritu()));
+
     }
 
     public void aumentarMana(Integer mana) {
-        this.setMana(Math.min(this.getMana() + 15, manaMax));
+        this.setMana(Math.min(this.getMana() + mana, manaMax));
     }
 
     public void reducirMana(Integer mana) {
@@ -77,15 +74,20 @@ public class Medium implements Serializable {
 
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            this.verificarSiEstaLibre(espiritu);
+            this.verificarSiPuedeInvocar(espiritu);
             this.reducirMana(10);
-            espiritu.invocarme(this,this.ubicacion);
+            espiritu.invocarseA(this.ubicacion);
         }
     }
 
-    private void verificarSiEstaLibre(Espiritu espiritu) {
-        if (!espiritu.estaLibre()) {
+    private void verificarSiPuedeInvocar(Espiritu espiritu) {
+        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
+        if (! espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
+        }
+
+        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
         }
     }
 
@@ -113,10 +115,15 @@ public class Medium implements Serializable {
     }
 
     public void setMana(int mana) {
-        if (mana > this.manaMax) {
-            this.mana = this.manaMax;
-        }else{
-            this.mana = mana;
-        }
+        this.mana = (mana > this.manaMax) ? this.manaMax : mana;
+    }
+
+    public void moverseA(Ubicacion ubicacion){
+        setUbicacion(ubicacion);
+        espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
+    }
+
+    public void desconectarse(Espiritu espiritu) {
+        getEspiritus().remove(espiritu);
     }
 }
