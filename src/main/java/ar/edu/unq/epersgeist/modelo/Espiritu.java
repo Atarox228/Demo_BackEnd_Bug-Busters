@@ -73,4 +73,12 @@ public abstract class Espiritu implements Serializable {
     public abstract TipoEspiritu getTipo();
 
     public abstract List<Espiritu> ataque(List<Espiritu> demoniacosRestantes);
+
+    public void moverCementerio() {}
+
+    public void moverSantuario() {}
+
+    public abstract boolean puedeRecuperarseEnCementerio();
+
+    public abstract boolean puedeRecuperarseEnSantuario();
 }

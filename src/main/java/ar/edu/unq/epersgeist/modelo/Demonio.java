@@ -27,4 +27,19 @@ public final class Demonio extends Espiritu {
     public List<Espiritu> ataque(List<Espiritu> demoniacosRestantes) {
         return demoniacosRestantes;
     }
+
+    @Override
+    public void moverSantuario() {
+        this.reducirConexionYdesvincularSiEsNecesario(10);
+    }
+
+    @Override
+    public boolean puedeRecuperarseEnCementerio() {
+        return true;
+    }
+
+    @Override
+    public boolean puedeRecuperarseEnSantuario() {
+        return false;
+    }
 }

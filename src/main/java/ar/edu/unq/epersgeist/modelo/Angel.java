@@ -39,4 +39,18 @@ public final class Angel extends Espiritu {
         return demoniacosDefensores;
     }
 
+    @Override
+    public void moverCementerio() {
+        this.reducirConexionYdesvincularSiEsNecesario(5);
+    }
+
+    @Override
+    public boolean puedeRecuperarseEnCementerio() {
+        return false;
+    }
+
+    @Override
+    public boolean puedeRecuperarseEnSantuario() {
+        return true;
+    }
 }

@@ -21,7 +21,7 @@ public class Santuario extends Ubicacion{
 
     @Override
     public boolean puedeRecuperarse(Espiritu espiritu){
-        return espiritu.getTipo() == TipoEspiritu.ANGELICAL;
+        return espiritu.puedeRecuperarseEnSantuario();
     }
 
     @Override
@@ -32,9 +32,7 @@ public class Santuario extends Ubicacion{
     @Override
     public void moverAEspiritu(Espiritu espiritu){
         espiritu.setUbicacion(this);
-        if(espiritu.getTipo() == TipoEspiritu.DEMONIACO){
-            espiritu.reducirConexionYdesvincularSiEsNecesario(10);
-        }
+        espiritu.moverSantuario();
     }
 
     public boolean permiteInvocarTipo(TipoEspiritu tipo){
