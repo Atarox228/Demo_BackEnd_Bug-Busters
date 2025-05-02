@@ -76,13 +76,13 @@ public class EspirituServiceTest {
     @Test
     void actualizarEspiritu(){
         espirituService.crear(Casper);
-        Optional<Espiritu> sinActualizar = espirituService.recuperar(Casper.getId());
+        Espiritu sinActualizar = espirituService.recuperar(Casper.getId()).get();
         Casper.setNombre("Lala");
         espirituService.actualizar(Casper);
-        Optional<Espiritu> actualizado = espirituService.recuperar(Casper.getId());
-        assertEquals(sinActualizar.get().getId(), Casper.getId());
-        assertEquals("Casper", sinActualizar.get().getNombre());
-        assertEquals("Lala", actualizado.get().getNombre());
+        Espiritu actualizado = espirituService.recuperar(Casper.getId()).get();
+        assertEquals(sinActualizar.getId(), Casper.getId());
+        assertEquals("Casper", sinActualizar.getNombre());
+        assertEquals("Lala", actualizado.getNombre());
     }
 
     @Test
@@ -106,10 +106,10 @@ public class EspirituServiceTest {
     @Test
     void recuperarEspiritu(){
         espirituService.crear(Casper);
-        Optional<Espiritu> espirituRecuperado = espirituService.recuperar(Casper.getId());
-        assertEquals("Casper", espirituRecuperado.get().getNombre());
-        assertEquals(TipoEspiritu.ANGELICAL, espirituRecuperado.get().getTipo());
-        assertEquals(0, espirituRecuperado.get().getNivelConexion());
+        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId()).get();
+        assertEquals("Casper", espirituRecuperado.getNombre());
+        assertEquals(TipoEspiritu.ANGELICAL, espirituRecuperado.getTipo());
+        assertEquals(0, espirituRecuperado.getNivelConexion());
     }
 
     @Test
@@ -281,12 +281,12 @@ public class EspirituServiceTest {
 //        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
-        Optional<Medium> mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
-        Optional<Espiritu> espirituConectado = espirituService.recuperar(Casper.getId());
-        assertEquals(mediumConectado.get().getId(), medium.getId());
-        assertEquals(1, mediumConectado.get().getEspiritus().size());
-        assertFalse(espirituConectado.get().estaLibre());
-        assertEquals(10, espirituConectado.get().getNivelConexion());
+        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId()).get();
+        Espiritu espirituConectado = espirituService.recuperar(Casper.getId()).get();
+        assertEquals(mediumConectado.getId(), medium.getId());
+        assertEquals(1, mediumConectado.getEspiritus().size());
+        assertFalse(espirituConectado.estaLibre());
+        assertEquals(10, espirituConectado.getNivelConexion());
     }
 
     @Test
