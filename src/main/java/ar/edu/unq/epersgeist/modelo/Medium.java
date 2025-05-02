@@ -95,22 +95,11 @@ public class Medium implements Serializable {
         if(angeles.isEmpty()){
             throw new NoHayAngelesException();
         }
-        List<Espiritu> angelicalesRestantes = angeles;
         List<Espiritu> demoniacosRestantes = demonios;
-        while (angelicalesRestantes.size() >= 1 & demoniacosRestantes.size() >= 1) {
-            Espiritu atacante = angelicalesRestantes.getFirst();
-            Espiritu defensor = demoniacosRestantes.getFirst();
-             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
-                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
-                 if (defensor.getNivelConexion() == 0 & demoniacosRestantes.size() >= 2) {
-                     demoniacosRestantes.remove(defensor);
-                     defensor = demoniacosRestantes.getFirst();
-                 }
-             } else {
-                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
-             }
-            angelicalesRestantes.remove(atacante);
 
+        for (Espiritu atacante : angeles){
+            if (demoniacosRestantes.isEmpty()) {break;}
+            demoniacosRestantes = atacante.ataque(demoniacosRestantes);
         }
     }
 

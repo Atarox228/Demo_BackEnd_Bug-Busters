@@ -5,6 +5,8 @@ import lombok.*;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
@@ -19,5 +21,10 @@ public final class Demonio extends Espiritu {
     @Override
     public TipoEspiritu getTipo() {
         return TipoEspiritu.DEMONIACO;
+    }
+
+    @Override
+    public List<Espiritu> ataque(List<Espiritu> demoniacosRestantes) {
+        return demoniacosRestantes;
     }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor
@@ -71,4 +72,5 @@ public abstract class Espiritu implements Serializable {
 
     public abstract TipoEspiritu getTipo();
 
+    public abstract List<Espiritu> ataque(List<Espiritu> demoniacosRestantes);
 }
