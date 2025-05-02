@@ -1,12 +1,10 @@
 package ar.edu.unq.epersgeist.controller;
 
+import ar.edu.unq.epersgeist.configuration.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +35,11 @@ public class UbicacionControllerREST {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // ejemplo de uso de excepcion hecha en configuracion
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         Ubicacion ubicacion = ubicacionService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ubicacion no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
 
         ubicacionService.eliminar(ubicacion);
 
@@ -78,5 +77,11 @@ public class UbicacionControllerREST {
     public ResponseEntity<List<Medium>> mediumsSinEspiritusEn(@PathVariable Long id) {
         List<Medium> mediums = ubicacionService.mediumsSinEspiritusEn(id);
         return ResponseEntity.ok(mediums);
+    }
+
+    // ejemplo para comprobar funcionamiento del manejador de errores y su handleo de errores
+    @GetMapping("/test-error")
+    public void lanzarError() {
+        throw new RecursoNoEncontradoException("Este es un error de prueba");
     }
 }
