@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.ExorcismoEnDiferenteUbicacionException;
 import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
@@ -18,11 +19,9 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -1064,12 +1063,30 @@ public class MediumServiceTest {
         });
     }
 
+    @Test
+    void exorcismoEnDiferentesUbicaciones(){
+        espiritu.setUbicacion(cementerio);
+        espirituService.actualizar(espiritu2);
+
+        medium.setUbicacion(cementerio);
+        mediumService.actualizar(medium);
+        medium2.setUbicacion(santuario);
+        mediumService.actualizar(medium2);
+
+        medium.conectarseAEspiritu(espiritu);
+        mediumService.actualizar(medium);
+
+        assertThrows(ExorcismoEnDiferenteUbicacionException.class, () -> {
+            mediumService.exorcizar(medium.getId(), medium2.getId());
+        });
+    }
+
     @AfterEach
     void cleanUp() {
         espirituService.eliminarTodo();
         mediumService.eliminarTodo();
         ubicacionService.clearAll();
-        //dado.setModo(new ModoRandom());
+        dado.setModo(new ModoRandom());
     }
 }
 
