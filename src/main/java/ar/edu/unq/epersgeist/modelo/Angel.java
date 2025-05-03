@@ -53,4 +53,13 @@ public final class Angel extends Espiritu {
     public boolean puedeRecuperarseEnSantuario() {
         return true;
     }
+
+    @Override
+    public void aumentarConexionDeSantuario(Integer flujoEnergia) {
+        this.setNivelConexion(Math.min(this.getNivelConexion()+flujoEnergia,100));
+    }
+
+    @Override
+    public void aumentarConexionDeCementerio(Integer flujoEnergia) {
+    }
 }

@@ -38,4 +38,10 @@ public class Cementerio extends Ubicacion{
         return tipo == TipoEspiritu.DEMONIACO;
     }
 
+    @Override
+    public void aumentarConexionDe(Espiritu espiritu) {
+        espiritu.aumentarConexionDeCementerio(this.getFlujoEnergia());
+    }
+
+
 }

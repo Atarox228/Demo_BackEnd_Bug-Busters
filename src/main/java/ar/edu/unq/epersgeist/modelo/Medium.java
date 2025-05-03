@@ -58,9 +58,10 @@ public class Medium implements Serializable {
 
     public void descansar() {
         this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
-        espiritus.stream()
-                .filter(espiritu -> this.ubicacion.puedeRecuperarse(espiritu))
-                .forEach(espiritu -> espiritu.aumentarConexion(this.ubicacion.valorDeRecuperacionEspiritu()));
+        for (Espiritu espiritu : espiritus) {
+            espiritu.aumentarConexionEn(this.ubicacion);
+        }
+//        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexionEn(this.ubicacion));
 
     }
 

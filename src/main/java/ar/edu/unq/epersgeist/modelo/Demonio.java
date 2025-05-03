@@ -42,4 +42,12 @@ public final class Demonio extends Espiritu {
     public boolean puedeRecuperarseEnSantuario() {
         return false;
     }
+
+    @Override
+    public void aumentarConexionDeSantuario(Integer flujoEnergia) {}
+
+    @Override
+    public void aumentarConexionDeCementerio(Integer flujoEnergia) {
+        this.setNivelConexion(Math.min(this.getNivelConexion()+flujoEnergia,100));
+    }
 }

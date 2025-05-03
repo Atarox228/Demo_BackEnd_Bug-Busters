@@ -39,4 +39,9 @@ public class Santuario extends Ubicacion{
         return tipo == TipoEspiritu.ANGELICAL;
     }
 
+    @Override
+    public void aumentarConexionDe(Espiritu espiritu) {
+        espiritu.aumentarConexionDeSantuario(this.getFlujoEnergia());
+    }
+
 }

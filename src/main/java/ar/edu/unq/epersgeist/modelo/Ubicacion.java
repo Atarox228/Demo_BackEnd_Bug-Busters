@@ -37,4 +37,5 @@ public abstract class Ubicacion implements Serializable{
 
     public abstract boolean permiteInvocarTipo(TipoEspiritu tipo);
 
+    public abstract void aumentarConexionDe(Espiritu espiritu);
 }
