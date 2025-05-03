@@ -81,8 +81,8 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarUbicacion(){
-        Optional<Ubicacion> ubicacion2 = ubicacionService.recuperar(fellwood.getId());
-        assertEquals(fellwood.getNombre(), ubicacion2.get().getNombre());
+        Ubicacion ubicacion2 = ubicacionService.recuperar(fellwood.getId()).get();
+        assertEquals(fellwood.getNombre(), ubicacion2.getNombre());
     }
 
     @Test
@@ -114,9 +114,9 @@ public class UbicacionServiceTest {
     void eliminarUbicacionConEspiritus(){
         espiritu1.setUbicacion(fellwood);
         espirituService.actualizar(espiritu1);
-        Optional<Ubicacion> ubicacion = ubicacionService.recuperar(fellwood.getId());
+        Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId()).get();
         assertThrows(DataIntegrityViolationException.class, () -> {      // DEBERIA SER OTRO ERROR?¿
-          ubicacionService.eliminar(ubicacion.get());
+          ubicacionService.eliminar(ubicacion);
         });
 
     }
@@ -143,8 +143,8 @@ public class UbicacionServiceTest {
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
         ubicacionService.actualizar(fellwood);
-        Optional<Ubicacion> ubiCambiada = ubicacionService.recuperar(fellwood.getId());
-        assertNotEquals(nombrePre , ubiCambiada.get().getNombre());
+        Ubicacion ubiCambiada = ubicacionService.recuperar(fellwood.getId()).get();
+        assertNotEquals(nombrePre , ubiCambiada.getNombre());
     }
 
     @Test
@@ -177,11 +177,11 @@ public class UbicacionServiceTest {
         ashenvale.setNombre("Ardenweald");
         ubicacionService.actualizar(fellwood);
         ubicacionService.actualizar(ashenvale);
-        Optional<Ubicacion> ubiCambiada1 = ubicacionService.recuperar(fellwood.getId());
-        Optional<Ubicacion> ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId());
+        Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId()).get();
+        Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId()).get();
 
-        assertNotEquals(nombrePre1 , ubiCambiada1.get().getNombre());
-        assertNotEquals(nombrePre2 , ubiCambiada2.get().getNombre());
+        assertNotEquals(nombrePre1 , ubiCambiada1.getNombre());
+        assertNotEquals(nombrePre2 , ubiCambiada2.getNombre());
     }
 
     @Test

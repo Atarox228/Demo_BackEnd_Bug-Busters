@@ -40,11 +40,11 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public Espiritu recuperar(Long espirituId) {
+    public Optional<Espiritu> recuperar(Long espirituId) {
         if (espirituId == null) {
             throw new IdNoValidoException(null);
         }
-        return espirituDAO.findById(espirituId).orElseThrow(() -> new IdNoValidoException(espirituId));
+        return Optional.ofNullable(espirituDAO.findById(espirituId).orElseThrow(() -> new IdNoValidoException(espirituId)));
     }
 
     @Override
@@ -70,12 +70,12 @@ public class EspirituServiceImpl implements EspirituService {
         espirituDAO.deleteAll();
     }
 
-    public Medium conectar(Long espirituId, Long mediumId) {
+    public Optional<Medium> conectar(Long espirituId, Long mediumId) {
         Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
         Optional<Medium> medium = mediumDAO.findById(mediumId);
         medium.get().conectarseAEspiritu(espiritu.get());
         mediumDAO.save(medium.get());
-        return mediumDAO.findById(mediumId).get();
+        return Optional.of(mediumDAO.findById(mediumId).get());
     }
 
     @Override

@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -74,10 +76,10 @@ public class EspirituServiceTest {
     @Test
     void actualizarEspiritu(){
         espirituService.crear(Casper);
-        Espiritu sinActualizar = espirituService.recuperar(Casper.getId());
+        Espiritu sinActualizar = espirituService.recuperar(Casper.getId()).get();
         Casper.setNombre("Lala");
         espirituService.actualizar(Casper);
-        Espiritu actualizado = espirituService.recuperar(Casper.getId());
+        Espiritu actualizado = espirituService.recuperar(Casper.getId()).get();
         assertEquals(sinActualizar.getId(), Casper.getId());
         assertEquals("Casper", sinActualizar.getNombre());
         assertEquals("Lala", actualizado.getNombre());
@@ -104,7 +106,7 @@ public class EspirituServiceTest {
     @Test
     void recuperarEspiritu(){
         espirituService.crear(Casper);
-        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
+        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId()).get();
         assertEquals("Casper", espirituRecuperado.getNombre());
         assertEquals(TipoEspiritu.ANGELICAL, espirituRecuperado.getTipo());
         assertEquals(0, espirituRecuperado.getNivelConexion());
@@ -279,8 +281,8 @@ public class EspirituServiceTest {
 //        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
-        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
-        Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
+        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId()).get();
+        Espiritu espirituConectado = espirituService.recuperar(Casper.getId()).get();
         assertEquals(mediumConectado.getId(), medium.getId());
         assertEquals(1, mediumConectado.getEspiritus().size());
         assertFalse(espirituConectado.estaLibre());
