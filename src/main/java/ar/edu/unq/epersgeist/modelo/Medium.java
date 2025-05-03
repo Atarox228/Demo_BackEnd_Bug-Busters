@@ -1,10 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
-import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
-import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
-import ar.edu.unq.epersgeist.modelo.exception.ExorcismoEnDiferenteUbicacionException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -92,15 +88,15 @@ public class Medium implements Serializable {
         }
     }
 
-    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws ExorcismoEnDiferenteUbicacionException, NoHayAngelesException {
+    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws ExorcismoEnDiferenteUbicacionException, NoHayAngelesException, MismoMediumException {
 
-        if (this.estaEnOtraUbicacion(medium2)) {
-            throw new ExorcismoEnDiferenteUbicacionException();
-        }
+        if (this.getId() == medium2.getId()) throw new MismoMediumException();
 
-        if(angeles.isEmpty()){
-            throw new NoHayAngelesException();
-        }
+        if (this.estaEnOtraUbicacion(medium2)) throw new ExorcismoEnDiferenteUbicacionException();
+
+
+        if(angeles.isEmpty()) throw new NoHayAngelesException();
+
 
         List<Espiritu> demoniacosRestantes = demonios;
 

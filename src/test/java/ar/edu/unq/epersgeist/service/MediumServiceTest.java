@@ -1,11 +1,8 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.modelo.exception.ExorcismoEnDiferenteUbicacionException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
-import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -1078,6 +1075,17 @@ public class MediumServiceTest {
 
         assertThrows(ExorcismoEnDiferenteUbicacionException.class, () -> {
             mediumService.exorcizar(medium.getId(), medium2.getId());
+        });
+    }
+
+    @Test
+    void autoExorcismo(){
+        medium.setUbicacion(cementerio);
+        mediumService.actualizar(medium);
+
+
+        assertThrows(MismoMediumException.class, () -> {
+            mediumService.exorcizar(medium.getId(), medium.getId());
         });
     }
 
