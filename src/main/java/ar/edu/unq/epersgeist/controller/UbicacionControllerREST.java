@@ -49,7 +49,7 @@ public class UbicacionControllerREST {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/actualizar")
     public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
         Ubicacion ubicacion = ubicacionService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -67,13 +67,13 @@ public class UbicacionControllerREST {
         return ResponseEntity.ok(ubicaciones);
     }
 
-    @GetMapping("/espiritusEn/{id}")
+    @GetMapping("/{id}/espiritus")
     public ResponseEntity<List<Espiritu>> espiritusEn(@PathVariable Long id) {
         List <Espiritu> espiritusEnUbicacion = ubicacionService.espiritusEn(id);
         return ResponseEntity.ok(espiritusEnUbicacion);
     }
 
-    @GetMapping("/mediumsSinEspiritusEn/{id}")
+    @GetMapping("/{id}/mediumsSinEspiritusEn")
     public ResponseEntity<List<Medium>> mediumsSinEspiritusEn(@PathVariable Long id) {
         List<Medium> mediums = ubicacionService.mediumsSinEspiritusEn(id);
         return ResponseEntity.ok(mediums);

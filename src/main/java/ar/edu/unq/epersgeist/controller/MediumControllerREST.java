@@ -58,4 +58,6 @@ public class MediumControllerREST {
         mediumUpdate.setManaMax(dto.manaMaximo());
         mediumService.actualizar(mediumUpdate);
     }
+
+    @PutMapping()
 }
