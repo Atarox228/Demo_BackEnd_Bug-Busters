@@ -40,4 +40,5 @@ public abstract class Ubicacion implements Serializable{
     public abstract void aumentarConexionDe(Espiritu espiritu);
 
 
+    public abstract String getTipo();
 }

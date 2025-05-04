@@ -1,10 +1,10 @@
 package ar.edu.unq.epersgeist.controller.dto;
 
-import ar.edu.unq.epersgeist.modelo.*
+import ar.edu.unq.epersgeist.modelo.*;
 
 import java.util.Objects;
 
-public record EspirituDTO(Long id, String nombre, String tipoDeEspiritu, Integer nivelDeConexion, UbicacionDTO ubicacion, MediumDTO medium,) {
+public record EspirituDTO(Long id, String nombre, String tipoDeEspiritu, Integer nivelDeConexion, UbicacionDTO ubicacion, MediumDTO medium) {
 
     public static EspirituDTO desdeModelo(Espiritu espiritu){
         return new EspirituDTO(

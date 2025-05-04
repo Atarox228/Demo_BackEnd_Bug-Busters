@@ -43,5 +43,10 @@ public class Cementerio extends Ubicacion{
         espiritu.aumentarConexionDeCementerio(this.getFlujoEnergia());
     }
 
+    @Override
+    public String getTipo() {
+        return "CEMENTERIO";
+    }
+
 
 }
