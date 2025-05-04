@@ -46,4 +46,14 @@ public record EspirituDTO(Long id, String nombre, String tipoDeEspiritu, Integer
         return espiritu;
     }
 
+    public static EspirituDTO desdeModeloNoRecursivo(Espiritu espiritu) {
+        return new EspirituDTO(
+                espiritu.getId(),
+                espiritu.getNombre(),
+                espiritu.getTipo().toString(),
+                espiritu.getNivelConexion(),
+                null,
+                null
+        );
+    }
 }
