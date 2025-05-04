@@ -13,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/ubicacion")
 public class UbicacionControllerREST {
@@ -24,7 +26,7 @@ public class UbicacionControllerREST {
     }
 
     @PostMapping
-    public void crearUbicacion(@RequestBody Ubicacion ubicacion) {
+    public void crearUbicacion(@Valid @RequestBody Ubicacion ubicacion) {
         ubicacionService.crear(ubicacion);
     }
 
@@ -59,12 +61,6 @@ public class UbicacionControllerREST {
     public ResponseEntity<Collection<Ubicacion>> recuperarTodos() {
         Collection<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
         return ResponseEntity.ok(ubicaciones);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> clearAll() {
-        ubicacionService.clearAll();
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/espiritusEn/{id}")

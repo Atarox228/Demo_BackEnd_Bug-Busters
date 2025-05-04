@@ -30,7 +30,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void crear(Medium medium) {
         if (medium.getId() != null) {
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException();
         }
         mediumDAO.save(medium);
     }

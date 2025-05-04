@@ -32,7 +32,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void crear(Ubicacion ubicacion) {
         if (ubicacion.getId() != null) {
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException();
         }
         ubicacionDAO.save(ubicacion);
     }
@@ -53,7 +53,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void actualizar(Ubicacion ubicacion) {
         if(ubicacion.getId() == null){
-            throw new IdNoValidoException(null); //
+            throw new IdNoValidoException();
         }
         ubicacionDAO.save(ubicacion);
     }

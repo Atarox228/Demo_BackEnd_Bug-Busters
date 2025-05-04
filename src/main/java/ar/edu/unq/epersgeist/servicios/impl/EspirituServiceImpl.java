@@ -34,7 +34,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void crear(Espiritu espiritu) {
         if(espiritu.getId() != null){
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException();
         }
         this.espirituDAO.save(espiritu);
     }
@@ -42,7 +42,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Espiritu recuperar(Long espirituId) {
         if (espirituId == null) {
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException();
         }
         return espirituDAO.findById(espirituId).orElseThrow(() -> new IdNoValidoException(espirituId));
     }
@@ -56,7 +56,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void actualizar(Espiritu espiritu) {
         if (espiritu.getId() == null) {
-            throw new IdNoValidoException(null);
+            throw new IdNoValidoException();
         }
         espirituDAO.save(espiritu);
     }
