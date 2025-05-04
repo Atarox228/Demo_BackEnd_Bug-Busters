@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.controller.dto.TipoUbicacion;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;

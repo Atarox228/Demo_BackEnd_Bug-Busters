@@ -1,9 +1,8 @@
 package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import jakarta.validation.constraints.NotBlank;
-
-import java.util.Objects;
 
 public record EspirituDTO(
         Long id,

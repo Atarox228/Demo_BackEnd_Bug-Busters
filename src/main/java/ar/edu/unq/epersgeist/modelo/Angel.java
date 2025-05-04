@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import lombok.*;
 
 import jakarta.persistence.*;

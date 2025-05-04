@@ -73,8 +73,8 @@ public class UbicacionControllerREST {
         return ResponseEntity.ok(espiritusEnUbicacion);
     }
 
-    @GetMapping("/{id}/mediumsSinEspiritusEn")
-    public ResponseEntity<List<Medium>> mediumsSinEspiritusEn(@PathVariable Long id) {
+    @GetMapping("/{id}/mediumsSinEspiritus")
+    public ResponseEntity<List<Medium>> mediumsSinEspiritus(@PathVariable Long id) {
         List<Medium> mediums = ubicacionService.mediumsSinEspiritusEn(id);
         return ResponseEntity.ok(mediums);
     }
