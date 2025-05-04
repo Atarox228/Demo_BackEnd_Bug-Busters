@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
+import ar.edu.unq.epersgeist.controller.dto.TipoUbicacion;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
@@ -45,8 +44,8 @@ public class Santuario extends Ubicacion{
     }
 
     @Override
-    public String getTipo() {
-        return "SANTUARIO";
+    public TipoUbicacion getTipo() {
+        return TipoUbicacion.valueOf("SANTUARIO");
     }
 
 }

@@ -1,12 +1,21 @@
 package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record MediumDTO(Long id, String nombre, Integer mana,Integer manaMaximo, UbicacionDTO ubicacion, Set<EspirituDTO> espiritus) {
+public record MediumDTO(
+        Long id,
+        @NotBlank String nombre,
+        @Min(0) Integer mana,
+        @Min(1) Integer manaMaximo,
+        @NotNull UbicacionDTO ubicacion,
+        Set<EspirituDTO> espiritus) {
 
 
     public static MediumDTO desdeModelo(Medium medium) {

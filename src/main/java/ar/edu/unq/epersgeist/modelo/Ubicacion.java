@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.controller.dto.TipoUbicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -40,5 +41,5 @@ public abstract class Ubicacion implements Serializable{
     public abstract void aumentarConexionDe(Espiritu espiritu);
 
 
-    public abstract String getTipo();
+    public abstract TipoUbicacion getTipo();
 }

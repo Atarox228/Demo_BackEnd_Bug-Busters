@@ -1,9 +1,8 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
+import ar.edu.unq.epersgeist.controller.dto.TipoUbicacion;
 import jakarta.persistence.*;
 import lombok.*;
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -44,8 +43,8 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
-    public String getTipo() {
-        return "CEMENTERIO";
+    public TipoUbicacion getTipo() {
+        return TipoUbicacion.valueOf("CEMENTERIO");
     }
 
 

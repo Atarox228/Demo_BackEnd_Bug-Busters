@@ -1,8 +1,15 @@
 package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
-public record UbicacionDTO(Long id, String nombre, String tipoDeUbicacion, Integer flujoDeEnergia) {
+public record UbicacionDTO(
+        Long id,
+        @NotBlank String nombre,
+        TipoUbicacion tipoDeUbicacion,
+        @Min(1) Integer flujoDeEnergia)
+{
 
 
     public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
@@ -15,13 +22,9 @@ public record UbicacionDTO(Long id, String nombre, String tipoDeUbicacion, Integ
     }
 
     public Ubicacion aModelo(){
-        Ubicacion ubicacion;
-        if (this.tipoDeUbicacion.equals("SANTUARIO")){
-            ubicacion = new Santuario(this.nombre, this.flujoDeEnergia);
-        } else {
-            ubicacion = new Cementerio(this.nombre, this.flujoDeEnergia);
-        }
-        ubicacion.setId(this.id);
-        return ubicacion;
+        return switch (this.tipoDeUbicacion) {
+            case SANTUARIO -> new Santuario(nombre, flujoDeEnergia);
+            case CEMENTERIO -> new Cementerio(nombre, flujoDeEnergia);
+        };
     }
 }
