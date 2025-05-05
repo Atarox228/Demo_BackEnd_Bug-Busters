@@ -104,12 +104,13 @@ public class MediumControllerREST {
     }
 
     @PutMapping("/{id}/mover/{ubicacionId}")
-    public void mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
+    public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
         Medium medium = mediumService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Ubicacion ubicacion = ubicacionService.recuperar(ubicacionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mediumService.mover(medium.getId(),ubicacion.getId());
+        return ResponseEntity.noContent().build();
     }
 }
