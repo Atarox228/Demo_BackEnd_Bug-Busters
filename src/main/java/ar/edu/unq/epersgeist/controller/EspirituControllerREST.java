@@ -71,7 +71,7 @@ public class EspirituControllerREST {
     }
 
     @GetMapping("/demoniacos/{direccion}/{pagina}/{cantidadPorPagina}")
-    public Set<EspirituDTO> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina){
+    public Set<EspirituDTO> espiritusDemoniacos(@PathVariable Direccion direccion, @PathVariable Integer pagina, @PathVariable Integer cantidadPorPagina){
         return espirituService.espiritusDemoniacos( direccion, pagina, cantidadPorPagina).stream()
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());

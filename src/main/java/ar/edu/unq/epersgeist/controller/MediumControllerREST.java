@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +24,12 @@ import java.util.stream.Collectors;
 public class MediumControllerREST {
     private final MediumService mediumService;
     private final EspirituService espirituService;
+    private final UbicacionService ubicacionService;
 
-    public MediumControllerREST(MediumService mediumService, EspirituService espirituService) {
+    public MediumControllerREST(MediumService mediumService, EspirituService espirituService, UbicacionService ubicacionService) {
         this.mediumService = mediumService;
         this.espirituService = espirituService;
+        this.ubicacionService = ubicacionService;
     }
 
     @PostMapping
@@ -56,7 +59,7 @@ public class MediumControllerREST {
         mediumService.eliminar(medium);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/actualizar")
     public void actualizar(@PathVariable Long id, @RequestBody ActualizarMediumRequestDTO dto) {
         Medium mediumUpdate = mediumService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -74,7 +77,7 @@ public class MediumControllerREST {
     }
 
     @PutMapping("/{id}/exorcizar/{mediumId}")
-    public void exorcizarA(@PathVariable Long id, @PathVariable Long mediumId) {
+    public void exorcizar(@PathVariable Long id, @PathVariable Long mediumId) {
         Medium medium = mediumService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Medium medium2 = mediumService.recuperar(mediumId)
@@ -83,7 +86,7 @@ public class MediumControllerREST {
     }
 
     @PutMapping("/{id}/invocar/{espirituId}")
-    public void invocarA(@PathVariable Long id, @PathVariable Long espirituId) {
+    public void invocar(@PathVariable Long id, @PathVariable Long espirituId) {
         Medium medium = mediumService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Espiritu espiritu = espirituService.recuperar(espirituId)
@@ -101,9 +104,12 @@ public class MediumControllerREST {
     }
 
     @PutMapping("/{id}/mover/{ubicacionId}")
-    public void moverA(@PathVariable Long id, @PathVariable Long ubicacionId) {
+    public void mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
         Medium medium = mediumService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        mediumService.mover(ubicacionId,medium.getId());
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        mediumService.mover(medium.getId(),ubicacion.getId());
     }
 }
