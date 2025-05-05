@@ -15,20 +15,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/ubicacion")
-public class EspirituControllerRest {
+@RequestMapping("/espiritu")
+public class EspirituControllerREST {
 
     private final EspirituService espirituService;
     private final MediumService mediumService;
 
-    public EspirituControllerRest(EspirituService espirituService, MediumService mediumService) {
+    public EspirituControllerREST(EspirituService espirituService, MediumService mediumService) {
         this.espirituService = espirituService;
         this.mediumService = mediumService;
     }
 
     @PostMapping
-    public void crearEspiritu(@RequestBody Espiritu espiritu) {
-        espirituService.crear(espiritu);
+    public void crearEspiritu(@RequestBody EspirituDTO espiritu) {
+        espirituService.crear(espiritu.aModelo());
     }
 
     @GetMapping("/{id}")
@@ -58,6 +58,7 @@ public class EspirituControllerRest {
         Espiritu espiritu = espirituService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         espiritu.setNombre(dto.nombre());
+        espirituService.actualizar(espiritu);
     }
 
     @PutMapping("/{id}/conectarse/{mediumid}")
