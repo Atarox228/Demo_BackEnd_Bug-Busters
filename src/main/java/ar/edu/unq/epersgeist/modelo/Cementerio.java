@@ -1,9 +1,9 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.InvocacionFallidaPorUbicacionException;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
 import jakarta.persistence.*;
 import lombok.*;
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -41,6 +41,11 @@ public class Cementerio extends Ubicacion{
     @Override
     public void aumentarConexionDe(Espiritu espiritu) {
         espiritu.aumentarConexionDeCementerio(this.getFlujoEnergia());
+    }
+
+    @Override
+    public TipoUbicacion getTipo() {
+        return TipoUbicacion.valueOf("CEMENTERIO");
     }
 
 

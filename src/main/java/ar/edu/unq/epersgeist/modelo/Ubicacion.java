@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -38,4 +40,7 @@ public abstract class Ubicacion implements Serializable{
     public abstract boolean permiteInvocarTipo(TipoEspiritu tipo);
 
     public abstract void aumentarConexionDe(Espiritu espiritu);
+
+
+    public abstract TipoUbicacion getTipo();
 }

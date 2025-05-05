@@ -1,6 +1,9 @@
 package ar.edu.unq.epersgeist.controller;
 
+
 import ar.edu.unq.epersgeist.configuration.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -26,18 +29,18 @@ public class UbicacionControllerREST {
     }
 
     @PostMapping
-    public void crearUbicacion(@Valid @RequestBody Ubicacion ubicacion) {
-        ubicacionService.crear(ubicacion);
+    public ResponseEntity<Void> crearUbicacion(@Valid @RequestBody UbicacionDTO ubicacion) {
+        ubicacionService.crear(ubicacion.aModelo());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ubicacion> recuperarUbicacion(@PathVariable Long id) {
-        return ubicacionService.recuperar(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<UbicacionDTO> recuperarUbicacion(@PathVariable Long id) {
+        Ubicacion ubicacion = ubicacionService.recuperar(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return ResponseEntity.ok(UbicacionDTO.desdeModelo(ubicacion));
     }
 
-    // ejemplo de uso de excepcion hecha en configuracion
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         Ubicacion ubicacion = ubicacionService.recuperar(id)
@@ -48,12 +51,15 @@ public class UbicacionControllerREST {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody Ubicacion ubicacionActualizada) {
-        Ubicacion ubicacionActualizar = ubicacionService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ubicacion no encontrado"));
-        ubicacionActualizar.setNombre(ubicacionActualizada.getNombre());
-        ubicacionService.actualizar(ubicacionActualizar);
+    @PutMapping("/{id}/actualizar")
+    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
+        Ubicacion ubicacion = ubicacionService.recuperar(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        ubicacion.setNombre(dto.nombre());
+        ubicacion.setFlujoEnergia(dto.flujoDeEnergia());
+
+        ubicacionService.actualizar(ubicacion);
         return ResponseEntity.noContent().build();
     }
 
@@ -63,14 +69,14 @@ public class UbicacionControllerREST {
         return ResponseEntity.ok(ubicaciones);
     }
 
-    @GetMapping("/espiritusEn/{id}")
+    @GetMapping("/{id}/espiritus")
     public ResponseEntity<List<Espiritu>> espiritusEn(@PathVariable Long id) {
         List <Espiritu> espiritusEnUbicacion = ubicacionService.espiritusEn(id);
         return ResponseEntity.ok(espiritusEnUbicacion);
     }
 
-    @GetMapping("/mediumsSinEspiritusEn/{id}")
-    public ResponseEntity<List<Medium>> mediumsSinEspiritusEn(@PathVariable Long id) {
+    @GetMapping("/{id}/mediumsSinEspiritus")
+    public ResponseEntity<List<Medium>> mediumsSinEspiritus(@PathVariable Long id) {
         List<Medium> mediums = ubicacionService.mediumsSinEspiritusEn(id);
         return ResponseEntity.ok(mediums);
     }
