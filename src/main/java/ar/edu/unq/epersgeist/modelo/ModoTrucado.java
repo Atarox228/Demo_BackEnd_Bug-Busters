@@ -11,12 +11,6 @@ public class ModoTrucado implements Modo {
     }
 
     public int generarNumero(int min, int max) {
-        int resultado = 0;
-        if (max == 10){
-            resultado = trucado10;
-        } else {
-            resultado = trucado100;
-        }
-        return resultado;
+        return (max == 10) ? this.trucado10 : trucado100;
     }
 }

@@ -20,7 +20,7 @@ public class Cementerio extends Ubicacion{
 
     @Override
     public boolean puedeRecuperarse(Espiritu espiritu){
-        return espiritu.getTipo() == TipoEspiritu.DEMONIACO;
+        return espiritu.puedeRecuperarseEnCementerio();
     }
 
     @Override
@@ -31,13 +31,17 @@ public class Cementerio extends Ubicacion{
     @Override
     public void moverAEspiritu(Espiritu espiritu){
         espiritu.setUbicacion(this);
-        if(espiritu.getTipo() == TipoEspiritu.ANGELICAL){
-            espiritu.reducirConexionYdesvincularSiEsNecesario(5);
-        }
+        espiritu.moverCementerio();
     }
 
     public boolean permiteInvocarTipo(TipoEspiritu tipo){
         return tipo == TipoEspiritu.DEMONIACO;
     }
+
+    @Override
+    public void aumentarConexionDe(Espiritu espiritu) {
+        espiritu.aumentarConexionDeCementerio(this.getFlujoEnergia());
+    }
+
 
 }
