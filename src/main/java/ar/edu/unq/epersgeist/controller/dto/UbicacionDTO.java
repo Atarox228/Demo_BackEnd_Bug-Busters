@@ -1,0 +1,31 @@
+package ar.edu.unq.epersgeist.controller.dto;
+
+import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+public record UbicacionDTO(
+        Long id,
+        @NotBlank String nombre,
+        TipoUbicacion tipoDeUbicacion,
+        @Min(1) Integer flujoDeEnergia)
+{
+
+
+    public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
+        return new UbicacionDTO(
+                ubicacion.getId(),
+                ubicacion.getNombre(),
+                ubicacion.getTipo(),
+                ubicacion.getFlujoEnergia()
+        );
+    }
+
+    public Ubicacion aModelo(){
+        return switch (this.tipoDeUbicacion) {
+            case SANTUARIO -> new Santuario(nombre, flujoDeEnergia);
+            case CEMENTERIO -> new Cementerio(nombre, flujoDeEnergia);
+        };
+    }
+}

@@ -2,14 +2,12 @@ package ar.edu.unq.epersgeist.modelo;
 
 import java.io.Serializable;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import lombok.*;
 import jakarta.persistence.*;
 
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor
 
