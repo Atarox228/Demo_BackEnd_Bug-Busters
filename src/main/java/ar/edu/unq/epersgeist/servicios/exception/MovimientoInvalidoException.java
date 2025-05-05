@@ -5,8 +5,4 @@ public class MovimientoInvalidoException extends RuntimeException {
     public MovimientoInvalidoException() {
         super("El medium ya se encuentra en la ubicación");
     }
-
-    public MovimientoInvalidoException(String mensaje) {
-        super(mensaje);
-    }
 }
