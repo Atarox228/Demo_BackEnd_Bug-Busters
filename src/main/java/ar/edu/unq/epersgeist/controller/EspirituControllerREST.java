@@ -1,11 +1,17 @@
 package ar.edu.unq.epersgeist.controller;
 
+import ar.edu.unq.epersgeist.configuration.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarEspirituRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +33,16 @@ public class EspirituControllerREST {
     }
 
     @PostMapping
-    public void crearEspiritu(@RequestBody EspirituDTO espiritu) {
+    public void crearEspiritu(@Valid @RequestBody EspirituDTO espiritu) {
         espirituService.crear(espiritu.aModelo());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EspirituDTO> recuperarEspiritu(@PathVariable Long id) {
-        return espirituService.recuperar(id)
-                .map(EspirituDTO::desdeModelo)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        ValidacionID(id);
+        Espiritu espiritu = espirituService.recuperar(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
+        return ResponseEntity.ok(EspirituDTO.desdeModelo(espiritu));
     }
 
     @GetMapping
@@ -48,6 +54,7 @@ public class EspirituControllerREST {
 
     @DeleteMapping("{id}")
     public void eliminarEspiritu(@PathVariable Long id) {
+        ValidacionID(id);
         Espiritu espiritu = espirituService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         espirituService.eliminar(espiritu);
@@ -63,17 +70,37 @@ public class EspirituControllerREST {
 
     @PutMapping("/{id}/conectarse/{mediumid}")
     public void conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
+        ValidacionID(id);
         Espiritu espiritu = espirituService.recuperar(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        ValidacionID(mediumid);
         Medium medium = mediumService.recuperar(mediumid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(! medium.puedeConectarse(espiritu)){
+            throw new NoSePuedenConectarException(medium,espiritu);
+        }
+
         espirituService.conectar(espiritu.getId(),medium.getId());
     }
 
     @GetMapping("/demoniacos/{direccion}/{pagina}/{cantidadPorPagina}")
     public Set<EspirituDTO> espiritusDemoniacos(@PathVariable Direccion direccion, @PathVariable Integer pagina, @PathVariable Integer cantidadPorPagina){
+        if (pagina < 1 ){
+            throw new PaginaInvalidaException("La pagina no es valida");
+        }
+        if (cantidadPorPagina < 0 ){
+            throw new PaginaInvalidaException("La cantidad de paginas no es valida");
+        }
+
         return espirituService.espiritusDemoniacos( direccion, pagina, cantidadPorPagina).stream()
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
+    }
+
+    private void ValidacionID(@PathVariable Long id) {
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
     }
 }

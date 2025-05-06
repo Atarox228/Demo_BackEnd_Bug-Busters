@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 public record EspirituDTO(
         Long id,
         @NotBlank String nombre,
-        TipoEspiritu tipoDeEspiritu,
+        @NotBlank TipoEspiritu tipoDeEspiritu,
         Integer nivelDeConexion,
         UbicacionDTO ubicacion,
         MediumDTO medium) {

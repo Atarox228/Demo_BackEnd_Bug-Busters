@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.ReporteSanturarioMasCorruptoDTO;
 import ar.edu.unq.epersgeist.servicios.EstadisticaService;
+import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,10 @@ public class EstadisicaticaControllerREST {
 
     @GetMapping("/santuario-corrupto")
     public ReporteSanturarioMasCorruptoDTO reporteSantuarioCorrupto() {
+        if(estadisticaService.sinSanturariosCorruptos()){
+            throw new NoHaySantuariosConDemoniosException();
+        }
+
         return ReporteSanturarioMasCorruptoDTO.desdeModelo(estadisticaService.santuarioCorrupto());
     }
 }

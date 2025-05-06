@@ -1,7 +1,9 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.Check;
 import java.io.Serializable;
@@ -23,8 +25,10 @@ public class Medium implements Serializable {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
     @Column(nullable = false)
+    @Min(1)
     private Integer manaMax;
     @Column(nullable = false)
+    @Min(0)
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -121,5 +125,10 @@ public class Medium implements Serializable {
 
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);
+    }
+
+    public boolean tieneAngeles() {
+        return espiritus.stream()
+                .anyMatch(espiritu -> espiritu.getTipo() == TipoEspiritu.ANGELICAL);
     }
 }

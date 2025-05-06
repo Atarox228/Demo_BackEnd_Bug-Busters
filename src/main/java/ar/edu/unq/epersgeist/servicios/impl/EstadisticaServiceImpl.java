@@ -44,5 +44,10 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         return new ReporteSantuarioMasCorrupto(santuarioCorrupto.getNombre(), mediumEndemoniado, cantDemoniosTotal, cantDemoniosLibres);
     }
 
+    public boolean sinSanturariosCorruptos(){
+
+        return espirituDAO.santuariosCorruptos().isEmpty();
+    }
+
 
 }

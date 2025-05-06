@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ar.edu.unq.epersgeist.modelo.exception.*;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
-import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +21,12 @@ public class ManejadorDeErrores {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errores.put(error.getField(), error.getDefaultMessage()));
         return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ArgumentoNoValidoException.class)
+    public ResponseEntity<ErrorDetalle>  manejarErroresDeValidacion(ArgumentoNoValidoException ex) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PaginaInvalidaException.class)

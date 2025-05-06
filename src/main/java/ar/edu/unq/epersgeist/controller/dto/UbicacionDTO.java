@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 public record UbicacionDTO(
         Long id,
         @NotBlank String nombre,
-        TipoUbicacion tipoDeUbicacion,
+        @NotBlank TipoUbicacion tipoDeUbicacion,
         @Min(1) Integer flujoDeEnergia)
 {
 

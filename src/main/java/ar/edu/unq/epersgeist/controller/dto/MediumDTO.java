@@ -14,7 +14,7 @@ public record MediumDTO(
         @NotBlank String nombre,
         @Min(0) Integer mana,
         @Min(1) Integer manaMaximo,
-        @NotNull UbicacionDTO ubicacion,
+        UbicacionDTO ubicacion,
         Set<EspirituDTO> espiritus) {
 
 

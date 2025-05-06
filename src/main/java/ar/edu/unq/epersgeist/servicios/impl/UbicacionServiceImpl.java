@@ -39,8 +39,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        if (ubicacionId == null) {
-            return Optional.empty();
+        if (ubicacionId == null || ubicacionId <= 0) {
+            throw new IdNoValidoException();
         }
         return ubicacionDAO.findById(ubicacionId);
     }
