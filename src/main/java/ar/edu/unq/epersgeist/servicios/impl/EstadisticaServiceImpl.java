@@ -37,7 +37,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
             if (santuarios.isEmpty()) {
                 throw new NoHaySantuariosConDemoniosException();
             }
-        Ubicacion santuarioCorrupto = espirituDAO.santuariosCorruptos().get(0);
+        Ubicacion santuarioCorrupto = espirituDAO.santuariosCorruptos().getFirst();
         Medium mediumEndemoniado    = mediumDAO.mediumConMasDemoniosEn(santuarioCorrupto.getId()).orElseThrow(() -> new NoSuchElementException("No se encuentran mediums con demonios en este santuario"));
         Integer cantDemoniosTotal   = espirituDAO.demoniosEn(santuarioCorrupto.getId()).size();
         Integer cantDemoniosLibres  = espirituDAO.demoniosLibresEn(santuarioCorrupto.getId()).size();

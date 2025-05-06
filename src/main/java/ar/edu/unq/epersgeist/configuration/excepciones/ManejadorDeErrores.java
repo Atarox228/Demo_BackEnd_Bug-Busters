@@ -53,6 +53,12 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MismoMediumException.class)
+    public ResponseEntity<ErrorDetalle> manejarExorcirsoConUnoMismo(MismoMediumException ex, WebRequest request) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(ExorcismoEnDiferenteUbicacionException.class)
     public ResponseEntity<ErrorDetalle> manejarExorcismoEnUbicacionDiferente(ExorcismoEnDiferenteUbicacionException ex, WebRequest request) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
@@ -89,8 +95,15 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(MediumSinUbicacionException.class)
+    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(MediumSinUbicacionException ex, WebRequest request) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetalle> manejarErroresGenerales(Exception ex, WebRequest request) {
+        ex.printStackTrace();
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), "Error interno del servidor");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

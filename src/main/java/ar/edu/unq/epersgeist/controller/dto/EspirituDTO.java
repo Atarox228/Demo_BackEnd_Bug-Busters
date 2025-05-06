@@ -24,22 +24,22 @@ public record EspirituDTO(
         );
     }
 
-    public Espiritu aModelo(Ubicacion ubicacion){
-       Espiritu espiritu = this.aModelo();
-       espiritu.setUbicacion(ubicacion);
-       return espiritu;
-    }
+//    public Espiritu aModelo(Ubicacion ubicacion){
+//       Espiritu espiritu = this.aModelo();
+//       espiritu.setUbicacion(ubicacion);
+//       return espiritu;
+//    }
     public Espiritu aModelo(Medium medium){
         Espiritu espiritu = this.aModelo();
         espiritu.setMedium(medium);
         return espiritu;
     }
-    public Espiritu aModelo(Ubicacion ubicacion, Medium medium){
-        Espiritu espiritu = this.aModelo();
-        espiritu.setUbicacion(ubicacion);
-        espiritu.setMedium(medium);
-        return espiritu;
-    }
+//    public Espiritu aModelo(Ubicacion ubicacion, Medium medium){
+//        Espiritu espiritu = this.aModelo();
+//        espiritu.setUbicacion(ubicacion);
+//        espiritu.setMedium(medium);
+//        return espiritu;
+//    }
     public Espiritu aModelo(){
         return switch (this.tipoDeEspiritu) {
             case ANGELICAL -> new Angel(nombre);

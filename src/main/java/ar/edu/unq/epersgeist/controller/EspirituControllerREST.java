@@ -41,7 +41,7 @@ public class EspirituControllerREST {
     public ResponseEntity<EspirituDTO> recuperarEspiritu(@PathVariable Long id) {
         ValidacionID(id);
         Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
         return ResponseEntity.ok(EspirituDTO.desdeModelo(espiritu));
     }
 
@@ -56,14 +56,14 @@ public class EspirituControllerREST {
     public void eliminarEspiritu(@PathVariable Long id) {
         ValidacionID(id);
         Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
         espirituService.eliminar(espiritu);
     }
 
     @PutMapping("/{id}/actualizar")
     public void actualizarEspiritu(@PathVariable Long id, @RequestBody ActualizarEspirituRequestDTO dto) {
         Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
         espiritu.setNombre(dto.nombre());
         espirituService.actualizar(espiritu);
     }
@@ -72,10 +72,10 @@ public class EspirituControllerREST {
     public void conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
         ValidacionID(id);
         Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
         ValidacionID(mediumid);
         Medium medium = mediumService.recuperar(mediumid)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumid + " no encontrada"));
 
         if(! medium.puedeConectarse(espiritu)){
             throw new NoSePuedenConectarException(medium,espiritu);

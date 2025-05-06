@@ -97,12 +97,6 @@ public class UbicacionControllerREST {
         return ResponseEntity.ok(mediums);
     }
 
-    // ejemplo para comprobar funcionamiento del manejador de errores y su handleo de errores
-    @GetMapping("/test-error")
-    public void lanzarError() {
-        throw new RecursoNoEncontradoException("Este es un error de prueba");
-    }
-
     private void ValidacionID(@PathVariable Long id) {
         if (id == null || id <= 0) {
             throw new IdNoValidoException();
