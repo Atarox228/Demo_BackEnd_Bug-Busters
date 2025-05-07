@@ -1,13 +1,10 @@
 package ar.edu.unq.epersgeist.controller;
 
 
-import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -38,68 +36,44 @@ public class UbicacionControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<UbicacionDTO> recuperarUbicacion(@PathVariable Long id) {
-        ValidacionID(id);
-        Ubicacion ubicacion = ubicacionService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
-        return ResponseEntity.ok(UbicacionDTO.desdeModelo(ubicacion));
+        return ResponseEntity.ok(UbicacionDTO.desdeModelo(ubicacionService.recuperar(id).get()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        ValidacionID(id);
-        Ubicacion ubicacion = ubicacionService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
-
+    public void eliminar(@PathVariable Long id) {
+        Ubicacion ubicacion = ubicacionService.recuperar(id).get();
         ubicacionService.eliminar(ubicacion);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/actualizar")
-    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
-        ValidacionID(id);
-        Ubicacion ubicacion = ubicacionService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada"));
+    public void actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
+        Ubicacion ubicacion = ubicacionService.recuperar(id).get();
 
         ubicacion.setNombre(dto.nombre());
         ubicacion.setFlujoEnergia(dto.flujoDeEnergia());
 
         ubicacionService.actualizar(ubicacion);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<Collection<Ubicacion>> recuperarTodos() {
-        Collection<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
-        return ResponseEntity.ok(ubicaciones);
+    public Collection<UbicacionDTO> recuperarTodos() {
+        return ubicacionService.recuperarTodos().stream()
+                .map(UbicacionDTO::desdeModelo)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}/espiritus")
-    public ResponseEntity<List<Espiritu>> espiritusEn(@PathVariable Long id) {
-        ValidacionID(id);
-        if(ubicacionService.recuperar(id).isEmpty())
-        {
-            throw new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada");
-        }
-
-        List <Espiritu> espiritusEnUbicacion = ubicacionService.espiritusEn(id);
-        return ResponseEntity.ok(espiritusEnUbicacion);
+    public List<EspirituDTO> espiritusEn(@PathVariable Long id) {
+        return ubicacionService.espiritusEn(id).stream()
+                .map(EspirituDTO::desdeModelo)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}/mediumsSinEspiritus")
-    public ResponseEntity<List<Medium>> mediumsSinEspiritus(@PathVariable Long id) {
-        ValidacionID(id);
-        if(ubicacionService.recuperar(id).isEmpty())
-        {
-            throw new RecursoNoEncontradoException("Ubicación con ID " + id + " no encontrada");
-        }
-
-        List<Medium> mediums = ubicacionService.mediumsSinEspiritusEn(id);
-        return ResponseEntity.ok(mediums);
+    public List<MediumDTO> mediumsSinEspiritus(@PathVariable Long id) {
+        return ubicacionService.mediumsSinEspiritusEn(id).stream()
+                .map(MediumDTO::desdeModelo)
+                .collect(Collectors.toList());
     }
 
-    private void ValidacionID(@PathVariable Long id) {
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
 }

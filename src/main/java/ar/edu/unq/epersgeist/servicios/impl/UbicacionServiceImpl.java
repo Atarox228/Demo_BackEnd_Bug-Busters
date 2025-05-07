@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -9,6 +10,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
@@ -32,44 +34,42 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        if (ubicacion.getId() != null) {
-            throw new IdNoValidoException();
+        if(ubicacionDAO.existeUbicacionConNombre(ubicacion.getNombre()) != null){
+
+            throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        if (ubicacionId == null || ubicacionId <= 0) {
-            throw new IdNoValidoException();
-        }
-        Optional<Ubicacion> ubicacion = ubicacionDAO.findById(ubicacionId);
-        if (ubicacion.get().getDeleted()) {
-            throw new EntidadEliminadaException();
-        }
-        return ubicacion;
+        RevisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        return Optional.of(ubicacion);
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        if (ubicacion.getId() == null || !espirituDAO.existsById(ubicacion.getId())) {
-            throw new IdNoValidoException(ubicacion.getId());
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
         }
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacion.setDeleted(true);
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if(ubicacion.getId() == null){
-            throw new IdNoValidoException();
-        }
+        RevisarId (ubicacion.getId());
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return ubicacionDAO.findAll();
+        return ubicacionDAO.recuperarTodosNoEliminados();
     }
 
     @Override
@@ -79,13 +79,25 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
+        RevisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
+        RevisarId(ubicacionId);
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
+    private <T> void RevisarEntidadEliminado(Boolean condicion,T entidad) {
+        if(condicion){
+            throw new EntidadEliminadaException(entidad);
+        }
+    }
+    private void RevisarId(Long id){
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
+    }
 
 }

@@ -36,7 +36,6 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void crear(Espiritu espiritu) {
-        RevisarId(espiritu.getId());
         this.espirituDAO.save(espiritu);
     }
 
@@ -56,7 +55,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        if (!mediumDAO.existsById(espiritu.getId())) {
+        if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
@@ -65,7 +64,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void eliminar(Espiritu espiritu) {
-        if (!mediumDAO.existsById(espiritu.getId())) {
+        if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);

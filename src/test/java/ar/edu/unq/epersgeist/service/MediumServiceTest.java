@@ -89,9 +89,9 @@ public class MediumServiceTest {
 
     @Test
     void crearMismoMediumDosVeces(){
-        assertThrows(IdNoValidoException.class, () -> {
-            mediumService.crear(medium);
-        });
+        Long id1 = medium.getId();
+        mediumService.crear(medium);
+        assertEquals(medium.getId(), id1);
     }
 
     @Test

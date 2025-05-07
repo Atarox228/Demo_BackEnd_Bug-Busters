@@ -17,11 +17,14 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
     List<Espiritu> obtenerEspiritus(@Param("mediumId") Long mediumId);
 
     @Query(
-            "SELECT m FROM Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) and m.ubicacion.id = :ubicacionId")
+            "SELECT m FROM Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) and m.ubicacion.id = :ubicacionId AND m.ubicacion.deleted = false")
     List<Medium> mediumsSinEspiritusEn(@Param("ubicacionId")Long ubicacionId);
 
     @Query(
             "SELECT m FROM Medium m JOIN m.espiritus e WHERE TYPE(e) = Demonio AND m.ubicacion.id = :ubicacionId  GROUP BY m ORDER BY COUNT(e) DESC LIMIT 1"
     )
     Optional<Medium> mediumConMasDemoniosEn(@Param("ubicacionId")Long ubicacionId);
+
+    @Query("SELECT m FROM Medium m WHERE m.deleted = false ORDER BY m.nombre ASC")
+    List<Medium> recuperarTodosNoEliminados();
 }

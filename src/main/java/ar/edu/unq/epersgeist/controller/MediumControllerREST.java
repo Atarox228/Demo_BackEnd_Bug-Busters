@@ -31,11 +31,11 @@ public class MediumControllerREST {
         this.ubicacionService = ubicacionService;
     }
 
-        @PostMapping
-        public ResponseEntity<Void> crearMedium(@RequestBody @Valid MediumDTO medium) {
-            mediumService.crear(medium.aModelo());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
+    @PostMapping
+    public ResponseEntity<Void> crearMedium(@RequestBody @Valid MediumDTO medium) {
+        mediumService.crear(medium.aModelo());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
 
     @GetMapping("/{id}")

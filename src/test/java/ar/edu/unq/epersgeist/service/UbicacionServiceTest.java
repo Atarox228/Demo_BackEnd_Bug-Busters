@@ -1,8 +1,11 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
@@ -69,12 +72,13 @@ public class UbicacionServiceTest {
 
     @Test
     void crearUbicacion(){
+
         assertNotNull(ashenvale.getId());
     }
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(UbicacionYaCreadaException.class, () -> {
             ubicacionService.crear(fellwood);
         });
     }
@@ -87,27 +91,34 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarUbicacionNoPersistida(){
-            assertEquals(Optional.empty(), ubicacionService.recuperar(1L));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(1L);
+        });
     }
 
     @Test
     void recuperarUbicacionNula(){
-        assertEquals(Optional.empty(), ubicacionService.recuperar(null));
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.recuperar(null);
+        });
+
     }
 
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(idEliminado);
+        });
     }
 
     @Test
     void eliminarMismaUbicacionDosVeces() {
-        Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        ubicacionService.eliminar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.eliminar(fellwood);
+        });
     }
 
     @Test
@@ -115,7 +126,7 @@ public class UbicacionServiceTest {
         espiritu1.setUbicacion(fellwood);
         espirituService.actualizar(espiritu1);
         Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId()).get();
-        assertThrows(DataIntegrityViolationException.class, () -> {      // DEBERIA SER OTRO ERROR?¿
+        assertThrows(DataIntegrityViolationException.class, () -> {
           ubicacionService.eliminar(ubicacion);
         });
 
@@ -200,8 +211,12 @@ public class UbicacionServiceTest {
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
         ubicacionService.clearAll();
-        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi1Id));
-        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi2Id));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(ubi1Id);
+        });
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(ubi2Id);
+        });
     }
 
     @Test

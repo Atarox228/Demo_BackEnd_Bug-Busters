@@ -32,9 +32,6 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void crear(Medium medium) {
-        if (medium.getId() != null) {
-            throw new IdNoValidoException();
-        }
         mediumDAO.save(medium);
     }
 
@@ -52,7 +49,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Collection<Medium> recuperarTodos() {
-        return mediumDAO.findAll(Sort.by(Sort.Direction.ASC, "nombre"));
+        return mediumDAO.recuperarTodosNoEliminados();
     }
 
     @Override

@@ -34,7 +34,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     Page<Espiritu> findDemonios(Pageable pageable);
 
     @Query(
-            "SELECT e FROM Espiritu e WHERE e.ubicacion IS NOT NULL AND e.ubicacion.id = :ubicacionId"
+            "SELECT e FROM Espiritu e WHERE e.ubicacion IS NOT NULL AND e.ubicacion.id = :ubicacionId AND e.ubicacion.deleted = false"
     )
     List<Espiritu> espiritusEn(@Param("ubicacionId") Long ubicacionId);
 
