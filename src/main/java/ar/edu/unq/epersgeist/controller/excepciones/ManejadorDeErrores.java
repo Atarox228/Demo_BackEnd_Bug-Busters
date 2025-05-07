@@ -1,16 +1,21 @@
-package ar.edu.unq.epersgeist.configuration.excepciones;
+package ar.edu.unq.epersgeist.controller.excepciones;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
 public class ManejadorDeErrores {
@@ -95,10 +100,45 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(MediumSinUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(MediumSinUbicacionException ex, WebRequest request) {
+    @ExceptionHandler(EntidadSinUbicacionException.class)
+    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(EntidadSinUbicacionException ex, WebRequest request) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(EntidadEliminadaException.class)
+    public ResponseEntity<ErrorDetalle> manejarEntidadEliminada(EntidadEliminadaException ex, WebRequest request) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.GONE);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorDetalle> manejarRutaNoEncontrada(NoHandlerFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorDetalle(LocalDateTime.now(),"Ruta no válida: " + ex.getRequestURL()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorDetalle> handleJsonParseError(HttpMessageNotReadableException ex) {
+        String message = extractEnumErrorMessage(ex);
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorDetalle(LocalDateTime.now(),message));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDetalle> handleEnumMismatch(MethodArgumentTypeMismatchException ex) {
+        if (ex.getRequiredType().isEnum()) {
+            String valoresPermitidos = Arrays.stream(ex.getRequiredType().getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorDetalle(LocalDateTime.now(),"Valor inválido para '" + ex.getName() + "'. Valores permitidos: " + valoresPermitidos + "."));
+        }
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorDetalle(LocalDateTime.now(),"Error de parámetro: " + ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -107,4 +147,16 @@ public class ManejadorDeErrores {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), "Error interno del servidor");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    private String extractEnumErrorMessage(HttpMessageNotReadableException ex) {
+        Throwable root = ex.getMostSpecificCause();
+        if (root.getMessage() != null && root.getMessage().contains("TipoUbicacion")) {
+            return "Valor inválido para 'tipoUbicacion'. Valores permitidos: SANTUARIO, CEMENTERIO";
+        } else if (root.getMessage() != null && root.getMessage().contains("TipoEspiritu")) {
+            return "Valor inválido para 'TipoEspiritu'. Valores permitidos: ANGELICAL, DEMONIACO";
+        }
+        return "Error al interpretar el cuerpo de la solicitud: " + root.getMessage();
+    }
+
 }

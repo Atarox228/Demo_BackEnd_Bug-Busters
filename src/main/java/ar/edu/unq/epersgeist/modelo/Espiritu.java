@@ -7,6 +7,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
@@ -28,6 +29,24 @@ public abstract class Espiritu implements Serializable {
     private Medium medium;
     @ManyToOne
     private Ubicacion ubicacion;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(nullable = false)
+    private Boolean deleted = false;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt  = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt  = new Date();
+    }
 
     public Espiritu(@NonNull String nombre) {
         this.nivelConexion = 0;

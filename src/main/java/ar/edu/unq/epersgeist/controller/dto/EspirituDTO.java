@@ -3,11 +3,12 @@ package ar.edu.unq.epersgeist.controller.dto;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record EspirituDTO(
         Long id,
         @NotBlank String nombre,
-        @NotBlank TipoEspiritu tipoDeEspiritu,
+        @NotNull TipoEspiritu tipoDeEspiritu,
         Integer nivelDeConexion,
         UbicacionDTO ubicacion,
         MediumDTO medium) {

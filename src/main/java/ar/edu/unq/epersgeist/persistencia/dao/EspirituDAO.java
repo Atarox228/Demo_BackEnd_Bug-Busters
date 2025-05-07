@@ -30,7 +30,7 @@ import java.util.List;
 //}
 @Repository
 public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
-    @Query("SELECT e FROM Espiritu e WHERE TYPE(e) = Demonio")
+    @Query("SELECT e FROM Espiritu e WHERE TYPE(e) = Demonio AND e.deleted = false")
     Page<Espiritu> findDemonios(Pageable pageable);
 
     @Query(
@@ -57,5 +57,8 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
             "SELECT e FROM Espiritu e WHERE e.ubicacion IS NOT NULL AND e.ubicacion.id = :ubicacionId AND TYPE(e) = Demonio AND e.medium = NULL"
     )
     List<Object> demoniosLibresEn(@Param("ubicacionId") Long ubicacionId);
+
+    @Query("SELECT e FROM Espiritu e WHERE e.deleted = false ORDER BY e.nombre ASC")
+    List<Espiritu> recuperarTodosNoEliminados();
 }
 

@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +43,20 @@ public class UbicacionServiceImpl implements UbicacionService {
         if (ubicacionId == null || ubicacionId <= 0) {
             throw new IdNoValidoException();
         }
-        return ubicacionDAO.findById(ubicacionId);
+        Optional<Ubicacion> ubicacion = ubicacionDAO.findById(ubicacionId);
+        if (ubicacion.get().getDeleted()) {
+            throw new EntidadEliminadaException();
+        }
+        return ubicacion;
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        ubicacionDAO.delete(ubicacion);
+        if (ubicacion.getId() == null || !espirituDAO.existsById(ubicacion.getId())) {
+            throw new IdNoValidoException(ubicacion.getId());
+        }
+        ubicacion.setDeleted(true);
+        ubicacionDAO.save(ubicacion);
     }
 
     @Override

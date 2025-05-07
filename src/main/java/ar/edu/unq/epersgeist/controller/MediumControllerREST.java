@@ -1,26 +1,20 @@
 package ar.edu.unq.epersgeist.controller;
 
-import ar.edu.unq.epersgeist.configuration.excepciones.MediumSinUbicacionException;
-import ar.edu.unq.epersgeist.configuration.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarMediumRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +32,7 @@ public class MediumControllerREST {
     }
 
         @PostMapping
-        public ResponseEntity<Void> crearMedium(@Valid @RequestBody MediumDTO medium) {
+        public ResponseEntity<Void> crearMedium(@RequestBody @Valid MediumDTO medium) {
             mediumService.crear(medium.aModelo());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
@@ -46,31 +40,25 @@ public class MediumControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<MediumDTO> recuperarMedium(@PathVariable Long id) {
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        return ResponseEntity.ok(MediumDTO.desdeModelo(medium));
+
+        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.recuperar(id).get()));
     }
 
     @GetMapping
-    public ResponseEntity<Collection<Medium>> recuperararTodosLosMediums() {
-        Collection<Medium> mediums = mediumService.recuperarTodos();
-        return ResponseEntity.ok(mediums);
+    public Collection<MediumDTO> recuperararTodosLosMediums() {
+        return mediumService.recuperarTodos().stream()
+                .map(MediumDTO::desdeModelo)
+                .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
     public void borrarMedium(@PathVariable Long id) {
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        mediumService.eliminar(medium);
+        mediumService.eliminar(mediumService.recuperar(id).get());
     }
 
     @PutMapping("/{id}/actualizar")
     public void actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarMediumRequestDTO dto) {
-        ValidacionID(id);
-        Medium mediumUpdate = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
+        Medium mediumUpdate = mediumService.recuperar(id).orElseThrow();
         mediumUpdate.setNombre(dto.nombre());
         mediumUpdate.setMana(dto.mana());
         mediumUpdate.setManaMax(dto.manaMaximo());
@@ -79,78 +67,32 @@ public class MediumControllerREST {
 
     @PutMapping("/{id}/descansar")
     public void descansar(@PathVariable Long id){
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        mediumService.descansar(medium.getId());
+//        Medium medium = mediumService.recuperar(id).orElseThrow();
+//        mediumService.descansar(medium.getId());
+        mediumService.descansar(id);
     }
 
     @PutMapping("/{id}/exorcizar/{mediumId}")
     public void exorcizar(@PathVariable Long id, @PathVariable Long mediumId) {
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        ValidacionID(mediumId);
-        Medium medium2 = mediumService.recuperar(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
 
-        ValidarExorcismo(medium,medium2);
+        Medium medium = mediumService.recuperar(id).orElseThrow();
+        Medium medium2 = mediumService.recuperar(mediumId).orElseThrow();
 
         mediumService.exorcizar(medium.getId(),medium2.getId());
     }
 
-    private void ValidarExorcismo(Medium medium, Medium medium2) {
-
-        if(medium.getId().equals(medium2.getId())){
-            throw new MismoMediumException();
-        }
-        if (medium.getUbicacion() == null){
-            throw new MediumSinUbicacionException("Medium con ID " + medium.getId() + " no puede exorcizar sin estar en una ubicacion");
-        }
-        if (medium2.getUbicacion() == null){
-            throw new MediumSinUbicacionException("Medium con ID " + medium2.getId() + " no puede ser exorcizado sin estar en una ubicacion");
-        }
-        if(!Objects.equals(medium.getUbicacion().getId(), medium2.getUbicacion().getId())){
-            throw new ExorcismoEnDiferenteUbicacionException();
-        }
-        if(! medium.tieneAngeles()){
-            throw new NoHayAngelesException();
-        }
-    }
 
     @PutMapping("/{id}/invocar/{espirituId}")
     public void invocar(@PathVariable Long id, @PathVariable Long espirituId) {
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        ValidacionID(espirituId);
-        Espiritu espiritu = espirituService.recuperar(espirituId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrada"));
-
-        ValidarInvocacion(medium,espiritu);
+        Medium medium = mediumService.recuperar(id).orElseThrow();
+        Espiritu espiritu = espirituService.recuperar(espirituId).orElseThrow();
 
         mediumService.invocar(medium.getId(),espiritu.getId());
     }
 
-    private void ValidarInvocacion(Medium medium, Espiritu espiritu) {
-
-        if(! espiritu.estaLibre()){
-            throw new EspirituNoLibreException(espiritu);
-        }
-        if (medium.getUbicacion() == null){
-            throw new MediumSinUbicacionException("Medium no puede invocar sin estar en una ubicacion");
-        }
-        if (! medium.getUbicacion().permiteInvocarTipo(espiritu.getTipo())){
-            throw new InvocacionFallidaPorUbicacionException(espiritu,medium.getUbicacion());
-        }
-
-    }
-
     @GetMapping("/{id}/espiritu")
     public Set<EspirituDTO> espiritu(@PathVariable Long id){
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
+        Medium medium = mediumService.recuperar(id).orElseThrow();
 
         return mediumService.espiritus(medium.getId()).stream()
                 .map(EspirituDTO::desdeModelo)
@@ -158,25 +100,11 @@ public class MediumControllerREST {
     }
 
     @PutMapping("/{id}/mover/{ubicacionId}")
-    public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
-        ValidacionID(id);
-        Medium medium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrada"));
-        ValidacionID(ubicacionId);
-        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-
-        if(medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())){
-            throw new MovimientoInvalidoException();
-        }
+    public void mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
+        Medium medium = mediumService.recuperar(id).orElseThrow();
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionId).orElseThrow();
 
         mediumService.mover(medium.getId(),ubicacion.getId());
-        return ResponseEntity.noContent().build();
     }
 
-    private void ValidacionID(@PathVariable Long id) {
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
 }

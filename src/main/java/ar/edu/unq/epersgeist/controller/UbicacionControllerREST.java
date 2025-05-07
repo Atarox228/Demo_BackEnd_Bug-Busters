@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.controller;
 
 
-import ar.edu.unq.epersgeist.configuration.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 
 import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
@@ -31,7 +31,7 @@ public class UbicacionControllerREST {
     }
 
     @PostMapping
-    public ResponseEntity<Void> crearUbicacion(@Valid @RequestBody UbicacionDTO ubicacion) {
+    public ResponseEntity<Void> crearUbicacion(@RequestBody @Valid UbicacionDTO ubicacion) {
         ubicacionService.crear(ubicacion.aModelo());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

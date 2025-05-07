@@ -7,10 +7,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.Check;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
@@ -34,9 +31,26 @@ public class Medium implements Serializable {
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
-    @Setter
     @ManyToOne
     private Ubicacion ubicacion;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(nullable = false)
+    private Boolean deleted = false;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt  = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt  = new Date();
+    }
 
     public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
         this.mana = (manaMax >= mana) ? mana : manaMax;
