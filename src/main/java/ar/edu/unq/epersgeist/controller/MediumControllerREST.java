@@ -76,7 +76,6 @@ public class MediumControllerREST {
 
     @PutMapping("/{id}/exorcizar/{mediumId}")
     public ResponseEntity<Void> exorcizar(@PathVariable Long id, @PathVariable Long mediumId) {
-        Dado
         mediumService.exorcizar(id,mediumId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -57,7 +57,7 @@ public class EspirituControllerREST {
     }
 
     @PutMapping("/{id}/actualizar")
-    public ResponseEntity<Void> actualizarEspiritu(@PathVariable Long id, @RequestBody ActualizarEspirituRequestDTO dto) {
+    public ResponseEntity<Void> actualizarEspiritu(@PathVariable Long id, @Valid @RequestBody ActualizarEspirituRequestDTO dto) {
         Espiritu espiritu = espirituService.recuperar(id).get();
         espiritu.setNombre(dto.nombre());
         espirituService.actualizar(espiritu);

@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -36,91 +35,91 @@ public class ManejadorDeErrores {
     }
 
     @ExceptionHandler(PaginaInvalidaException.class)
-    public ResponseEntity<ErrorDetalle> manejarPaginaInvalida(PaginaInvalidaException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarPaginaInvalida(PaginaInvalidaException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IdNoValidoException.class)
-    public ResponseEntity<ErrorDetalle> manejarIdNoValido(IdNoValidoException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarIdNoValido(IdNoValidoException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<ErrorDetalle> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoHaySantuariosConDemoniosException.class)
-    public ResponseEntity<ErrorDetalle> manejarSantuarioDemoniacoNoEncontrado(NoHaySantuariosConDemoniosException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarSantuarioDemoniacoNoEncontrado(NoHaySantuariosConDemoniosException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MismoMediumException.class)
-    public ResponseEntity<ErrorDetalle> manejarExorcirsoConUnoMismo(MismoMediumException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarExorcirsoConUnoMismo(MismoMediumException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ExorcismoEnDiferenteUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarExorcismoEnUbicacionDiferente(ExorcismoEnDiferenteUbicacionException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarExorcismoEnUbicacionDiferente(ExorcismoEnDiferenteUbicacionException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EspirituNoLibreException.class)
-    public ResponseEntity<ErrorDetalle> manejarEspirituNoLibre(EspirituNoLibreException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarEspirituNoLibre(EspirituNoLibreException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MovimientoInvalidoException.class)
-    public ResponseEntity<ErrorDetalle> manejarMovimientoInvalido(MovimientoInvalidoException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarMovimientoInvalido(MovimientoInvalidoException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UbicacionYaCreadaException.class)
-    public ResponseEntity<ErrorDetalle> manejarUbicacionYaCreada(UbicacionYaCreadaException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarUbicacionYaCreada(UbicacionYaCreadaException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EntidadConEntidadesConectadasException.class)
-    public ResponseEntity<ErrorDetalle> manejarEliminarEntidadConEntidades(EntidadConEntidadesConectadasException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarEliminarEntidadConEntidades(EntidadConEntidadesConectadasException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NoHayAngelesException.class)
-    public ResponseEntity<ErrorDetalle> manejarSinAngeles(NoHayAngelesException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarSinAngeles(NoHayAngelesException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(InvocacionFallidaPorUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarInvocacionNulaPorUbicacion(InvocacionFallidaPorUbicacionException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarInvocacionNulaPorUbicacion(InvocacionFallidaPorUbicacionException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(NoSePuedenConectarException.class)
-    public ResponseEntity<ErrorDetalle> manejarConexionFallida(NoSePuedenConectarException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarConexionFallida(NoSePuedenConectarException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(EntidadSinUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(EntidadSinUbicacionException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(EntidadSinUbicacionException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(EntidadEliminadaException.class)
-    public ResponseEntity<ErrorDetalle> manejarEntidadEliminada(EntidadEliminadaException ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarEntidadEliminada(EntidadEliminadaException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.GONE);
     }
@@ -141,6 +140,8 @@ public class ManejadorDeErrores {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorDetalle> handleEnumMismatch(MethodArgumentTypeMismatchException ex) {
+        String nombre = ex.getName();
+        Class<?> tipoEsperado = ex.getRequiredType();
         if (ex.getRequiredType().isEnum()) {
             String valoresPermitidos = Arrays.stream(ex.getRequiredType().getEnumConstants())
                     .map(Object::toString)
@@ -148,6 +149,14 @@ public class ManejadorDeErrores {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorDetalle(LocalDateTime.now(),"Valor inválido para '" + ex.getName() + "'. Valores permitidos: " + valoresPermitidos + "."));
+        } else if (tipoEsperado != null && tipoEsperado.equals(Long.class)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe ser un número válido (long)."));
+        } else if (tipoEsperado != null && tipoEsperado.equals(Integer.class)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe ser un número válido (Integer)."));
         }
         return ResponseEntity
                 .badRequest()
@@ -155,7 +164,7 @@ public class ManejadorDeErrores {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetalle> manejarErroresGenerales(Exception ex, WebRequest request) {
+    public ResponseEntity<ErrorDetalle> manejarErroresGenerales(Exception ex) {
         ex.printStackTrace();
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), "Error interno del servidor");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

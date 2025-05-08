@@ -47,7 +47,7 @@ public class UbicacionControllerREST {
     }
 
     @PutMapping("/{id}/actualizar")
-    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
+    public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarUbicacionRequestDTO dto) {
         Ubicacion ubicacion = ubicacionService.recuperar(id).get();
 
         ubicacion.setNombre(dto.nombre());
