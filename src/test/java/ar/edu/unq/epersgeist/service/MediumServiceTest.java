@@ -1225,8 +1225,6 @@ public class MediumServiceTest {
 
         espirituService.eliminar(espirituAct);
 
-        Medium m = mediumService.recuperar(medium.getId()).get();
-
         assertThrows(NoHayAngelesException.class, () -> {
             mediumService.exorcizar(medium.getId(), medium2.getId());
         });
