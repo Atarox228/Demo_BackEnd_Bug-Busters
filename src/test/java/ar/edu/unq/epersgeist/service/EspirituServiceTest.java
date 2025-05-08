@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
@@ -90,15 +91,15 @@ public class EspirituServiceTest {
         });
     }
 
-//    @Test
-//    void actualizarEspirituEliminado(){
-//        espirituService.crear(Casper);
-//        Casper.setNombre("Lala");
-//        espirituService.eliminar(Casper);
-//        assertThrows(OptimisticLockException.class, () -> {
-//            espirituService.actualizar(Casper);
-//        });
-//    }
+    @Test
+    void actualizarEspirituEliminado(){
+        espirituService.crear(Casper);
+        Casper.setNombre("Lala");
+        espirituService.eliminar(Casper);
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.actualizar(Casper);
+        });
+    }
 
 
     @Test
@@ -128,7 +129,7 @@ public class EspirituServiceTest {
     void recuperarEspirituEliminado() {
         espirituService.crear(Casper);
         espirituService.eliminar(Casper);
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(EntidadEliminadaException.class, () -> {
             espirituService.recuperar(Casper.getId());
         });
     }

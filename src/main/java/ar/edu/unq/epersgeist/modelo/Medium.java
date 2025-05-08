@@ -134,7 +134,8 @@ public class Medium implements Serializable {
 
     public void moverseA(Ubicacion ubicacion){
         setUbicacion(ubicacion);
-        espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
+        List<Espiritu> copia = new ArrayList<>(espiritus);
+        copia.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
     }
 
     public void desconectarse(Espiritu espiritu) {

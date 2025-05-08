@@ -27,4 +27,7 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
 
     @Query("SELECT m FROM Medium m WHERE m.deleted = false ORDER BY m.nombre ASC")
     List<Medium> recuperarTodosNoEliminados();
+
+    @Query("SELECT m FROM Medium m WHERE m.deleted = false and m.ubicacion.id = :ubicacionId ORDER BY m.nombre ASC")
+    List<Medium> mediumsEn(@Param("ubicacionId")Long ubicacionId);
 }

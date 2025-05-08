@@ -55,6 +55,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
+        RevisarId(espiritu.getId());
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
@@ -77,10 +78,13 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
+        RevisarId(espirituId);
+        RevisarId(mediumId);
+
         Espiritu espiritu = espirituDAO.findById(espirituId)
-                .orElseThrow(() -> new IdNoValidoException(espirituId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
         Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new IdNoValidoException(mediumId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         
         RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         RevisarEntidadEliminado(medium.getDeleted(),medium);

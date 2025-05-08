@@ -1,7 +1,9 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
@@ -103,12 +105,14 @@ public class MediumServiceTest {
 
     @Test
     void recuperarMediumConIdInvalido(){
-        assertFalse(mediumService.recuperar(125L).isPresent());
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.recuperar(125L);
+        });
     }
 
     @Test
     void recuperarMediumConIdNulo() {
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+        assertThrows(IdNoValidoException.class, () -> {
             mediumService.recuperar(null);
         });
     }
@@ -133,17 +137,19 @@ public class MediumServiceTest {
         Long mediumId = medium.getId();
         assertTrue(mediumService.recuperar(mediumId).isPresent());
         mediumService.eliminar(medium);
-        assertFalse(mediumService.recuperar(mediumId).isPresent());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            mediumService.recuperar(mediumId);
+        });
     }
-/*
+
     @Test
     void eliminarMediumYaEliminado(){
         mediumService.eliminar(medium);
-        assertThrows(OptimisticLockException.class, () -> {
+        assertThrows(EntidadEliminadaException.class, () -> {
             mediumService.eliminar(medium);
         });
     }
-*/
+
     @Test
     void eliminarTodosLosMediums() {
         Long mediumId = medium.getId();
@@ -153,9 +159,14 @@ public class MediumServiceTest {
         assertTrue(mediumService.recuperar(mediumId2).isPresent());
 
         mediumService.eliminarTodo();
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.recuperar(mediumId);
+        });
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.recuperar(mediumId2).isPresent();
 
-        assertFalse(mediumService.recuperar(mediumId).isPresent());
-        assertFalse(mediumService.recuperar(mediumId2).isPresent());
+        });
+
     }
 
     @Test
@@ -172,7 +183,7 @@ public class MediumServiceTest {
     @Test
     void actualizarMediumEliminado(){
         mediumService.eliminar(medium);
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(EntidadEliminadaException.class, () -> {
             mediumService.actualizar(medium);
         });
     }
@@ -775,14 +786,14 @@ public class MediumServiceTest {
 
     @Test
     void descansarMediumConIdNulo(){
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+        assertThrows(IdNoValidoException.class, () -> {
             mediumService.descansar(null);
         });
     }
 
     @Test
     void descansarMediumConIdInexistente(){
-        assertThrows(IdNoValidoException.class,()->{
+        assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.descansar(1258L);
         });
     }
@@ -805,7 +816,7 @@ public class MediumServiceTest {
         medium3 = mediumService.recuperar(medium3.getId()).get();
 
         assertEquals(medium3.getMana(), 40);
-        assertEquals(espirituInvocado.getUbicacion(), espiritu2.getUbicacion());
+        assertEquals(espirituInvocado.getUbicacion().getId(), espiritu2.getUbicacion().getId());
     }
 
     @Test
@@ -869,28 +880,28 @@ public class MediumServiceTest {
 
     @Test
     void invocarEspirituConIdMediumNull() {
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+        assertThrows(IdNoValidoException.class, () -> {
             mediumService.recuperar(null);
         });
     }
 
     @Test
     void invocarEspirituConIdMediumInvalido() {
-        assertThrows(IdNoValidoException.class,()->{
+        assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.invocar(2025L, espiritu2.getId());
         });
     }
 
     @Test
     void invocarEspirituConIdEspirituNull() {
-        assertThrows(InvalidDataAccessApiUsageException.class,()->{
+        assertThrows(IdNoValidoException.class,()->{
             mediumService.invocar(medium3.getId(), null);
         });
     }
 
     @Test
     void invocarEspirituConIdEspirituInvalido() {
-        assertThrows(IdNoValidoException.class,()->{
+        assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.invocar(medium3.getId(), 2025L);
         });
     }
@@ -915,14 +926,14 @@ public class MediumServiceTest {
 
     @Test
     void espiritusDeMediumConIdInvalida(){
-        assertThrows(IdNoValidoException.class,()->{
+        assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.espiritus(2025L);
         });
     }
 
     @Test
     void espiritusDeMediumConIdNull(){
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+        assertThrows(IdNoValidoException.class, () -> {
         mediumService.espiritus(null);
         });
     }
@@ -1034,21 +1045,21 @@ public class MediumServiceTest {
 
     @Test
     void movimientoDeMediumConIdInexistente() {
-        assertThrows(IdNoValidoException.class,() -> {
+        assertThrows(RecursoNoEncontradoException.class,() -> {
             mediumService.mover(25L, santuario.getId());;
         });
     }
 
     @Test
     void movimientoDeMediumAUbicacionConIdInexistente() {
-        assertThrows(IdNoValidoException.class,() -> {
+        assertThrows(RecursoNoEncontradoException.class,() -> {
             mediumService.mover(medium2.getId(), 21L);;
         });
     }
 
     @Test
     void movimientoDeMediumConIdNulo() {
-        assertThrows(InvalidDataAccessApiUsageException.class,() -> {
+        assertThrows(IdNoValidoException.class,() -> {
             mediumService.mover(null, santuario.getId());;
         });
     }

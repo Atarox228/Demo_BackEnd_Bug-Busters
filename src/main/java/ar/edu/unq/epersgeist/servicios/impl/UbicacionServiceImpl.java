@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
 import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
@@ -56,6 +57,7 @@ public class UbicacionServiceImpl implements UbicacionService {
             throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
         }
         RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        RevisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
         ubicacion.setDeleted(true);
         ubicacionDAO.save(ubicacion);
     }
@@ -63,6 +65,9 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void actualizar(Ubicacion ubicacion) {
         RevisarId (ubicacion.getId());
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
+        }
         RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionDAO.save(ubicacion);
     }
@@ -98,6 +103,16 @@ public class UbicacionServiceImpl implements UbicacionService {
         if (id == null || id <= 0) {
             throw new IdNoValidoException();
         }
+    }
+
+    private <T> void RevisarUbicacionConEntidades(Long id, T entidad){
+        if (!espiritusEn(id).isEmpty() || !mediumsEn(id).isEmpty()){
+            throw new EntidadConEntidadesConectadasException(entidad);
+        }
+    }
+
+    private List<Medium> mediumsEn(Long id){
+        return mediumDAO.mediumsEn(id);
     }
 
 }

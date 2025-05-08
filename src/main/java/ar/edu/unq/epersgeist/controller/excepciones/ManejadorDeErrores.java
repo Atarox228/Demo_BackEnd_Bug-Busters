@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -82,6 +83,18 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UbicacionYaCreadaException.class)
+    public ResponseEntity<ErrorDetalle> manejarUbicacionYaCreada(UbicacionYaCreadaException ex, WebRequest request) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EntidadConEntidadesConectadasException.class)
+    public ResponseEntity<ErrorDetalle> manejarEliminarEntidadConEntidades(EntidadConEntidadesConectadasException ex, WebRequest request) {
+        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(NoHayAngelesException.class)
     public ResponseEntity<ErrorDetalle> manejarSinAngeles(NoHayAngelesException ex, WebRequest request) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
@@ -148,15 +161,25 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     private String extractEnumErrorMessage(HttpMessageNotReadableException ex) {
         Throwable root = ex.getMostSpecificCause();
-        if (root.getMessage() != null && root.getMessage().contains("TipoUbicacion")) {
-            return "Valor inválido para 'tipoUbicacion'. Valores permitidos: SANTUARIO, CEMENTERIO";
-        } else if (root.getMessage() != null && root.getMessage().contains("TipoEspiritu")) {
-            return "Valor inválido para 'TipoEspiritu'. Valores permitidos: ANGELICAL, DEMONIACO";
+
+        if (root instanceof InvalidFormatException invalidFormat) {
+
+            String campo = invalidFormat.getPath().get(0).getFieldName();
+            Class<?> tipo = invalidFormat.getTargetType();
+
+            if (tipo.isEnum()) {
+                String valoresPermitidos = Arrays.stream(tipo.getEnumConstants())
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", "));
+
+                return "Valor inválido para '" + campo + "'. Valores permitidos: " + valoresPermitidos + ".";
+            }
         }
-        return "Error al interpretar el cuerpo de la solicitud: " + root.getMessage();
+
+        return "Error al interpretar el cuerpo de la solicitud.";
     }
+
 
 }

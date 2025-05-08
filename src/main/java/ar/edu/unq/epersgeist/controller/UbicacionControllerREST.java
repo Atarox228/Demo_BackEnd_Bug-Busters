@@ -40,19 +40,21 @@ public class UbicacionControllerREST {
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         Ubicacion ubicacion = ubicacionService.recuperar(id).get();
         ubicacionService.eliminar(ubicacion);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
-    public void actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
+    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody ActualizarUbicacionRequestDTO dto) {
         Ubicacion ubicacion = ubicacionService.recuperar(id).get();
 
         ubicacion.setNombre(dto.nombre());
         ubicacion.setFlujoEnergia(dto.flujoDeEnergia());
 
         ubicacionService.actualizar(ubicacion);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping

@@ -34,7 +34,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     @Override
     public ReporteSantuarioMasCorrupto santuarioCorrupto() {
         List<Ubicacion> santuarios  = espirituDAO.santuariosCorruptos();
-            if (santuarios.isEmpty()) {
+            if (santuarios.isEmpty() || sinSanturariosCorruptos(santuarios)) {
                 throw new NoHaySantuariosConDemoniosException();
             }
         Ubicacion santuarioCorrupto = espirituDAO.santuariosCorruptos().getFirst();
@@ -44,9 +44,10 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         return new ReporteSantuarioMasCorrupto(santuarioCorrupto.getNombre(), mediumEndemoniado, cantDemoniosTotal, cantDemoniosLibres);
     }
 
-    public boolean sinSanturariosCorruptos(){
 
-        return espirituDAO.santuariosCorruptos().isEmpty();
+    private boolean sinSanturariosCorruptos(List<Ubicacion> santuarios){
+
+        return espirituDAO.demoniosEn(santuarios.getFirst().getId()).isEmpty();
     }
 
 

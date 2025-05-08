@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.controller;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarMediumRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.modelo.Dado;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -52,59 +53,53 @@ public class MediumControllerREST {
     }
 
     @DeleteMapping("/{id}")
-    public void borrarMedium(@PathVariable Long id) {
+    public ResponseEntity<Void> borrarMedium(@PathVariable Long id) {
         mediumService.eliminar(mediumService.recuperar(id).get());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
-    public void actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarMediumRequestDTO dto) {
+    public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarMediumRequestDTO dto) {
         Medium mediumUpdate = mediumService.recuperar(id).orElseThrow();
         mediumUpdate.setNombre(dto.nombre());
         mediumUpdate.setMana(dto.mana());
         mediumUpdate.setManaMax(dto.manaMaximo());
         mediumService.actualizar(mediumUpdate);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/descansar")
-    public void descansar(@PathVariable Long id){
-//        Medium medium = mediumService.recuperar(id).orElseThrow();
-//        mediumService.descansar(medium.getId());
+    public ResponseEntity<Void> descansar(@PathVariable Long id){
         mediumService.descansar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/exorcizar/{mediumId}")
-    public void exorcizar(@PathVariable Long id, @PathVariable Long mediumId) {
-
-        Medium medium = mediumService.recuperar(id).orElseThrow();
-        Medium medium2 = mediumService.recuperar(mediumId).orElseThrow();
-
-        mediumService.exorcizar(medium.getId(),medium2.getId());
+    public ResponseEntity<Void> exorcizar(@PathVariable Long id, @PathVariable Long mediumId) {
+        Dado
+        mediumService.exorcizar(id,mediumId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 
     @PutMapping("/{id}/invocar/{espirituId}")
-    public void invocar(@PathVariable Long id, @PathVariable Long espirituId) {
-        Medium medium = mediumService.recuperar(id).orElseThrow();
-        Espiritu espiritu = espirituService.recuperar(espirituId).orElseThrow();
-
-        mediumService.invocar(medium.getId(),espiritu.getId());
+    public ResponseEntity<Void> invocar(@PathVariable Long id, @PathVariable Long espirituId) {
+        mediumService.invocar(id,espirituId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{id}/espiritu")
     public Set<EspirituDTO> espiritu(@PathVariable Long id){
-        Medium medium = mediumService.recuperar(id).orElseThrow();
 
-        return mediumService.espiritus(medium.getId()).stream()
+        return mediumService.espiritus(id).stream()
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
     }
 
     @PutMapping("/{id}/mover/{ubicacionId}")
-    public void mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
-        Medium medium = mediumService.recuperar(id).orElseThrow();
-        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionId).orElseThrow();
-
-        mediumService.mover(medium.getId(),ubicacion.getId());
+    public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
+        mediumService.mover(id,ubicacionId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

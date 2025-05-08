@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
 import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
@@ -58,6 +59,7 @@ public class MediumServiceImpl implements MediumService {
             throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         RevisarEntidadEliminado(medium.getDeleted(),medium);
+        RevisarUbicacionConEntidades(medium.getId(),medium);
         medium.setDeleted(true);
         mediumDAO.save(medium);
     }
@@ -69,8 +71,9 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void actualizar(Medium medium) {
-        if (medium.getId() == null || !mediumDAO.existsById(medium.getId())) {
-            throw new IdNoValidoException(medium.getId());
+        RevisarId(medium.getId());
+        if (!mediumDAO.existsById(medium.getId())) {
+            throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         RevisarEntidadEliminado(medium.getDeleted(),medium);
         mediumDAO.save(medium);
@@ -79,8 +82,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void exorcizar(long idMedium, long idMedium2) {
         RevisarId(idMedium);
-        RevisarId(idMedium2
-        );
+        RevisarId(idMedium2);
         Medium medium = mediumDAO.findById(idMedium)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + idMedium + " no encontrado"));
         Medium medium2 = mediumDAO.findById(idMedium2)
@@ -130,6 +132,7 @@ public class MediumServiceImpl implements MediumService {
         RevisarId(mediumId);
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
+        RevisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         medium.descansar();
         mediumDAO.save(medium);
     }
@@ -161,6 +164,13 @@ public class MediumServiceImpl implements MediumService {
             throw new EntidadSinUbicacionException(entidad,id);
         }
     }
+
+    private <T> void RevisarUbicacionConEntidades(Long id, T entidad){
+        if (!espiritus(id).isEmpty()){
+            throw new EntidadConEntidadesConectadasException(entidad);
+        }
+    }
+
     private void RevisarId(Long id){
         if (id == null || id <= 0) {
             throw new IdNoValidoException();

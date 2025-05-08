@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
 import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
 import ar.edu.unq.epersgeist.servicios.impl.*;
@@ -126,7 +127,7 @@ public class UbicacionServiceTest {
         espiritu1.setUbicacion(fellwood);
         espirituService.actualizar(espiritu1);
         Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId()).get();
-        assertThrows(DataIntegrityViolationException.class, () -> {
+        assertThrows(EntidadConEntidadesConectadasException.class, () -> {
           ubicacionService.eliminar(ubicacion);
         });
 
@@ -176,8 +177,9 @@ public class UbicacionServiceTest {
     @Test
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
-        ubicacionService.actualizar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(fellwood.getId()));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.actualizar(fellwood);
+        });
     }
 
     @Test
@@ -198,7 +200,7 @@ public class UbicacionServiceTest {
     @Test
     void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
-        assertThrows(DataIntegrityViolationException.class, () -> {  //CAMBIE LA EXCEPTION
+        assertThrows(DataIntegrityViolationException.class, () -> {
             ubicacionService.actualizar(fellwood);
         });
     }
@@ -247,9 +249,9 @@ public class UbicacionServiceTest {
 
     @Test
     void espiritusEnUbicacionNula(){
-        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(null);
-
-        assertEquals(0, espiritusUbi.size());
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.espiritusEn(null);
+        });
     }
 
     @Test
@@ -258,8 +260,6 @@ public class UbicacionServiceTest {
           mediumService.actualizar(medium1);
           medium2.setUbicacion(ashenvale);
           mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
         assertEquals(2, mediumsSinEsps.size());
@@ -275,8 +275,6 @@ public class UbicacionServiceTest {
         mediumService.actualizar(medium1);
         medium2.setUbicacion(ashenvale);
         mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         espirituService.conectar(espiritu1.getId(),medium1.getId());
         espirituService.conectar(espiritu2.getId(),medium2.getId());
@@ -295,8 +293,6 @@ public class UbicacionServiceTest {
         mediumService.actualizar(medium1);
         medium2.setUbicacion(ashenvale);
         mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         espirituService.conectar(espiritu1.getId(),medium1.getId());
         espirituService.conectar(espiritu2.getId(),medium1.getId());
@@ -313,8 +309,9 @@ public class UbicacionServiceTest {
 
     @Test
     void mediumsEnUbicacionNula(){
-        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
-        assertEquals(0, mediumsSinEsps.size());
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.mediumsSinEspiritusEn(null);
+        });
     }
 
     @Test

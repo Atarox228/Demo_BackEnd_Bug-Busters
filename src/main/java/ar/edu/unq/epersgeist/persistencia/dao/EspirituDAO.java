@@ -43,7 +43,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
 
     // DEBO CAMBIAR CUANDO UBICACION TENGA TIPO
     @Query("SELECT e.ubicacion FROM Espiritu e " +
-            "WHERE TYPE(e.ubicacion) = Santuario GROUP BY e.ubicacion " +
+            "WHERE TYPE(e.ubicacion) = Santuario and e.ubicacion.deleted = FALSE GROUP BY e.ubicacion " +
             "ORDER BY  (SUM(CASE WHEN TYPE(e) = Demonio THEN 1 ELSE 0 END) - SUM(CASE WHEN TYPE(e) = Angel THEN 1 ELSE 0 END)) DESC," +
             " e.ubicacion.nombre ASC")
     List<Ubicacion> santuariosCorruptos();

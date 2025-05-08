@@ -50,28 +50,24 @@ public class EspirituControllerREST {
     }
 
     @DeleteMapping("{id}")
-    public void eliminarEspiritu(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarEspiritu(@PathVariable Long id) {
         Espiritu espiritu = espirituService.recuperar(id).get();
         espirituService.eliminar(espiritu);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
-    public void actualizarEspiritu(@PathVariable Long id, @RequestBody ActualizarEspirituRequestDTO dto) {
+    public ResponseEntity<Void> actualizarEspiritu(@PathVariable Long id, @RequestBody ActualizarEspirituRequestDTO dto) {
         Espiritu espiritu = espirituService.recuperar(id).get();
         espiritu.setNombre(dto.nombre());
         espirituService.actualizar(espiritu);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/conectarse/{mediumid}")
-    public void conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
-        Espiritu espiritu = espirituService.recuperar(id).get();
-        Medium medium = mediumService.recuperar(mediumid).get();
-
-//        if(! medium.puedeConectarse(espiritu)){
-//            throw new NoSePuedenConectarException(medium,espiritu);
-//        }
-
-        espirituService.conectar(espiritu.getId(),medium.getId());
+    public ResponseEntity<Void> conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
+        espirituService.conectar(id,mediumid);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/demoniacos/{direccion}/{pagina}/{cantidadPorPagina}")

@@ -19,10 +19,6 @@ public class EstadisicaticaControllerREST {
 
     @GetMapping("/santuario-corrupto")
     public ReporteSanturarioMasCorruptoDTO reporteSantuarioCorrupto() {
-        if(estadisticaService.sinSanturariosCorruptos()){
-            throw new NoHaySantuariosConDemoniosException();
-        }
-
         return ReporteSanturarioMasCorruptoDTO.desdeModelo(estadisticaService.santuarioCorrupto());
     }
 }
