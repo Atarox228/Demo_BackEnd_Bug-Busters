@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -326,6 +328,147 @@ public class EspirituServiceTest {
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
         });
+    }
+
+    //test de soft delete
+    @Test
+    void creacionTimeStampUpdateAndNoDelete(){
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Angel("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        assertNotNull(angelAct.getCreatedAt());
+        assertNotNull(angelAct.getUpdatedAt());
+        assertFalse(angelAct.getDeleted());
+        assertNotNull(demonioAct.getCreatedAt());
+        assertNotNull(demonioAct.getUpdatedAt());
+        assertFalse(demonioAct.getDeleted());
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStamp() throws InterruptedException {
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Angel("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("juancho");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+
+        demonioAct.setNombre("DobleDemonio");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+
+        int comparison = angelAct.getUpdatedAt().compareTo(angelAct.getCreatedAt());
+        int comparison2 = angelAct.getUpdatedAt().compareTo(angelAct.getCreatedAt());
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStampDoble() throws InterruptedException {
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Angel("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("juancho");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+        Date lastUpdate = angelAct.getUpdatedAt();
+
+        demonioAct.setNombre("DobleDemonio");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+        Date lastUpdate2 = demonioAct.getUpdatedAt();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("miphiel");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+
+        demonioAct.setNombre("sartorias");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+
+        int comparison = angelAct.getUpdatedAt().compareTo(lastUpdate);
+        int comparison2 = angelAct.getUpdatedAt().compareTo(lastUpdate2);
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void softDeletion(){
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Angel("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(angelAct);
+        espirituService.eliminar(demonioAct);
+
+        angelAct = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
+        demonioAct = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(angelAct.getDeleted());
+        assertTrue(demonioAct.getDeleted());
+
+    }
+
+    @Test
+    void noRecuperaTodosConSoftdelete(){
+        mediumService.eliminarTodo();
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Angel("belcebu");
+        Espiritu demonio2 = new Angel("miras");
+
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+        espirituService.crear(demonio2);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(angelAct);
+        espirituService.eliminar(demonioAct);
+
+
+        List<Espiritu> todos = espirituService.recuperarTodos();
+
+        assertEquals(todos.size(),1);
+
     }
 
     @AfterEach
