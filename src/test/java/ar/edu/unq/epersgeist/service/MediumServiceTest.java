@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import java.security.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -1103,7 +1104,7 @@ public class MediumServiceTest {
 
     //test de soft delete
     @Test
-    void creacionTimeStamp(){
+    void creacionTimeStampUpdateAndNoDelete(){
         Medium medium = new Medium("pedro",100,20);
 
         mediumService.crear(medium);
@@ -1112,6 +1113,7 @@ public class MediumServiceTest {
 
         assertNotNull(mediumAct.getCreatedAt());
         assertNotNull(mediumAct.getUpdatedAt());
+        assertFalse(mediumAct.getDeleted());
 
     }
 
@@ -1138,6 +1140,34 @@ public class MediumServiceTest {
 
     //test de soft delete
     @Test
+    void updateTimeStampDoble() throws InterruptedException {
+        Medium medium = new Medium("pedro",100,20);
+
+        mediumService.crear(medium);
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        Thread.sleep(1000);
+
+        mediumAct.setNombre("juancho");
+        mediumService.actualizar(mediumAct);
+        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+        Date lastUpdate = mediumAct.getUpdatedAt();
+
+        Thread.sleep(1000);
+
+        mediumAct.setNombre("pedritos");
+        mediumService.actualizar(mediumAct);
+        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+
+        int comparison = mediumAct.getUpdatedAt().compareTo(lastUpdate);
+
+        assertTrue(comparison > 0);
+
+    }
+
+    //test de soft delete
+    @Test
     void softDeletion(){
         Medium medium = new Medium("pedro",100,20);
 
@@ -1153,6 +1183,24 @@ public class MediumServiceTest {
 
     }
 
+    @Test
+    void noRecuperaTodosConSoftdelete(){
+        mediumService.eliminarTodo();
+        Medium medium = new Medium("pedro",100,20);
+        Medium medium2 = new Medium("juan",100,20);
+
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        mediumService.eliminar(mediumAct);
+
+        Collection<Medium> todos = mediumService.recuperarTodos();
+
+        assertEquals(todos.size(),1);
+
+    }
 
 
     @AfterEach
