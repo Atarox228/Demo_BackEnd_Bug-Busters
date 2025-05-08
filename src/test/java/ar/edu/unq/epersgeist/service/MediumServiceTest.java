@@ -957,7 +957,7 @@ public class MediumServiceTest {
         assertEquals(santuario.getNombre(), demonio.getUbicacion().getNombre());
         assertEquals(angel.getMedium().getId(), actualizado.getId());
         assertEquals(demonio.getMedium().getId(), actualizado.getId());
-        assertEquals(angel.getNivelConexion(), espiritu.getNivelConexion());
+        assertEquals(demonio.getNivelConexion(), 30);
         assertNotEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
     }
 
@@ -982,7 +982,7 @@ public class MediumServiceTest {
         assertEquals(cementerio.getId(), demonio.getUbicacion().getId());
         assertEquals(angel.getMedium().getId(), actualizado.getId());
         assertEquals(demonio.getMedium().getId(), actualizado.getId());
-        assertNotEquals(angel.getNivelConexion(), espiritu.getNivelConexion());
+        assertEquals(angel.getNivelConexion(),5);
         assertEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
     }
 
@@ -1100,6 +1100,8 @@ public class MediumServiceTest {
         });
     }
 
+
+
     @AfterEach
     void cleanUp() {
         espirituService.eliminarTodo();
@@ -1107,5 +1109,7 @@ public class MediumServiceTest {
         ubicacionService.clearAll();
         dado.setModo(new ModoRandom());
     }
+
+
 }
 

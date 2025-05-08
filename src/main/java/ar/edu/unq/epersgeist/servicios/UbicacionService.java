@@ -17,4 +17,5 @@ public interface UbicacionService {
     List<Espiritu> espiritusEn(Long ubicacionId);
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
     void clearAll();
+    Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
 }

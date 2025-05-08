@@ -83,6 +83,14 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
+        RevisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        return Optional.of(ubicacion);
+    }
+
+    @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
         RevisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);

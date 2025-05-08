@@ -38,9 +38,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Optional <Medium> recuperar(Long id) {
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
+        RevisarId(id);
         Medium medium = mediumDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrado"));
         RevisarEntidadEliminado(medium.getDeleted(),medium);
@@ -152,6 +150,14 @@ public class MediumServiceImpl implements MediumService {
         medium.moverseA(ubicacion);
         ubicacionDAO.save(ubicacion);
         mediumDAO.save(medium);
+    }
+
+    @Override
+    public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
+        RevisarId(mediumId);
+        Medium medium = mediumDAO.findById(mediumId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
+        return Optional.of(medium);
     }
 
     private <T> void RevisarEntidadEliminado(Boolean condicion,T entidad) {

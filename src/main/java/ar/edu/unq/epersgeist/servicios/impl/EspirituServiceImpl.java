@@ -106,7 +106,15 @@ public class EspirituServiceImpl implements EspirituService {
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
         return espirituDAO.findDemonios(pageable).getContent();
     }
-    
+
+    @Override
+    public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
+        RevisarId(espirituId);
+        Espiritu espiritu = espirituDAO.findById(espirituId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
+        return Optional.of(espiritu);
+    }
+
     private <T> void RevisarEntidadEliminado(Boolean condicion,T entidad) {
         if(condicion){
             throw new EntidadEliminadaException(entidad);
