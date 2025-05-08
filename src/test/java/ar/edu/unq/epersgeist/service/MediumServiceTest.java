@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -619,7 +620,7 @@ public class MediumServiceTest {
     }
 
     @Test
-    void exorcizarMedium1a1VictoriosoTeniendoDemoniacosYAngelicalesDeMas(){
+    void exorcizarEjemplo(){
         dado.setModo(new ModoTrucado(5,60));
 
         Espiritu rika = new Angel("Rika");
@@ -1098,6 +1099,58 @@ public class MediumServiceTest {
         assertThrows(MismoMediumException.class, () -> {
             mediumService.exorcizar(medium.getId(), medium.getId());
         });
+    }
+
+    //test de soft delete
+    @Test
+    void creacionTimeStamp(){
+        Medium medium = new Medium("pedro",100,20);
+
+        mediumService.crear(medium);
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        assertNotNull(mediumAct.getCreatedAt());
+        assertNotNull(mediumAct.getUpdatedAt());
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStamp() throws InterruptedException {
+        Medium medium = new Medium("pedro",100,20);
+
+        mediumService.crear(medium);
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        Thread.sleep(1000);
+
+        mediumAct.setNombre("juancho");
+        mediumService.actualizar(mediumAct);
+        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+
+        int comparison = mediumAct.getUpdatedAt().compareTo(mediumAct.getCreatedAt());
+
+        assertTrue(comparison > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void softDeletion(){
+        Medium medium = new Medium("pedro",100,20);
+
+        mediumService.crear(medium);
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        mediumService.eliminar(mediumAct);
+
+        mediumAct = mediumService.recuperarAunConSoftDelete(medium.getId()).get();
+
+        assertTrue(mediumAct.getDeleted());
+
     }
 
 
