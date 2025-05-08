@@ -13,15 +13,15 @@ import java.util.Optional;
 @Repository
 public interface MediumDAO extends JpaRepository<Medium, Long> {
 
-    @Query("from Espiritu e where e.medium.id = :mediumId order by e.nombre asc")
+    @Query("from Espiritu e where e.medium.id = :mediumId AND e.deleted = false order by e.nombre asc")
     List<Espiritu> obtenerEspiritus(@Param("mediumId") Long mediumId);
 
     @Query(
-            "SELECT m FROM Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) and m.ubicacion.id = :ubicacionId AND m.ubicacion.deleted = false")
+            "SELECT m FROM Medium m where m.id NOT IN (SELECT e.medium.id FROM Espiritu e WHERE e.medium.id IS NOT NULL) AND m.deleted = false AND m.ubicacion.id = :ubicacionId AND m.ubicacion.deleted = false")
     List<Medium> mediumsSinEspiritusEn(@Param("ubicacionId")Long ubicacionId);
 
     @Query(
-            "SELECT m FROM Medium m JOIN m.espiritus e WHERE TYPE(e) = Demonio AND m.ubicacion.id = :ubicacionId  GROUP BY m ORDER BY COUNT(e) DESC LIMIT 1"
+            "SELECT m FROM Medium m JOIN m.espiritus e WHERE TYPE(e) = Demonio AND m.ubicacion.id = :ubicacionId AND e.deleted = false GROUP BY m ORDER BY COUNT(e) DESC LIMIT 1"
     )
     Optional<Medium> mediumConMasDemoniosEn(@Param("ubicacionId")Long ubicacionId);
 
