@@ -1177,9 +1177,11 @@ public class MediumServiceTest {
 
         mediumService.eliminar(mediumAct);
 
-        mediumAct = mediumService.recuperarAunConSoftDelete(medium.getId()).get();
-
-        assertTrue(mediumAct.getDeleted());
+        Medium mediumBorrado = mediumService.recuperarAunConSoftDelete(mediumAct.getId()).get();
+        assertThrows(EntidadEliminadaException.class, () -> {
+            mediumService.recuperar(mediumAct.getId());
+        });
+        assertTrue(mediumBorrado.getDeleted());
 
     }
 
@@ -1198,6 +1200,13 @@ public class MediumServiceTest {
 
         Collection<Medium> todos = mediumService.recuperarTodos();
 
+
+        Medium mediumBorrado = mediumService.recuperarAunConSoftDelete(mediumAct.getId()).get();
+
+        assertThrows(EntidadEliminadaException.class, () -> {
+            mediumService.recuperar(mediumAct.getId());
+        });
+        assertTrue(mediumBorrado.getDeleted());
         assertEquals(todos.size(),1);
 
     }

@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
@@ -431,11 +432,17 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
-        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
+        Ubicacion santuarioBorrado= ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
+        Ubicacion cementerioBorrado = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
 
-        assertTrue(santuarioAct.getDeleted());
-        assertTrue(cementerioAct.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(santuarioAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(cementerioAct.getId());
+        });
+        assertTrue(santuarioBorrado.getDeleted());
+        assertTrue(cementerioBorrado.getDeleted());
 
     }
 
@@ -454,11 +461,25 @@ public class UbicacionServiceTest {
         Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
         Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
 
+
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
+
+        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuario.getId()).get();
+        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerio.getId()).get();
+
         Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
 
+
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(santuario.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(cementerio.getId());
+        });
+        assertTrue(santuarioAct.getDeleted());
+        assertTrue(cementerioAct.getDeleted());
         assertEquals(todos.size(),1);
 
     }

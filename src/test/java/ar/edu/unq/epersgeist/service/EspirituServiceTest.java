@@ -438,11 +438,17 @@ public class EspirituServiceTest {
         espirituService.eliminar(angelAct);
         espirituService.eliminar(demonioAct);
 
-        angelAct = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
-        demonioAct = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
-        assertTrue(angelAct.getDeleted());
-        assertTrue(demonioAct.getDeleted());
+        assertTrue(angelBorrado.getDeleted());
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(angelAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
 
     }
 
@@ -467,6 +473,17 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.recuperarTodos();
 
+        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(angelBorrado.getDeleted());
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(angelAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
         assertEquals(todos.size(),1);
 
     }
@@ -486,6 +503,12 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1,2);
 
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
         assertEquals(todos.size(),1);
     }
 
