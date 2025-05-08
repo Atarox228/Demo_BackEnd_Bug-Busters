@@ -38,7 +38,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     )
     List<Espiritu> espiritusEn(@Param("ubicacionId") Long ubicacionId);
 
-    @Query("from Espiritu e where e.medium.id = :id and type(e) = :tipo")
+    @Query("from Espiritu e where e.medium.id = :id and type(e) = :tipo AND e.deleted = false")
     List<Espiritu> recuperarEspiritusDeTipo(@Param("id") Long id, @Param("tipo") Class<? extends Espiritu> tipo);
 
     // DEBO CAMBIAR CUANDO UBICACION TENGA TIPO

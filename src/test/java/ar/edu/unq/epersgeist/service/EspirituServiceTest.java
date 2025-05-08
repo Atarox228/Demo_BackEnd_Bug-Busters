@@ -448,7 +448,7 @@ public class EspirituServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
-        espirituService.eliminarTodo();;
+        espirituService.eliminarTodo();
         Espiritu angel = new Angel("azael");
         Espiritu demonio = new Demonio("belcebu");
         Espiritu demonio2 = new Demonio("miras");
@@ -469,6 +469,24 @@ public class EspirituServiceTest {
 
         assertEquals(todos.size(),1);
 
+    }
+
+    @Test
+    void noRecuperaEspiritusDemoniacosConSoftDelete(){
+        espirituService.eliminarTodo();
+        Espiritu demonio = new Demonio("belcebu");
+        Espiritu demonio2 = new Demonio("miras");
+
+        espirituService.crear(demonio);
+        espirituService.crear(demonio2);
+
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(demonioAct);
+
+        List<Espiritu> todos = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1,2);
+
+        assertEquals(todos.size(),1);
     }
 
     @AfterEach
