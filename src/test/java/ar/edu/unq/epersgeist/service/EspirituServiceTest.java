@@ -334,7 +334,7 @@ public class EspirituServiceTest {
     @Test
     void creacionTimeStampUpdateAndNoDelete(){
         Espiritu angel = new Angel("azael");
-        Espiritu demonio = new Angel("belcebu");
+        Espiritu demonio = new Demonio("belcebu");
 
         espirituService.crear(angel);
         espirituService.crear(demonio);
@@ -355,7 +355,7 @@ public class EspirituServiceTest {
     @Test
     void updateTimeStamp() throws InterruptedException {
         Espiritu angel = new Angel("azael");
-        Espiritu demonio = new Angel("belcebu");
+        Espiritu demonio = new Demonio("belcebu");
 
         espirituService.crear(angel);
         espirituService.crear(demonio);
@@ -385,7 +385,7 @@ public class EspirituServiceTest {
     @Test
     void updateTimeStampDoble() throws InterruptedException {
         Espiritu angel = new Angel("azael");
-        Espiritu demonio = new Angel("belcebu");
+        Espiritu demonio = new Demonio("belcebu");
 
         espirituService.crear(angel);
         espirituService.crear(demonio);
@@ -416,7 +416,7 @@ public class EspirituServiceTest {
         demonioAct = espirituService.recuperar(demonioAct.getId()).get();
 
         int comparison = angelAct.getUpdatedAt().compareTo(lastUpdate);
-        int comparison2 = angelAct.getUpdatedAt().compareTo(lastUpdate2);
+        int comparison2 = demonioAct.getUpdatedAt().compareTo(lastUpdate2);
 
         assertTrue(comparison > 0);
         assertTrue(comparison2 > 0);
@@ -427,7 +427,7 @@ public class EspirituServiceTest {
     @Test
     void softDeletion(){
         Espiritu angel = new Angel("azael");
-        Espiritu demonio = new Angel("belcebu");
+        Espiritu demonio = new Demonio("belcebu");
 
         espirituService.crear(angel);
         espirituService.crear(demonio);
@@ -448,10 +448,10 @@ public class EspirituServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
-        mediumService.eliminarTodo();
+        espirituService.eliminarTodo();;
         Espiritu angel = new Angel("azael");
-        Espiritu demonio = new Angel("belcebu");
-        Espiritu demonio2 = new Angel("miras");
+        Espiritu demonio = new Demonio("belcebu");
+        Espiritu demonio2 = new Demonio("miras");
 
 
         espirituService.crear(angel);

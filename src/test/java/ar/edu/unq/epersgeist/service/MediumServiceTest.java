@@ -1202,6 +1202,31 @@ public class MediumServiceTest {
 
     }
 
+    @Test
+    void softDeleteEnExorcismo(){
+        dado.setModo(new ModoTrucado(6,60));
+        espiritu = espirituService.recuperar(espiritu.getId()).get();
+        espiritu.setNivelConexion(80);
+        espirituService.actualizar(espiritu);
+
+        espirituService.conectar(espiritu.getId(), medium.getId());
+        espirituService.conectar(espiritu2.getId(), medium2.getId());
+
+        Espiritu espirituAct = espirituService.recuperar(espiritu.getId()).get();
+
+        espirituService.eliminar(espirituAct);
+
+        Medium m = mediumService.recuperar(medium.getId()).get();
+
+        assertThrows(NoHayAngelesException.class, () -> {
+            mediumService.exorcizar(medium.getId(), medium2.getId());
+        });
+
+
+
+
+    }
+
 
     @AfterEach
     void cleanUp() {

@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -318,6 +320,147 @@ public class UbicacionServiceTest {
     void ubicacionSinMediumsRegistrados(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
         assertEquals(0, mediumsSinEsps.size());
+    }
+
+    //test de soft delete
+    @Test
+    void creacionTimeStampUpdateAndNoDelete(){
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        assertNotNull(santuarioAct.getCreatedAt());
+        assertNotNull(santuarioAct.getUpdatedAt());
+        assertFalse(santuarioAct.getDeleted());
+        assertNotNull(cementerioAct.getCreatedAt());
+        assertNotNull(cementerioAct.getUpdatedAt());
+        assertFalse(cementerioAct.getDeleted());
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStamp() throws InterruptedException {
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+
+        cementerioAct.setNombre("cAct");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+
+        int comparison = santuarioAct.getUpdatedAt().compareTo(santuarioAct.getCreatedAt());
+        int comparison2 = cementerioAct.getUpdatedAt().compareTo(cementerioAct.getCreatedAt());
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStampDoble() throws InterruptedException {
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+        Date lastUpdate = santuarioAct.getUpdatedAt();
+
+        cementerioAct.setNombre("cAct");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+        Date lastUpdate2 = cementerioAct.getUpdatedAt();
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct2");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+
+        cementerioAct.setNombre("cAct2");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+
+        int comparison = santuarioAct.getUpdatedAt().compareTo(lastUpdate);
+        int comparison2 = cementerioAct.getUpdatedAt().compareTo(lastUpdate2);
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void softDeletion(){
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        ubicacionService.eliminar(santuarioAct);
+        ubicacionService.eliminar(cementerioAct);
+
+        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
+        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
+
+        assertTrue(santuarioAct.getDeleted());
+        assertTrue(cementerioAct.getDeleted());
+
+    }
+
+    @Test
+    void noRecuperaTodosConSoftdelete(){
+        dataService.eliminarTodo();
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+        Ubicacion cementerio2 = new Cementerio("cementerio2", 100);
+
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio2);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        ubicacionService.eliminar(santuarioAct);
+        ubicacionService.eliminar(cementerioAct);
+
+        Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
+
+        assertEquals(todos.size(),1);
+
     }
 
     @AfterEach
