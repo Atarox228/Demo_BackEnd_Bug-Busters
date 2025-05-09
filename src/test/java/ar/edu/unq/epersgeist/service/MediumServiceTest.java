@@ -1182,7 +1182,7 @@ public class MediumServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
-        mediumService.eliminarTodo();
+        dataService.eliminarTodo();
         Medium medium = new Medium("pedro",100,20);
         Medium medium2 = new Medium("juan",100,20);
 

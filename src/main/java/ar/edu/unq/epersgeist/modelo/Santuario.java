@@ -20,11 +20,6 @@ public class Santuario extends Ubicacion{
     }
 
     @Override
-    public boolean puedeRecuperarse(Espiritu espiritu){
-        return espiritu.puedeRecuperarseEnSantuario();
-    }
-
-    @Override
     public Integer valorDeRecuperacionMedium(){
         return (int) Math.floor(this.getFlujoEnergia() * 1.5) ;
     }

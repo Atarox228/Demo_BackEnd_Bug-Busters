@@ -19,11 +19,6 @@ public class Cementerio extends Ubicacion{
     }
 
     @Override
-    public boolean puedeRecuperarse(Espiritu espiritu){
-        return espiritu.puedeRecuperarseEnCementerio();
-    }
-
-    @Override
     public Integer valorDeRecuperacionMedium(){
          return this.getFlujoEnergia() / 2;
     }

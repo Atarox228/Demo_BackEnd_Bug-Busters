@@ -437,7 +437,7 @@ public class EspirituServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
-        espirituService.eliminarTodo();
+        dataService.eliminarTodo();
         Espiritu angel = new Angel("azael");
         Espiritu demonio = new Demonio("belcebu");
         Espiritu demonio2 = new Demonio("miras");
@@ -473,7 +473,7 @@ public class EspirituServiceTest {
 
     @Test
     void noRecuperaEspiritusDemoniacosConSoftDelete(){
-        espirituService.eliminarTodo();
+        dataService.eliminarTodo();
         Espiritu demonio = new Demonio("belcebu");
         Espiritu demonio2 = new Demonio("miras");
 
