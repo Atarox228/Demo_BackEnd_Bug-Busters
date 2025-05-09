@@ -141,7 +141,6 @@ public class MediumServiceImpl implements MediumService {
         
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
         medium.moverseA(ubicacion);
-        ubicacionDAO.save(ubicacion);
         mediumDAO.save(medium);
     }
 
