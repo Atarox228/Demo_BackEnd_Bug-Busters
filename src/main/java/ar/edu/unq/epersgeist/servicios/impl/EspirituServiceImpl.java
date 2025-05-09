@@ -36,10 +36,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        RevisarId(espirituId);
+        revisarId(espirituId);
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
-        RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         return Optional.of(espiritu);
     }
 
@@ -50,11 +50,11 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        RevisarId(espiritu.getId());
+        revisarId(espiritu.getId());
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espirituDAO.save(espiritu);
     }
 
@@ -63,7 +63,7 @@ public class EspirituServiceImpl implements EspirituService {
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espiritu.setDeleted(true);
         espirituDAO.save(espiritu);
     }
@@ -73,19 +73,19 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
-        RevisarId(espirituId);
-        RevisarId(mediumId);
+        revisarId(espirituId);
+        revisarId(mediumId);
 
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         
-        RevisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-        RevisarEntidadEliminado(medium.getDeleted(),medium);
+        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        revisarEntidadEliminado(medium.getDeleted(),medium);
         
-        RevisarUbicacionNoNula(espiritu.getUbicacion(),espiritu,espirituId);
-        RevisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
+        revisarUbicacionNoNula(espiritu.getUbicacion(),espiritu,espirituId);
+        revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         
         medium.conectarseAEspiritu(espiritu);
         mediumDAO.save(medium);
@@ -104,23 +104,23 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
-        RevisarId(espirituId);
+        revisarId(espirituId);
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
         return Optional.of(espiritu);
     }
 
-    private <T> void RevisarEntidadEliminado(Boolean condicion,T entidad) {
+    private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
         if(condicion){
             throw new EntidadEliminadaException(entidad);
         }
     }
-    private <T> void RevisarUbicacionNoNula(Ubicacion ubicacion, T entidad, Long id) {
+    private <T> void revisarUbicacionNoNula(Ubicacion ubicacion, T entidad, Long id) {
         if(ubicacion == null){
             throw new EntidadSinUbicacionException(entidad,id);
         }
     }
-    private void RevisarId(Long id){
+    private void revisarId(Long id){
         if (id == null || id <= 0) {
             throw new IdNoValidoException();
         }
