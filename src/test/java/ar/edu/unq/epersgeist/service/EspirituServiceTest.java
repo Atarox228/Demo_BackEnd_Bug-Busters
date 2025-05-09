@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collection;
+
 import java.util.Date;
 import java.util.List;
 
@@ -264,7 +264,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId()).get();
@@ -284,9 +283,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
-//
-
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
@@ -305,8 +301,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium2);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Bernal.getId());
-//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
