@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.controller.excepciones;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import lombok.*;
 

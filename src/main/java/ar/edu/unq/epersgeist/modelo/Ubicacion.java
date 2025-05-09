@@ -50,13 +50,8 @@ public abstract class Ubicacion implements Serializable{
         this.flujoEnergia = flujoEnergia;
     }
 
-    public abstract boolean puedeRecuperarse(Espiritu espiritu);
-
     public abstract Integer valorDeRecuperacionMedium();
 
-    public Integer valorDeRecuperacionEspiritu(){
-        return this.flujoEnergia;
-    }
 
     public abstract void moverAEspiritu(Espiritu espiritu);
 

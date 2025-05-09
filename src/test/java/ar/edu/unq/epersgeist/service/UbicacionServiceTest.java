@@ -2,21 +2,9 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
-import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
-import ar.edu.unq.epersgeist.servicios.impl.*;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import jakarta.persistence.OptimisticLockException;
-import org.hibernate.exception.ConstraintViolationException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.servicios.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -323,7 +311,7 @@ public class UbicacionServiceTest {
         assertEquals(0, mediumsSinEsps.size());
     }
 
-    //test de soft delete
+    //test de auditoria de datos
     @Test
     void creacionTimeStampUpdateAndNoDelete(){
         Ubicacion santuario = new Santuario("santuario",100);
@@ -344,7 +332,6 @@ public class UbicacionServiceTest {
 
     }
 
-    //test de soft delete
     @Test
     void updateTimeStamp() throws InterruptedException {
         Ubicacion santuario = new Santuario("santuario",100);
@@ -375,7 +362,6 @@ public class UbicacionServiceTest {
 
     }
 
-    //test de soft delete
     @Test
     void updateTimeStampDoble() throws InterruptedException {
         Ubicacion santuario = new Santuario("santuario",100);
@@ -417,7 +403,6 @@ public class UbicacionServiceTest {
 
     }
 
-    //test de soft delete
     @Test
     void softDeletion(){
         Ubicacion santuario = new Santuario("santuario",100);
