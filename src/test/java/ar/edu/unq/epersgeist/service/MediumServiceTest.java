@@ -3,13 +3,9 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
-import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import java.security.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -1102,7 +1097,7 @@ public class MediumServiceTest {
         });
     }
 
-    //test de soft delete
+    //test de auditoria de datos
     @Test
     void creacionTimeStampUpdateAndNoDelete(){
         Medium medium = new Medium("pedro",100,20);
@@ -1117,7 +1112,7 @@ public class MediumServiceTest {
 
     }
 
-    //test de soft delete
+
     @Test
     void updateTimeStamp() throws InterruptedException {
         Medium medium = new Medium("pedro",100,20);
@@ -1138,7 +1133,6 @@ public class MediumServiceTest {
 
     }
 
-    //test de soft delete
     @Test
     void updateTimeStampDoble() throws InterruptedException {
         Medium medium = new Medium("pedro",100,20);
@@ -1166,7 +1160,7 @@ public class MediumServiceTest {
 
     }
 
-    //test de soft delete
+
     @Test
     void softDeletion(){
         Medium medium = new Medium("pedro",100,20);

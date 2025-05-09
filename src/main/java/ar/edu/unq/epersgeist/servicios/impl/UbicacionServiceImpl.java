@@ -1,17 +1,10 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.controller.excepciones.*;
+import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;

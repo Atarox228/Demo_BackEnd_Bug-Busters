@@ -1,16 +1,11 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.controller.excepciones.EntidadSinUbicacionException;
-import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;

@@ -2,14 +2,10 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
-import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
-import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,12 +116,6 @@ public class EspirituServiceTest {
         });
     }
 
-//    @Test
-//    void recuperarEspirituConIdNoPersistido(){
-//        assertThrows(IdNoValidoException.class, () -> {
-//            espirituService.recuperar(10L);
-//        });
-//    }
 
     @Test
     void recuperarEspirituEliminado() {
@@ -160,14 +150,6 @@ public class EspirituServiceTest {
         });
     }
 
-//    @Test
-//    void eliminarEspirituDosVeces() {
-//        espirituService.crear(Casper);
-//        espirituService.eliminar(Casper);
-//        assertThrows(OptimisticLockException.class, () -> {
-//            espirituService.eliminar(Casper);
-//        });
-//    }
 
     @Test
     void obtenerEspiritusDemoniacos() {
@@ -351,7 +333,7 @@ public class EspirituServiceTest {
 
     }
 
-    //test de soft delete
+    //test de sauditoria de datos
     @Test
     void updateTimeStamp() throws InterruptedException {
         Espiritu angel = new Angel("azael");
@@ -374,14 +356,13 @@ public class EspirituServiceTest {
         demonioAct = espirituService.recuperar(demonioAct.getId()).get();
 
         int comparison = angelAct.getUpdatedAt().compareTo(angelAct.getCreatedAt());
-        int comparison2 = angelAct.getUpdatedAt().compareTo(angelAct.getCreatedAt());
+        int comparison2 = angelAct.getUpdatedAt().compareTo(demonioAct.getCreatedAt());
 
         assertTrue(comparison > 0);
         assertTrue(comparison2 > 0);
 
     }
 
-    //test de soft delete
     @Test
     void updateTimeStampDoble() throws InterruptedException {
         Espiritu angel = new Angel("azael");
@@ -423,7 +404,6 @@ public class EspirituServiceTest {
 
     }
 
-    //test de soft delete
     @Test
     void softDeletion(){
         Espiritu angel = new Angel("azael");

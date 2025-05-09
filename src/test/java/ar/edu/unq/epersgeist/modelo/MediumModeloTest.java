@@ -1,11 +1,9 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediumModeloTest {
     private Espiritu Casper;

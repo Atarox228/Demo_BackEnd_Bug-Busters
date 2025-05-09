@@ -1,8 +1,6 @@
 package ar.edu.unq.epersgeist.servicios;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 
 import java.util.Collection;
 import java.util.List;

@@ -2,10 +2,7 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.EstadisticaService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
