@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.*;
@@ -27,6 +28,8 @@ public class EspirituServiceTest {
     private MediumService mediumService;
     @Autowired
     private UbicacionService ubicacionService;
+    @Autowired
+    private DataService dataService;
     private Angel Casper;
     private Demonio Jinn;
     private Demonio Oni;
@@ -494,10 +497,8 @@ public class EspirituServiceTest {
 
     @AfterEach
     void cleanUp() {
-        //dataService.eliminarTodo();
-        mediumService.eliminarTodo();
-        espirituService.eliminarTodo();
-        ubicacionService.clearAll();
+        dataService.eliminarTodo();
+
 
     }
 

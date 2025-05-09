@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(Lifecycle.PER_CLASS)
 public class MediumServiceTest {
 
+    @Autowired
     private DataService dataService;
 
     @Autowired
@@ -1231,9 +1232,7 @@ public class MediumServiceTest {
 
     @AfterEach
     void cleanUp() {
-        espirituService.eliminarTodo();
-        mediumService.eliminarTodo();
-        ubicacionService.clearAll();
+        dataService.eliminarTodo();
         dado.setModo(new ModoRandom());
     }
 
