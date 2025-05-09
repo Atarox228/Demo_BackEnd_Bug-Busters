@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -16,4 +17,5 @@ public interface EspirituService {
     void actualizar(Espiritu espiritu);
     Optional<Medium> conectar(Long espirituId, Long mediumId);
     List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina);
+    Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId);
 }

@@ -1,15 +1,19 @@
 package ar.edu.unq.epersgeist.controller;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarEspirituRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,16 +31,15 @@ public class EspirituControllerREST {
     }
 
     @PostMapping
-    public void crearEspiritu(@RequestBody EspirituDTO espiritu) {
+    public ResponseEntity<Void> crearEspiritu(@RequestBody @Valid EspirituDTO espiritu) {
         espirituService.crear(espiritu.aModelo());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EspirituDTO> recuperarEspiritu(@PathVariable Long id) {
-        return espirituService.recuperar(id)
-                .map(EspirituDTO::desdeModelo)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+        return ResponseEntity.ok(EspirituDTO.desdeModelo(espirituService.recuperar(id).get()));
     }
 
     @GetMapping
@@ -47,33 +50,38 @@ public class EspirituControllerREST {
     }
 
     @DeleteMapping("{id}")
-    public void eliminarEspiritu(@PathVariable Long id) {
-        Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Void> eliminarEspiritu(@PathVariable Long id) {
+        Espiritu espiritu = espirituService.recuperar(id).get();
         espirituService.eliminar(espiritu);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
-    public void actualizarEspiritu(@PathVariable Long id, @RequestBody ActualizarEspirituRequestDTO dto) {
-        Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Void> actualizarEspiritu(@PathVariable Long id, @Valid @RequestBody ActualizarEspirituRequestDTO dto) {
+        Espiritu espiritu = espirituService.recuperar(id).get();
         espiritu.setNombre(dto.nombre());
         espirituService.actualizar(espiritu);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/conectarse/{mediumid}")
-    public void conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
-        Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Medium medium = mediumService.recuperar(mediumid)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        espirituService.conectar(espiritu.getId(),medium.getId());
+    public ResponseEntity<Void> conectarse(@PathVariable Long id, @PathVariable Long mediumid) {
+        espirituService.conectar(id,mediumid);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/demoniacos/{direccion}/{pagina}/{cantidadPorPagina}")
     public Set<EspirituDTO> espiritusDemoniacos(@PathVariable Direccion direccion, @PathVariable Integer pagina, @PathVariable Integer cantidadPorPagina){
+        if (pagina < 1 ){
+            throw new PaginaInvalidaException("La pagina no es valida");
+        }
+        if (cantidadPorPagina < 1 ){
+            throw new PaginaInvalidaException("La cantidad de paginas no es valida");
+        }
+
         return espirituService.espiritusDemoniacos( direccion, pagina, cantidadPorPagina).stream()
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
     }
+
 }

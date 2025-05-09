@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -7,7 +8,10 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
@@ -31,36 +35,46 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        if (ubicacion.getId() != null) {
-            throw new IdNoValidoException(null);
+        if(ubicacionDAO.existeUbicacionConNombre(ubicacion.getNombre()) != null){
+
+            throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        if (ubicacionId == null) {
-            return Optional.empty();
-        }
-        return ubicacionDAO.findById(ubicacionId);
+        RevisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        return Optional.of(ubicacion);
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        ubicacionDAO.delete(ubicacion);
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
+        }
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        RevisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
+        ubicacion.setDeleted(true);
+        ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if(ubicacion.getId() == null){
-            throw new IdNoValidoException(null); //
+        RevisarId (ubicacion.getId());
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
+        RevisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return ubicacionDAO.findAll();
+        return ubicacionDAO.recuperarTodosNoEliminados();
     }
 
     @Override
@@ -69,14 +83,44 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
+        RevisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        return Optional.of(ubicacion);
+    }
+
+    @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
+        RevisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
+        RevisarId(ubicacionId);
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
+    private <T> void RevisarEntidadEliminado(Boolean condicion,T entidad) {
+        if(condicion){
+            throw new EntidadEliminadaException(entidad);
+        }
+    }
+    private void RevisarId(Long id){
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
+    }
+
+    private <T> void RevisarUbicacionConEntidades(Long id, T entidad){
+        if (!espiritusEn(id).isEmpty() || !mediumsEn(id).isEmpty()){
+            throw new EntidadConEntidadesConectadasException(entidad);
+        }
+    }
+
+    private List<Medium> mediumsEn(Long id){
+        return mediumDAO.mediumsEn(id);
+    }
 
 }

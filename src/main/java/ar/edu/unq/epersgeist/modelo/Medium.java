@@ -1,14 +1,13 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.Check;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
@@ -23,16 +22,35 @@ public class Medium implements Serializable {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
     @Column(nullable = false)
+    @Min(1)
     private Integer manaMax;
     @Column(nullable = false)
+    @Min(0)
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
-    @Setter
     @ManyToOne
     private Ubicacion ubicacion;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(nullable = false)
+    private Boolean deleted = false;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt  = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt  = new Date();
+    }
 
     public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
         this.mana = (manaMax >= mana) ? mana : manaMax;
@@ -116,10 +134,16 @@ public class Medium implements Serializable {
 
     public void moverseA(Ubicacion ubicacion){
         setUbicacion(ubicacion);
-        espiritus.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
+        List<Espiritu> copia = new ArrayList<>(espiritus);
+        copia.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
     }
 
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);
+    }
+
+    public boolean tieneAngeles() {
+        return espiritus.stream()
+                .anyMatch(espiritu -> espiritu.getTipo() == TipoEspiritu.ANGELICAL);
     }
 }

@@ -1,13 +1,9 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.NoEsSantuarioException;
-import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Stream;
+
 
 @Getter
 @Setter
@@ -17,9 +13,7 @@ import java.util.stream.Stream;
 
 public class ReporteSantuarioMasCorrupto implements Serializable {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String santuario;
     @ManyToOne
     private Medium medium;

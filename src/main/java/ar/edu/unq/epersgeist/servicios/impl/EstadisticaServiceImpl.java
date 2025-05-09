@@ -34,14 +34,20 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     @Override
     public ReporteSantuarioMasCorrupto santuarioCorrupto() {
         List<Ubicacion> santuarios  = espirituDAO.santuariosCorruptos();
-            if (santuarios.isEmpty()) {
+            if (santuarios.isEmpty() || sinSanturariosCorruptos(santuarios)) {
                 throw new NoHaySantuariosConDemoniosException();
             }
-        Ubicacion santuarioCorrupto = espirituDAO.santuariosCorruptos().get(0);
+        Ubicacion santuarioCorrupto = espirituDAO.santuariosCorruptos().getFirst();
         Medium mediumEndemoniado    = mediumDAO.mediumConMasDemoniosEn(santuarioCorrupto.getId()).orElseThrow(() -> new NoSuchElementException("No se encuentran mediums con demonios en este santuario"));
         Integer cantDemoniosTotal   = espirituDAO.demoniosEn(santuarioCorrupto.getId()).size();
         Integer cantDemoniosLibres  = espirituDAO.demoniosLibresEn(santuarioCorrupto.getId()).size();
         return new ReporteSantuarioMasCorrupto(santuarioCorrupto.getNombre(), mediumEndemoniado, cantDemoniosTotal, cantDemoniosLibres);
+    }
+
+
+    private boolean sinSanturariosCorruptos(List<Ubicacion> santuarios){
+
+        return espirituDAO.demoniosEn(santuarios.getFirst().getId()).isEmpty();
     }
 
 

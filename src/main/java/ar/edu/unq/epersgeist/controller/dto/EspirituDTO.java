@@ -3,11 +3,12 @@ package ar.edu.unq.epersgeist.controller.dto;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record EspirituDTO(
         Long id,
         @NotBlank String nombre,
-        TipoEspiritu tipoDeEspiritu,
+        @NotNull TipoEspiritu tipoDeEspiritu,
         Integer nivelDeConexion,
         UbicacionDTO ubicacion,
         MediumDTO medium) {
@@ -24,22 +25,22 @@ public record EspirituDTO(
         );
     }
 
-    public Espiritu aModelo(Ubicacion ubicacion){
-       Espiritu espiritu = this.aModelo();
-       espiritu.setUbicacion(ubicacion);
-       return espiritu;
-    }
+//    public Espiritu aModelo(Ubicacion ubicacion){
+//       Espiritu espiritu = this.aModelo();
+//       espiritu.setUbicacion(ubicacion);
+//       return espiritu;
+//    }
     public Espiritu aModelo(Medium medium){
         Espiritu espiritu = this.aModelo();
         espiritu.setMedium(medium);
         return espiritu;
     }
-    public Espiritu aModelo(Ubicacion ubicacion, Medium medium){
-        Espiritu espiritu = this.aModelo();
-        espiritu.setUbicacion(ubicacion);
-        espiritu.setMedium(medium);
-        return espiritu;
-    }
+//    public Espiritu aModelo(Ubicacion ubicacion, Medium medium){
+//        Espiritu espiritu = this.aModelo();
+//        espiritu.setUbicacion(ubicacion);
+//        espiritu.setMedium(medium);
+//        return espiritu;
+//    }
     public Espiritu aModelo(){
         return switch (this.tipoDeEspiritu) {
             case ANGELICAL -> new Angel(nombre);

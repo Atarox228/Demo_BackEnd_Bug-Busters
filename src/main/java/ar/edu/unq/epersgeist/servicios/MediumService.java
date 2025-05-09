@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,4 +21,5 @@ public interface MediumService {
     List<Espiritu> espiritus(Long idMedium);
     void eliminarTodo();
     void mover(Long mediumId, Long ubicacionId);
+    Optional<Medium> recuperarAunConSoftDelete(Long mediumId);
 }

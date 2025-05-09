@@ -1,8 +1,13 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadConEntidadesConectadasException;
+import ar.edu.unq.epersgeist.servicios.exception.EntidadEliminadaException;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionYaCreadaException;
 import ar.edu.unq.epersgeist.servicios.impl.*;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
 import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
@@ -21,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,12 +76,13 @@ public class UbicacionServiceTest {
 
     @Test
     void crearUbicacion(){
+
         assertNotNull(ashenvale.getId());
     }
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(UbicacionYaCreadaException.class, () -> {
             ubicacionService.crear(fellwood);
         });
     }
@@ -87,27 +95,34 @@ public class UbicacionServiceTest {
 
     @Test
     void recuperarUbicacionNoPersistida(){
-            assertEquals(Optional.empty(), ubicacionService.recuperar(1L));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(1L);
+        });
     }
 
     @Test
     void recuperarUbicacionNula(){
-        assertEquals(Optional.empty(), ubicacionService.recuperar(null));
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.recuperar(null);
+        });
+
     }
 
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(idEliminado);
+        });
     }
 
     @Test
     void eliminarMismaUbicacionDosVeces() {
-        Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);
-        ubicacionService.eliminar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(idEliminado));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.eliminar(fellwood);
+        });
     }
 
     @Test
@@ -115,7 +130,7 @@ public class UbicacionServiceTest {
         espiritu1.setUbicacion(fellwood);
         espirituService.actualizar(espiritu1);
         Ubicacion ubicacion = ubicacionService.recuperar(fellwood.getId()).get();
-        assertThrows(DataIntegrityViolationException.class, () -> {      // DEBERIA SER OTRO ERROR?¿
+        assertThrows(EntidadConEntidadesConectadasException.class, () -> {
           ubicacionService.eliminar(ubicacion);
         });
 
@@ -165,8 +180,9 @@ public class UbicacionServiceTest {
     @Test
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
-        ubicacionService.actualizar(fellwood);
-        assertEquals(Optional.empty(), ubicacionService.recuperar(fellwood.getId()));
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.actualizar(fellwood);
+        });
     }
 
     @Test
@@ -187,7 +203,7 @@ public class UbicacionServiceTest {
     @Test
     void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
-        assertThrows(DataIntegrityViolationException.class, () -> {  //CAMBIE LA EXCEPTION
+        assertThrows(DataIntegrityViolationException.class, () -> {
             ubicacionService.actualizar(fellwood);
         });
     }
@@ -200,8 +216,12 @@ public class UbicacionServiceTest {
         assertNotNull(ubicacionService.recuperar(ubi1Id));
         assertNotNull(ubicacionService.recuperar(ubi2Id));
         ubicacionService.clearAll();
-        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi1Id));
-        assertEquals(Optional.empty(), ubicacionService.recuperar(ubi2Id));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(ubi1Id);
+        });
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperar(ubi2Id);
+        });
     }
 
     @Test
@@ -232,9 +252,9 @@ public class UbicacionServiceTest {
 
     @Test
     void espiritusEnUbicacionNula(){
-        List<Espiritu> espiritusUbi = ubicacionService.espiritusEn(null);
-
-        assertEquals(0, espiritusUbi.size());
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.espiritusEn(null);
+        });
     }
 
     @Test
@@ -243,8 +263,6 @@ public class UbicacionServiceTest {
           mediumService.actualizar(medium1);
           medium2.setUbicacion(ashenvale);
           mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
         assertEquals(2, mediumsSinEsps.size());
@@ -260,8 +278,6 @@ public class UbicacionServiceTest {
         mediumService.actualizar(medium1);
         medium2.setUbicacion(ashenvale);
         mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         espirituService.conectar(espiritu1.getId(),medium1.getId());
         espirituService.conectar(espiritu2.getId(),medium2.getId());
@@ -280,8 +296,6 @@ public class UbicacionServiceTest {
         mediumService.actualizar(medium1);
         medium2.setUbicacion(ashenvale);
         mediumService.actualizar(medium2);
-//        mediumService.mover(medium1.getId(),ashenvale.getId());
-//        mediumService.mover(medium2.getId(),ashenvale.getId());
 
         espirituService.conectar(espiritu1.getId(),medium1.getId());
         espirituService.conectar(espiritu2.getId(),medium1.getId());
@@ -298,14 +312,176 @@ public class UbicacionServiceTest {
 
     @Test
     void mediumsEnUbicacionNula(){
-        List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(null);
-        assertEquals(0, mediumsSinEsps.size());
+        assertThrows(IdNoValidoException.class, () -> {
+            ubicacionService.mediumsSinEspiritusEn(null);
+        });
     }
 
     @Test
     void ubicacionSinMediumsRegistrados(){
         List<Medium> mediumsSinEsps = ubicacionService.mediumsSinEspiritusEn(ashenvale.getId());
         assertEquals(0, mediumsSinEsps.size());
+    }
+
+    //test de soft delete
+    @Test
+    void creacionTimeStampUpdateAndNoDelete(){
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        assertNotNull(santuarioAct.getCreatedAt());
+        assertNotNull(santuarioAct.getUpdatedAt());
+        assertFalse(santuarioAct.getDeleted());
+        assertNotNull(cementerioAct.getCreatedAt());
+        assertNotNull(cementerioAct.getUpdatedAt());
+        assertFalse(cementerioAct.getDeleted());
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStamp() throws InterruptedException {
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+
+        cementerioAct.setNombre("cAct");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+
+        int comparison = santuarioAct.getUpdatedAt().compareTo(santuarioAct.getCreatedAt());
+        int comparison2 = cementerioAct.getUpdatedAt().compareTo(cementerioAct.getCreatedAt());
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void updateTimeStampDoble() throws InterruptedException {
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+        Date lastUpdate = santuarioAct.getUpdatedAt();
+
+        cementerioAct.setNombre("cAct");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+        Date lastUpdate2 = cementerioAct.getUpdatedAt();
+
+        Thread.sleep(1000);
+
+        santuarioAct.setNombre("santAct2");
+        ubicacionService.actualizar(santuarioAct);
+        santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
+
+        cementerioAct.setNombre("cAct2");
+        ubicacionService.actualizar(cementerioAct);
+        cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
+
+        int comparison = santuarioAct.getUpdatedAt().compareTo(lastUpdate);
+        int comparison2 = cementerioAct.getUpdatedAt().compareTo(lastUpdate2);
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    //test de soft delete
+    @Test
+    void softDeletion(){
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+        ubicacionService.eliminar(santuarioAct);
+        ubicacionService.eliminar(cementerioAct);
+
+        Ubicacion santuarioBorrado= ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
+        Ubicacion cementerioBorrado = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
+
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(santuarioAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(cementerioAct.getId());
+        });
+        assertTrue(santuarioBorrado.getDeleted());
+        assertTrue(cementerioBorrado.getDeleted());
+
+    }
+
+    @Test
+    void noRecuperaTodosConSoftdelete(){
+        dataService.eliminarTodo();
+        Ubicacion santuario = new Santuario("santuario",100);
+        Ubicacion cementerio = new Cementerio("cementerio", 100);
+        Ubicacion cementerio2 = new Cementerio("cementerio2", 100);
+
+
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio2);
+
+        Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
+        Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
+
+
+        ubicacionService.eliminar(santuarioAct);
+        ubicacionService.eliminar(cementerioAct);
+
+
+        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuario.getId()).get();
+        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerio.getId()).get();
+
+        Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
+
+
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(santuario.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            ubicacionService.recuperar(cementerio.getId());
+        });
+        assertTrue(santuarioAct.getDeleted());
+        assertTrue(cementerioAct.getDeleted());
+        assertEquals(todos.size(),1);
+
     }
 
     @AfterEach

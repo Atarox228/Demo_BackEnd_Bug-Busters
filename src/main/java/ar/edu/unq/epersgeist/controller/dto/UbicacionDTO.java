@@ -2,14 +2,16 @@ package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record UbicacionDTO(
         Long id,
         @NotBlank String nombre,
-        TipoUbicacion tipoDeUbicacion,
-        @Min(1) Integer flujoDeEnergia)
+        @NotNull TipoUbicacion tipoDeUbicacion,
+        @Min(0) @Max(100) Integer flujoDeEnergia)
 {
 
 
