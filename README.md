@@ -19,7 +19,7 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
 - [Entrega 1 - JDBC](enunciado/entrega1/entrega1.md)
 - [Entrega 2 - ORM - Hibernate](enunciado/entrega2/entrega2.md)
 - [Entrega 3 - ORM - Spring](/enunciado/entrega3/enunciado_tp3.md)
-- Entrega 4 - NoSQL - Neo4j - Spring
+- [Entrega 4 - NoSQL - Neo4j - Spring](enunciado/entrega4/enunciado_tp4.md)
 - Entrega 5 - NoSQL - MongoDB - Spring
 
 ## Consideraciones
