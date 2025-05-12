@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
@@ -13,32 +14,31 @@ import java.util.Optional;
 
 
 @Service
-@Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
-    private final UbicacionDAO ubicacionDAO;
+    private final UbicacionRepository ubicacionRepository;
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
-        this.ubicacionDAO = ubicacionDAO;
+    public UbicacionServiceImpl(UbicacionRepository ubicacionRepository, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
+        this.ubicacionRepository = ubicacionRepository;
         this.mediumDAO = mediumDAO;
         this.espirituDAO = espirituDAO;
     }
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        if(ubicacionDAO.existeUbicacionConNombre(ubicacion.getNombre()) != null){
+        if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
 
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
-        ubicacionDAO.save(ubicacion);
+        ubicacionRepository.crear(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
@@ -46,39 +46,39 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+        if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
         }
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         revisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
         ubicacion.setDeleted(true);
-        ubicacionDAO.save(ubicacion);
+        ubicacionRepository.actualizar(ubicacion);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
         revisarId(ubicacion.getId());
-        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+        if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
-        ubicacionDAO.save(ubicacion);
+        ubicacionRepository.actualizar(ubicacion);
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return ubicacionDAO.recuperarTodosNoEliminados();
+        return ubicacionRepository.recuperarTodos();
     }
 
     @Override
     public void clearAll() {
-        ubicacionDAO.deleteAll();
+        ubicacionRepository.eliminarTodos();
     }
 
     @Override
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
         return Optional.of(ubicacion);
     }
