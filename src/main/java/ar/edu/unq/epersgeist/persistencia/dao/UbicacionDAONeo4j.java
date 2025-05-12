@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import java.util.Optional;
 
 public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long> {
-    @Query("MATCH(u: Ubicacion) DETACH DELETE g")
+    @Query("MATCH(u: Ubicacion) DETACH DELETE u")
     void detachDelete();
 
     @Query("MATCH(u: Ubicacion {nombre: $nombre }) RETURN u")
