@@ -2,18 +2,17 @@ package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 
 import java.util.Collection;
 import java.util.Optional;
 
-@Component
+@Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAO ubicacionDAO;

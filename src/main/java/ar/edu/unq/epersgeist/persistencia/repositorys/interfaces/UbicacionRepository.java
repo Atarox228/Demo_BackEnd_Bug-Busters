@@ -1,12 +1,9 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionRepository {
