@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -89,5 +90,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.existeUbicacionConNombre(nombre);
     }
 
+    @Override
+    public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
+        return ubicacionDAONeo4J.ubicacionesSobrecargadas(umbralDeEnergia);
+    }
 
 }

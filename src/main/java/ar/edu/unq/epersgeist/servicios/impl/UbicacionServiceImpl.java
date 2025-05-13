@@ -116,4 +116,9 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsEn(id);
     }
 
+    @Override
+    public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
+        return ubicacionRepository.ubicacionesSobrecargadas(umbralDeEnergia);
+    }
+
 }

@@ -16,4 +16,5 @@ public interface UbicacionService {
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
     void clearAll();
     Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
