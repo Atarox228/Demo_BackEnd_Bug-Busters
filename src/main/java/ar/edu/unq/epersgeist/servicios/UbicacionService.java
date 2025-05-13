@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UbicacionService {
     void crear(Ubicacion ubicacion);
     Optional<Ubicacion> recuperar(Long ubicacionId);
-    Optional<UbicacionNeo4J> recuperarNeo4J(Long ubicacionId);
+    UbicacionNeo4J recuperarNeo4J(Long ubicacionId);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
