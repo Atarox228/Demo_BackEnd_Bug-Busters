@@ -25,7 +25,7 @@ public class UbicacionNeo4J {
     private TipoUbicacion tipo;
     private Integer flujoEnergia;
 
-    @Relationship(type = "CONECTADA")
+    @Relationship(type = "CONECTADA", direction = Relationship.Direction.OUTGOING)
     private Set<UbicacionNeo4J> ubicaciones = new HashSet<>();
 
     public UbicacionNeo4J(String nombre, TipoUbicacion tipo ,Integer flujoEnergia) {

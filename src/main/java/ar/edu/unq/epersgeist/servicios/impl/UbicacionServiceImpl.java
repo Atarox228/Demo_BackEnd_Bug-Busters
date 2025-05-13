@@ -7,11 +7,9 @@ import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionReposi
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -124,7 +122,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void conectar(Long idOrigen, Long idDestino) {
         UbicacionNeo4J origen = ubicacionRepository.recuperarNeo4J(idOrigen);
-        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(idOrigen);
+        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(idDestino);
         origen.conectarse(destino);
         ubicacionRepository.actualizar(origen);
     }

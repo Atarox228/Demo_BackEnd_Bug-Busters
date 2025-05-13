@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion);
-    Optional<Ubicacion> recuperar(long ubicacionId);
-    UbicacionNeo4J recuperarNeo4J(long ubicacionId);
+    Optional<Ubicacion> recuperar(Long ubicacionId);
+    UbicacionNeo4J recuperarNeo4J(Long ubicacionId);
     void actualizar(Ubicacion ubicacion);
     void actualizar(UbicacionNeo4J ubicacion);
 
