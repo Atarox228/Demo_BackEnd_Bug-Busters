@@ -469,6 +469,21 @@ public class UbicacionServiceTest {
 
     }
 
+    @Test
+    void RecuperarUbicacionesSobreCargadas() {
+        dataService.eliminarTodo();
+        Ubicacion santuario = new Santuario("santuario", 100);
+        Ubicacion cementerio = new Cementerio("cementerio", 50);
+        Ubicacion cementerio2 = new Cementerio("cementerio2", 70);
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio2);
+        List<UbicacionNeo4J> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(50);
+        assertEquals(2, ubicacionesSobrecargadas.size());
+        assertEquals(ubicacionesSobrecargadas.get(0).getNombre(), "santuario");
+        assertEquals(ubicacionesSobrecargadas.get(1).getNombre(), "cementerio2");
+    }
+
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();

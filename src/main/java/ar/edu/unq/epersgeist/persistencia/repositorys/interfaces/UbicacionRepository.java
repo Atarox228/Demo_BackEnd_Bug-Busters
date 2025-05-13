@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionRepository {
@@ -23,4 +24,5 @@ public interface UbicacionRepository {
     boolean existsById(Long id);
     void eliminarTodos();
     Ubicacion existeUbicacionConNombre(String nombre);
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
