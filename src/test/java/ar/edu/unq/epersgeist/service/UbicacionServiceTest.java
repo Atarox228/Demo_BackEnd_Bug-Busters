@@ -463,18 +463,18 @@ public class UbicacionServiceTest {
         });
         assertTrue(santuarioAct.getDeleted());
         assertTrue(cementerioAct.getDeleted());
-        assertEquals(todos.size(),1);
+        assertEquals(1, todos.size());
     }
 
     @Test
     void conectarUnidireccional() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
-        UbicacionNeo4J origen = ubicacionService.recuperarNeo4J(fellwood.getId());
-        UbicacionNeo4J destino = ubicacionService.recuperarNeo4J(ashenvale.getId());
+        Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
+        Collection<UbicacionNeo4J> destino = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
 
-        Assertions.assertEquals(0, destino.getUbicaciones().size());
-        Assertions.assertEquals(1, origen.getUbicaciones().size());
+        Assertions.assertEquals(0, destino.size());
+        Assertions.assertEquals(1, origen.size());
         //Assertions.assertEquals(destino.getId(), origen.getUbicaciones().iterator().next().getId());
     }
 /*

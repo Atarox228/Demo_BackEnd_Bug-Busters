@@ -31,18 +31,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+    public Ubicacion recuperar(Long ubicacionId) {
+        return ubicacionDAO.findById(ubicacionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return Optional.of(ubicacion);
     }
 
     @Override
-    public UbicacionNeo4J recuperarNeo4J(Long ubicacionId) {
-        String nombre = ubicacionDAO.findById(ubicacionId).get().getNombre();
-        UbicacionNeo4J ubicacion = ubicacionDAONeo4J.findByNombre(nombre)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return ubicacion;
+    public UbicacionNeo4J recuperarNeo4J(String nombre) {
+        return ubicacionDAONeo4J.findByNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
     @Override
@@ -61,12 +58,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.delete(ubicacionNeo);
     }
-
-//    @Override
-//    public void eliminar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo) {
-//        ubicacionDAO.save(ubicacion);
-//        ubicacionDAONeo4J.delete(ubicacionNeo);
-//    }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
@@ -96,5 +87,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.existeUbicacionConNombre(nombre);
     }
 
+    @Override
+    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
+        return ubicacionDAONeo4J.ubicacionesConectadas(nombre);
+    }
 
 }

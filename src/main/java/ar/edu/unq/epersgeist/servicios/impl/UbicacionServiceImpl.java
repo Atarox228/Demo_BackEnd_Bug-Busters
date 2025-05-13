@@ -36,15 +36,14 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
     }
 
     @Override
-    public UbicacionNeo4J recuperarNeo4J(Long ubicacionId) {
-        return ubicacionRepository.recuperarNeo4J(ubicacionId);
+    public UbicacionNeo4J recuperarNeo4J(String nombre) {
+        return ubicacionRepository.recuperarNeo4J(nombre);
     }
 
     @Override
@@ -81,8 +80,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         return Optional.of(ubicacion);
     }
 
@@ -121,9 +119,20 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void conectar(Long idOrigen, Long idDestino) {
-        UbicacionNeo4J origen = ubicacionRepository.recuperarNeo4J(idOrigen);
-        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(idDestino);
+
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        UbicacionNeo4J origen = ubicacionRepository.recuperarNeo4J(ubi1.getNombre());
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(ubi2.getNombre());
+
         origen.conectarse(destino);
+
         ubicacionRepository.actualizar(origen);
+    }
+
+    @Override
+    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
+
+        return ubicacionRepository.ubicacionesConectadas(nombre);
     }
 }

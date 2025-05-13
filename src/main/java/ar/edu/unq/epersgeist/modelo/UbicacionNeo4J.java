@@ -35,6 +35,6 @@ public class UbicacionNeo4J {
     }
 
     public void conectarse(UbicacionNeo4J destino) {
-        ubicaciones.add(destino);
+        this.ubicaciones.add(destino);
     }
 }

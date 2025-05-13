@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UbicacionService {
     void crear(Ubicacion ubicacion);
     Optional<Ubicacion> recuperar(Long ubicacionId);
-    UbicacionNeo4J recuperarNeo4J(Long ubicacionId);
+    UbicacionNeo4J recuperarNeo4J(String nombre);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
@@ -18,4 +18,6 @@ public interface UbicacionService {
     void clearAll();
     Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
     void conectar (Long idOrigen, Long idDestino);
+
+    Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
 }
