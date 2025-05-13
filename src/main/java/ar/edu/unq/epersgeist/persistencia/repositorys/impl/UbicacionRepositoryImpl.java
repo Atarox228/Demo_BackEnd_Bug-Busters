@@ -38,14 +38,20 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
+    public Optional<UbicacionNeo4J> recuperarNeo4J(long ubicacionId) {
+        UbicacionNeo4J ubicacion = ubicacionDAONeo4J.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        return Optional.of(ubicacion);
+    }
+
+    @Override
     public void actualizar(Ubicacion ubicacion) {
         ubicacionDAO.save(ubicacion);
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo) {
-        ubicacionDAO.save(ubicacion);
-        ubicacionDAONeo4J.save(ubicacionNeo);
+    public void actualizar(UbicacionNeo4J ubicacion) {
+        ubicacionDAONeo4J.save(ubicacion);
     }
 
     @Override

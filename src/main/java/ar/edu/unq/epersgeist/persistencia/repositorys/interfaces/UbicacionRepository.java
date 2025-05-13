@@ -10,9 +10,9 @@ public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion);
     Optional<Ubicacion> recuperar(long ubicacionId);
+    Optional<UbicacionNeo4J> recuperarNeo4J(long ubicacionId);
     void actualizar(Ubicacion ubicacion);
-
-    void actualizar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo);
+    void actualizar(UbicacionNeo4J ubicacion);
 
     void eliminar(Ubicacion ubicacion);
 

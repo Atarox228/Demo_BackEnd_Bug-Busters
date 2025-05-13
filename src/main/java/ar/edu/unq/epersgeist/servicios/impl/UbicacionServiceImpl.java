@@ -45,6 +45,13 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public Optional<UbicacionNeo4J> recuperarNeo4J(Long ubicacionId) {
+        UbicacionNeo4J ubicacion = ubicacionRepository.recuperarNeo4J(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        return Optional.of(ubicacion);
+    }
+
+    @Override
     public void eliminar(Ubicacion ubicacion) {
         if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
@@ -116,4 +123,13 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsEn(id);
     }
 
+    @Override
+    public void conectar(Long idOrigen, Long idDestino) {
+        UbicacionNeo4J origen = ubicacionRepository.recuperarNeo4J(idOrigen)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + idOrigen + " no encontrada"));
+        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(idOrigen)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + idDestino + " no encontrada"));
+        origen.conectarse(destino);
+        ubicacionRepository.actualizar(origen);
+    }
 }
