@@ -20,13 +20,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/medium")
 public class MediumControllerREST {
     private final MediumService mediumService;
-    private final EspirituService espirituService;
-    private final UbicacionService ubicacionService;
 
     public MediumControllerREST(MediumService mediumService, EspirituService espirituService, UbicacionService ubicacionService) {
         this.mediumService = mediumService;
-        this.espirituService = espirituService;
-        this.ubicacionService = ubicacionService;
     }
 
     @PostMapping
