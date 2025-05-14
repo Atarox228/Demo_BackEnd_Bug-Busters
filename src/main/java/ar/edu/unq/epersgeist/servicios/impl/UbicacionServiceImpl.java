@@ -96,6 +96,39 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
+//    @Override
+//    public void conectar(Long idOrigen, Long idDestino) {
+//
+//        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+//        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
+//        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+//        UbicacionNeo4J destino = ubicacionRepository.recuperarPorNombre(ubi2.getNombre());
+//
+//        origen.conectarse(destino);
+//
+//        ubicacionRepository.actualizar(origen);
+//    }
+
+    @Override
+    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
+
+        return ubicacionRepository.ubicacionesConectadas(nombre);
+    }
+
+    @Override
+    public void conectar(Long idOrigen, Long idDestino){
+
+        revisarId(idOrigen);
+        revisarId(idDestino);
+
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+
+
+        ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
+
+    }
+
     private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
         if(condicion){
             throw new EntidadEliminadaException(entidad);
@@ -117,22 +150,5 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsEn(id);
     }
 
-    @Override
-    public void conectar(Long idOrigen, Long idDestino) {
 
-        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
-        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
-        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        UbicacionNeo4J destino = ubicacionRepository.recuperarPorNombre(ubi2.getNombre());
-
-        origen.conectarse(destino);
-
-        ubicacionRepository.actualizar(origen);
-    }
-
-    @Override
-    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
-
-        return ubicacionRepository.ubicacionesConectadas(nombre);
-    }
 }

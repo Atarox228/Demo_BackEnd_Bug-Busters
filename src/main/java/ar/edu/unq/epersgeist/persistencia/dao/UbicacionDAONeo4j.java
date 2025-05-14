@@ -16,6 +16,13 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     Optional<UbicacionNeo4J> findByNombre(@Param("nombre") String nombre);
 
     @Query("""
+    MATCH (a:UbicacionNeo4J {nombre: $origenNombre})
+    MATCH (b:UbicacionNeo4J {nombre: $destinoNombre})
+    MERGE (a)-[:CONECTADA]->(b)
+    """)
+    void conectarUbicaciones(@Param("origenNombre") String origenNombre, @Param("destinoNombre") String destinoNombre);
+
+    @Query("""
         MATCH(p: UbicacionNeo4J {nombre: $nombre })
         MATCH(p)-[:CONECTADA]->(p2)
         RETURN p2

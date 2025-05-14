@@ -25,4 +25,6 @@ public interface UbicacionRepository {
     Ubicacion existeUbicacionConNombre(String nombre);
 
     Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
+
+    void conectarUbicaciones(String origen, String destino);
 }

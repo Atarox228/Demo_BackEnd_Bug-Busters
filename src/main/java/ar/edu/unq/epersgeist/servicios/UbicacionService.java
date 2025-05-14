@@ -20,4 +20,5 @@ public interface UbicacionService {
     void conectar (Long idOrigen, Long idDestino);
 
     Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
+
 }
