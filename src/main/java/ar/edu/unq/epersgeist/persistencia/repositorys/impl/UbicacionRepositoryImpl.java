@@ -37,7 +37,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public UbicacionNeo4J recuperarNeo4J(String nombre) {
+    public UbicacionNeo4J recuperarPorNombre(String nombre) {
         return ubicacionDAONeo4J.findByNombre(nombre)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }

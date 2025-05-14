@@ -42,8 +42,8 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public UbicacionNeo4J recuperarNeo4J(String nombre) {
-        return ubicacionRepository.recuperarNeo4J(nombre);
+    public UbicacionNeo4J recuperarPorNombre(String nombre) {
+        return ubicacionRepository.recuperarPorNombre(nombre);
     }
 
     @Override
@@ -121,9 +121,9 @@ public class UbicacionServiceImpl implements UbicacionService {
     public void conectar(Long idOrigen, Long idDestino) {
 
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
-        UbicacionNeo4J origen = ubicacionRepository.recuperarNeo4J(ubi1.getNombre());
+        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        UbicacionNeo4J destino = ubicacionRepository.recuperarNeo4J(ubi2.getNombre());
+        UbicacionNeo4J destino = ubicacionRepository.recuperarPorNombre(ubi2.getNombre());
 
         origen.conectarse(destino);
 

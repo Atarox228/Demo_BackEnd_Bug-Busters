@@ -17,7 +17,7 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     @Query("""
         MATCH(p: UbicacionNeo4J {nombre: $nombre })
-        MATCH(p)-[:CONECTADA*1]->(p2)
+        MATCH(p)-[:CONECTADA]->(p2)
         RETURN p2
     """)
     Collection<UbicacionNeo4J> ubicacionesConectadas(@Param("nombre") String nombre);

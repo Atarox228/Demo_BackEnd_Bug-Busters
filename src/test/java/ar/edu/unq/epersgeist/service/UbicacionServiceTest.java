@@ -15,7 +15,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,11 +34,13 @@ public class UbicacionServiceTest {
 
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
+    private Ubicacion santaMaria;
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
     private UbicacionRepository repository;
+
 
     @BeforeEach
     void prepare() {
@@ -48,6 +49,8 @@ public class UbicacionServiceTest {
         ubicacionService.crear(fellwood);
         ashenvale = new Santuario("Ashenvale",100);
         ubicacionService.crear(ashenvale);
+        santaMaria = new Cementerio("SantaMaria", 80);
+        ubicacionService.crear(santaMaria);
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -475,24 +478,22 @@ public class UbicacionServiceTest {
 
         Assertions.assertEquals(0, destino.size());
         Assertions.assertEquals(1, origen.size());
-        //Assertions.assertEquals(destino.getId(), origen.getUbicaciones().iterator().next().getId());
     }
-/*
+
     @Test void conectarDosVecesUnidireccional() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
 
-        UbicacionNeo4J origen = ubicacionService.recuperarNeo4J(fellwood.getId());
-        UbicacionNeo4J destino1 = ubicacionService.recuperarNeo4J(ashenvale.getId());
-        UbicacionNeo4J destino2 = ubicacionService.recuperarNeo4J(ashenvale.getId());
+        Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
+        Collection<UbicacionNeo4J> destino1 = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
+        Collection<UbicacionNeo4J> destino2 = ubicacionService.ubicacionesConectadas(santaMaria.getNombre());
 
-        assertEquals(0, destino1.getUbicaciones().size());
-        assertEquals(0, destino2.getUbicaciones().size());
-        assertEquals(2, origen.getUbicaciones().size());
-        assertEquals(destino1.getId(), origen.getUbicaciones().iterator().next().getId());
-        assertEquals(destino2.getId(), origen.getUbicaciones().iterator().next().getId());
+        assertEquals(0, destino1.size());
+        assertEquals(0, destino2.size());
+        assertEquals(2, origen.size());
     }
 
+/*
     @Test
     void conectarDosVecesMismoDestino() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());

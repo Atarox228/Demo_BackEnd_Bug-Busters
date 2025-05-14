@@ -10,7 +10,7 @@ public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion);
     Ubicacion recuperar(Long ubicacionId);
-    UbicacionNeo4J recuperarNeo4J(String nombre);
+    UbicacionNeo4J recuperarPorNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
     void actualizar(UbicacionNeo4J ubicacion);
 
