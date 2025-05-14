@@ -119,15 +119,17 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void conectar(Long idOrigen, Long idDestino) {
-
+        if (idOrigen.equals(idDestino)) {
+            throw new MismaUbicacionException();
+        }
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
-        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
         UbicacionNeo4J destino = ubicacionRepository.recuperarPorNombre(ubi2.getNombre());
 
         origen.conectarse(destino);
 
-        ubicacionRepository.actualizar(origen);
+        ubicacionRepository.actualizarNeo4J(origen);
     }
 
     @Override

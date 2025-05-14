@@ -34,7 +34,6 @@ public class UbicacionServiceTest {
 
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
-    private Ubicacion santaMaria;
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Medium medium1;
@@ -49,8 +48,7 @@ public class UbicacionServiceTest {
         ubicacionService.crear(fellwood);
         ashenvale = new Santuario("Ashenvale",100);
         ubicacionService.crear(ashenvale);
-        santaMaria = new Cementerio("SantaMaria", 80);
-        ubicacionService.crear(santaMaria);
+
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -473,16 +471,19 @@ public class UbicacionServiceTest {
     void conectarUnidireccional() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
-        Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
-        Collection<UbicacionNeo4J> destino = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
+        Collection<UbicacionNeo4J> ubicacionesDeOrigen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
+        Collection<UbicacionNeo4J> ubicacionesDeDestino = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
 
-        Assertions.assertEquals(0, destino.size());
-        Assertions.assertEquals(1, origen.size());
+        Assertions.assertEquals(0, ubicacionesDeDestino.size());
+        Assertions.assertEquals(1, ubicacionesDeOrigen.size());
+        Assertions.assertEquals("Ashenvale", ubicacionesDeOrigen.iterator().next().getNombre());
     }
 
     @Test void conectarDosVecesUnidireccional() {
-        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        Ubicacion santaMaria = new Santuario("SantaMaria", 80);
+        ubicacionService.crear(santaMaria);
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
         Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
         Collection<UbicacionNeo4J> destino1 = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
@@ -493,67 +494,68 @@ public class UbicacionServiceTest {
         assertEquals(2, origen.size());
     }
 
-/*
+
     @Test
     void conectarDosVecesMismoDestino() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
-        UbicacionNeo4J origen = ubicacionService.recuperarNeo4J(fellwood.getId());
-        UbicacionNeo4J destino = ubicacionService.recuperarNeo4J(ashenvale.getId());
+        Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
+        Collection<UbicacionNeo4J> destino = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
 
-        assertEquals(0, destino.getUbicaciones().size());
-        assertEquals(1, origen.getUbicaciones().size());
-        assertEquals(destino.getId(), origen.getUbicaciones().iterator().next().getId());
+        assertEquals(0, destino.size());
+        assertEquals(1, origen.size());
     }
 
+//    @Test
+//    void conectarBidireccional() {
+//        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+//        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+//
+//        Collection<UbicacionNeo4J> origen = ubicacionService.ubicacionesConectadas(fellwood.getNombre());
+//        Collection<UbicacionNeo4J> destino = ubicacionService.ubicacionesConectadas(ashenvale.getNombre());
+//
+//        assertEquals(1, destino.size());
+//        assertEquals(1, origen.size());
+//
+//    }
+
     @Test
-    void conectarBidireccional() {
-        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
-        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
-
-        UbicacionNeo4J origen = ubicacionService.recuperarNeo4J(fellwood.getId());
-        UbicacionNeo4J destino = ubicacionService.recuperarNeo4J(ashenvale.getId());
-
-        assertEquals(1, destino.getUbicaciones().size());
-        assertEquals(1, origen.getUbicaciones().size());
-        assertEquals(destino.getId(), origen.getUbicaciones().iterator().next().getId());
-        assertEquals(origen.getId(), destino.getUbicaciones().iterator().next().getId());
-    }
-
-    @Test
-    void conectarUbicacionOrigenConIdNulo() {
-        assertThrows(IdNoValidoException.class,() -> {
-            ubicacionService.conectar(null, fellwood.getId());
+    void conectarMismaUbicacion() {
+        assertThrows(MismaUbicacionException.class, () -> {
+            ubicacionService.conectar(fellwood.getId(), fellwood.getId());
         });
+
     }
 
-    @Test
-    void conectarUbicacionDestinoConIdNulo() {
-        assertThrows(IdNoValidoException.class,() -> {
-            ubicacionService.conectar(ashenvale.getId(), null);
-        });
-    }
+//    @Test
+//    void conectarUbicacionOrigenConIdNulo() {
+//        assertThrows(IdNoValidoException.class,() -> {
+//            ubicacionService.conectar(null, fellwood.getId());
+//        });
+//    }
+//
+//    @Test
+//    void conectarUbicacionDestinoConIdNulo() {
+//        assertThrows(IdNoValidoException.class,() -> {
+//            ubicacionService.conectar(ashenvale.getId(), null);
+//        });
+//    }
+//
+//    @Test
+//    void conectarUbicacionOrigenConIdInexistente() {
+//        assertThrows(RecursoNoEncontradoException.class,() -> {
+//            ubicacionService.conectar(1L, fellwood.getId());
+//        });
+//    }
+//
+//    @Test
+//    void conectarUbicacionDestinoInexistente() {
+//        assertThrows(RecursoNoEncontradoException.class,() -> {
+//            ubicacionService.conectar(fellwood.getId(), 1L);
+//        });
+//    }
 
-    @Test
-    void conectarUbicacionOrigenConIdInexistente() {
-        assertThrows(RecursoNoEncontradoException.class,() -> {
-            ubicacionService.conectar(1L, fellwood.getId());
-        });
-    }
-
-    @Test
-    void conectarUbicacionDestinoInexistente() {
-        assertThrows(RecursoNoEncontradoException.class,() -> {
-            ubicacionService.conectar(fellwood.getId(), 1L);
-        });
-    }
-
-    @Test
-    void conectarseASiMisma() {
-        ubicacionService.conectar(ashenvale.getId(), ashenvale.getId());
-    }
-*/
 
     @AfterEach
     void cleanUp() {

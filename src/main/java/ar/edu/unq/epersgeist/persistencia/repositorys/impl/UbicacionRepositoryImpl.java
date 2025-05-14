@@ -36,9 +36,10 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
     }
 
+
     @Override
     public UbicacionNeo4J recuperarPorNombre(String nombre) {
-        return ubicacionDAONeo4J.findByNombre(nombre)
+        return ubicacionDAONeo4J.findByNombreWithRelations(nombre)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
@@ -48,7 +49,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void actualizar(UbicacionNeo4J ubicacion) {
+    public void actualizarNeo4J(UbicacionNeo4J ubicacion) {
         ubicacionDAONeo4J.save(ubicacion);
     }
 
