@@ -103,4 +103,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         ubicacionDAONeo4J.conectarUbicaciones(origen, destino);
     }
 
+    @Override
+    public Boolean estanConectadas(String origen, String destino) {
+        return ubicacionDAONeo4J.estanConectadas(origen, destino);
+    }
 }

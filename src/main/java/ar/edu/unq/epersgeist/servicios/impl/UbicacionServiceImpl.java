@@ -106,19 +106,14 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void conectar(Long idOrigen, Long idDestino){
-
         revisarId(idOrigen);
         revisarId(idDestino);
-
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-
         if(idOrigen.equals(idDestino)){
             throw new MismaUbicacionException();
         }
-
         ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
-
     }
 
     private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
@@ -147,5 +142,12 @@ public class UbicacionServiceImpl implements UbicacionService {
         return ubicacionRepository.ubicacionesSobrecargadas(umbralDeEnergia);
     }
 
-
+    @Override
+    public Boolean estanConectadas(Long idOrigen, Long idDestino) {
+        revisarId(idOrigen);
+        revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+        return ubicacionRepository.estanConectadas(ubi1.getNombre(), ubi2.getNombre());
+    }
 }

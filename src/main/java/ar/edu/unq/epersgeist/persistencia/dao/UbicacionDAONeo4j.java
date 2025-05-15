@@ -12,9 +12,7 @@ import java.util.Optional;
 public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long> {
     @Query("MATCH(u: UbicacionNeo4J) DETACH DELETE u")
     void detachDelete();
-
     Optional<UbicacionNeo4J> findByNombre(String nombre);
-
 
     @Query("""
     MATCH (a:UbicacionNeo4J {nombre: $origenNombre})
@@ -30,7 +28,10 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     """)
     Collection<UbicacionNeo4J> ubicacionesConectadas(@Param("nombre") String nombre);
 
-    @Query("MATCH (u:Ubicacion) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
+    @Query("MATCH (a:UbicacionNeo4J {nombre: $origen})-[:CONECTADA]->(b:UbicacionNeo4J {nombre: $destino}) RETURN COUNT(b) > 0")
+    boolean estanConectadas(@Param("origen") String origen, @Param("destino") String destino);
+
+    @Query("MATCH (u:UbicacionNeo4J) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
 
