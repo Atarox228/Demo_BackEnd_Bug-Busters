@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long> {
@@ -29,4 +30,7 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     """)
     Collection<UbicacionNeo4J> ubicacionesConectadas(@Param("nombre") String nombre);
 
+    @Query("MATCH (u:Ubicacion) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
+

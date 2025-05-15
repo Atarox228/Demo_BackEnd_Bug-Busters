@@ -21,4 +21,5 @@ public interface UbicacionService {
 
     Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
 
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }

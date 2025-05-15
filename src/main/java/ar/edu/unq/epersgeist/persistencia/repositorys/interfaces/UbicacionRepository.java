@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionRepository {
@@ -26,4 +27,5 @@ public interface UbicacionRepository {
     Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
 
     void conectarUbicaciones(String origen, String destino);
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
