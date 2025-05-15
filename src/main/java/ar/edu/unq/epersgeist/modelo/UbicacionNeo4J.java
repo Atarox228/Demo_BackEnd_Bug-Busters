@@ -15,7 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
-@Node("Ubicacion")
+@Node
 public class UbicacionNeo4J {
 
     @Id
