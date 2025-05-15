@@ -43,7 +43,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public UbicacionNeo4J recuperarPorNombre(String nombre) {
-        return ubicacionRepository.recuperarPorNombre(nombre);
+        return ubicacionRepository.findByNombre(nombre);
     }
 
     @Override
@@ -96,18 +96,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
-//    @Override
-//    public void conectar(Long idOrigen, Long idDestino) {
-//
-//        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
-//        UbicacionNeo4J origen = ubicacionRepository.recuperarPorNombre(ubi1.getNombre());
-//        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-//        UbicacionNeo4J destino = ubicacionRepository.recuperarPorNombre(ubi2.getNombre());
-//
-//        origen.conectarse(destino);
-//
-//        ubicacionRepository.actualizar(origen);
-//    }
+
 
     @Override
     public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
@@ -124,6 +113,9 @@ public class UbicacionServiceImpl implements UbicacionService {
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
 
+        if(idOrigen.equals(idDestino)){
+            throw new MismaUbicacionException();
+        }
 
         ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
 

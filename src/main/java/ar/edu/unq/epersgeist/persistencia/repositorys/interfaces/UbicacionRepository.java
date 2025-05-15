@@ -10,13 +10,12 @@ public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion);
     Ubicacion recuperar(Long ubicacionId);
-    UbicacionNeo4J recuperarPorNombre(String nombre);
+    UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
-    void actualizar(UbicacionNeo4J ubicacion);
+
+    void actualizarNeo4J(UbicacionNeo4J ubicacion);
 
     void eliminar(Ubicacion ubicacion);
-
-//    void eliminar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo);
 
     Collection<Ubicacion> recuperarTodos();
     Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);

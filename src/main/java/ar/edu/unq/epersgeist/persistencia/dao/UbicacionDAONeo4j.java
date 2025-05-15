@@ -12,8 +12,8 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query("MATCH(u: UbicacionNeo4J) DETACH DELETE u")
     void detachDelete();
 
-    @Query("MATCH(u: UbicacionNeo4J {nombre: $nombre }) RETURN u")
-    Optional<UbicacionNeo4J> findByNombre(@Param("nombre") String nombre);
+    Optional<UbicacionNeo4J> findByNombre(String nombre);
+
 
     @Query("""
     MATCH (a:UbicacionNeo4J {nombre: $origenNombre})
@@ -24,7 +24,7 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     @Query("""
         MATCH(p: UbicacionNeo4J {nombre: $nombre })
-        MATCH(p)-[:CONECTADA]->(p2)
+        MATCH(p)-[CONECTADA]->(p2)
         RETURN p2
     """)
     Collection<UbicacionNeo4J> ubicacionesConectadas(@Param("nombre") String nombre);
