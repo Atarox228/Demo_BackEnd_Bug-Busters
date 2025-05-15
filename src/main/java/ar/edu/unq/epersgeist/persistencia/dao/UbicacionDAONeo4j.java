@@ -3,17 +3,34 @@ package ar.edu.unq.epersgeist.persistencia.dao;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long> {
-    @Query("MATCH(u: Ubicacion) DETACH DELETE u")
+    @Query("MATCH(u: UbicacionNeo4J) DETACH DELETE u")
     void detachDelete();
 
-    @Query("MATCH(u: Ubicacion {nombre: $nombre }) RETURN u")
     Optional<UbicacionNeo4J> findByNombre(String nombre);
+
+
+    @Query("""
+    MATCH (a:UbicacionNeo4J {nombre: $origenNombre})
+    MATCH (b:UbicacionNeo4J {nombre: $destinoNombre})
+    MERGE (a)-[:CONECTADA]->(b)
+    """)
+    void conectarUbicaciones(@Param("origenNombre") String origenNombre, @Param("destinoNombre") String destinoNombre);
+
+    @Query("""
+        MATCH(p: UbicacionNeo4J {nombre: $nombre })
+        MATCH(p)-[CONECTADA]->(p2)
+        RETURN p2
+    """)
+    Collection<UbicacionNeo4J> ubicacionesConectadas(@Param("nombre") String nombre);
 
     @Query("MATCH (u:Ubicacion) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
 }
+

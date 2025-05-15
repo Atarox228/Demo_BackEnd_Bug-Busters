@@ -32,10 +32,16 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Optional<Ubicacion> recuperar(long ubicacionId) {
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+    public Ubicacion recuperar(Long ubicacionId) {
+        return ubicacionDAO.findById(ubicacionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return Optional.of(ubicacion);
+    }
+
+
+    @Override
+    public UbicacionNeo4J findByNombre(String nombre) {
+        return ubicacionDAONeo4J.findByNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
     @Override
@@ -44,9 +50,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo) {
-        ubicacionDAO.save(ubicacion);
-        ubicacionDAONeo4J.save(ubicacionNeo);
+    public void actualizarNeo4J(UbicacionNeo4J ubicacion) {
+        ubicacionDAONeo4J.save(ubicacion);
     }
 
     @Override
@@ -55,12 +60,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.delete(ubicacionNeo);
     }
-
-//    @Override
-//    public void eliminar(Ubicacion ubicacion, UbicacionNeo4J ubicacionNeo) {
-//        ubicacionDAO.save(ubicacion);
-//        ubicacionDAONeo4J.delete(ubicacionNeo);
-//    }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
@@ -93,6 +92,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
         return ubicacionDAONeo4J.ubicacionesSobrecargadas(umbralDeEnergia);
+    }
+    @Override
+    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
+        return ubicacionDAONeo4J.ubicacionesConectadas(nombre);
+    }
+
+    @Override
+    public void conectarUbicaciones(String origen, String destino){
+        ubicacionDAONeo4J.conectarUbicaciones(origen, destino);
     }
 
 }

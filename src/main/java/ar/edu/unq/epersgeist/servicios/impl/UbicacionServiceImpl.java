@@ -7,11 +7,9 @@ import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionReposi
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -38,10 +36,14 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
+    }
+
+    @Override
+    public UbicacionNeo4J recuperarPorNombre(String nombre) {
+        return ubicacionRepository.findByNombre(nombre);
     }
 
     @Override
@@ -78,8 +80,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
         revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         return Optional.of(ubicacion);
     }
 
@@ -93,6 +94,31 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         revisarId(ubicacionId);
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
+    }
+
+
+
+    @Override
+    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
+
+        return ubicacionRepository.ubicacionesConectadas(nombre);
+    }
+
+    @Override
+    public void conectar(Long idOrigen, Long idDestino){
+
+        revisarId(idOrigen);
+        revisarId(idDestino);
+
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+
+        if(idOrigen.equals(idDestino)){
+            throw new MismaUbicacionException();
+        }
+
+        ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
+
     }
 
     private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
@@ -120,5 +146,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
         return ubicacionRepository.ubicacionesSobrecargadas(umbralDeEnergia);
     }
+
 
 }
