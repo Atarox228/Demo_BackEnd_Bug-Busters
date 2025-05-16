@@ -628,6 +628,12 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void recuperarNingunaUbicacionSobreCargada() {
+        List<UbicacionNeo4J> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(100);
+        assertEquals(0, ubicacionesSobrecargadas.size());
+    }
+
+    @Test
     void caminoMasCorto1Salto() {
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -657,10 +663,31 @@ public class UbicacionServiceTest {
         assertEquals(3, camino.size());
     }
 
+    @Test
+    void caminoMasCortoConDosCaminosIguales() {
+        Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
+        ubicacionService.crear(jardinDePaz);
+        Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
+        ubicacionService.crear(sanIgnacio);
 
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
 
+        ubicacionService.conectar(fellwood.getId(), jardinDePaz.getId());
+        ubicacionService.conectar(jardinDePaz.getId(), ashenvale.getId());
 
+        List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
+        assertEquals(3, camino.size());
+        // Funciona al azar, trae cualquier de los 2 caminos mas cortos
+    }
 
+    @Test
+    void caminoSinConexion() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        assertThrows(UbicacionesNoConectadasException.class,() -> {
+            ubicacionService.caminoMasCorto(fellwood.getId(), ashenvale.getId());
+        });
+    }
 
     @AfterEach
     void cleanUp() {

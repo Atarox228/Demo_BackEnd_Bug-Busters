@@ -152,7 +152,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
         List<UbicacionNeo4J> camino = ubicacionRepository.encontrarCaminoMasCorto(ubi1.getNombre(), ubi2.getNombre());
         if (camino.isEmpty()) {
-            // exception
+            throw new UbicacionesNoConectadasException();
         }
         return camino;
     }
