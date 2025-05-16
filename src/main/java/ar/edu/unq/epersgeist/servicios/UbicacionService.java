@@ -18,9 +18,7 @@ public interface UbicacionService {
     void clearAll();
     Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
     void conectar (Long idOrigen, Long idDestino);
-    Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadas(Long idOrigen, Long idDestino);
-
     List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino);
 }

@@ -93,10 +93,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
         return ubicacionDAONeo4J.ubicacionesSobrecargadas(umbralDeEnergia);
     }
-    @Override
-    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
-        return ubicacionDAONeo4J.ubicacionesConectadas(nombre);
-    }
 
     @Override
     public void conectarUbicaciones(String origen, String destino){
@@ -104,8 +100,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Boolean estanConectadas(String origen, String destino) {
-        return ubicacionDAONeo4J.estanConectadas(origen, destino);
+    public Boolean estanConectadasDirecta(String origen, String destino) {
+        return ubicacionDAONeo4J.estanConectadasDirecta(origen, destino);
     }
 
     @Override

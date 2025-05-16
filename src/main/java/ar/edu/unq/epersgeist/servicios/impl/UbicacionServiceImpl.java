@@ -96,14 +96,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
-
-
-    @Override
-    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
-
-        return ubicacionRepository.ubicacionesConectadas(nombre);
-    }
-
     @Override
     public void conectar(Long idOrigen, Long idDestino){
         revisarId(idOrigen);
@@ -148,7 +140,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        return ubicacionRepository.estanConectadas(ubi1.getNombre(), ubi2.getNombre());
+        return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
     }
 
     @Override
