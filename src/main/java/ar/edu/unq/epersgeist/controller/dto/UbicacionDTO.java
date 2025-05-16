@@ -24,6 +24,15 @@ public record UbicacionDTO(
         );
     }
 
+    public static UbicacionDTO desdeNeo(UbicacionNeo4J ubicacion) {
+        return new UbicacionDTO(
+                ubicacion.getId(),
+                ubicacion.getNombre(),
+                ubicacion.getTipo(),
+                ubicacion.getFlujoEnergia()
+        );
+    }
+
     public Ubicacion aModelo(){
         return switch (this.tipoDeUbicacion) {
             case SANTUARIO -> new Santuario(nombre, flujoDeEnergia);
