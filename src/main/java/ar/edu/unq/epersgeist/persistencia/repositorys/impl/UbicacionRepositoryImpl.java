@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
@@ -106,6 +107,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino) {
-        return ubicacionDAONeo4J.encontarCaminoMasCorto(origen, destino);
+        return ubicacionDAONeo4J.encontrarCaminoMasCorto(origen, destino);
     }
+
+    @Override
+    public ClosenessResult definirCentralidad(String nombre) {
+        List<Ubicacion> todasLasUbicaciones = ubicacionDAO.recuperarTodosNoEliminados();
+        Double sumatoriaDistancia = 0.0;
+        for (Ubicacion ubi : todasLasUbicaciones){
+            if (! nombre.equals(ubi.getNombre())) {
+                sumatoriaDistancia = (double) + (ubicacionDAONeo4J.encontrarCaminoMasCorto(nombre, ubi.getNombre()).size() - 1);
+            }
+        }
+        Double centralidad = 1.0 / sumatoriaDistancia;
+        return new ClosenessResult(ubicacionDAONeo4J.recuperarPorNombre(nombre), centralidad);
+    }
+
+
 }

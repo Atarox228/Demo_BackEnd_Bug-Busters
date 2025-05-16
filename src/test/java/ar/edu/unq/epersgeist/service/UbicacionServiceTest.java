@@ -689,6 +689,29 @@ public class UbicacionServiceTest {
         });
     }
 
+    @Test
+    void caminoMasCortoConBidireccionales() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        ubicacionService.conectar(santaMaria.getId(),ashenvale.getId());
+        List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
+        assertEquals(3, camino.size());
+    }
+
+    @Test
+    void ubicacionesConSusCloseness() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        List<Long> ids = List.of(fellwood.getId(), ashenvale.getId(), santaMaria.getId());
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(closeness.size(), 3);
+    }
+    //SIGO DESPUES, TUVE QUE REALIZAR UN RECUPERAR CON NOMBRE, Y QUE TRAIGA SIN RELACIONES PORQUE SE REALIZABA
+    // UN CIRCULO RECURSIVO
+
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
 
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 
@@ -24,4 +25,6 @@ public interface UbicacionRepository {
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadasDirecta(String origen, String destino);
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
+
+    ClosenessResult definirCentralidad(String nombre);
 }

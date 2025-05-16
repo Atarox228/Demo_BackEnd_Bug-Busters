@@ -21,6 +21,7 @@ public class UbicacionNeo4J {
     @Id
     @GeneratedValue
     private Long id;
+
     private String nombre;
     private TipoUbicacion tipo;
     private Integer flujoEnergia;
