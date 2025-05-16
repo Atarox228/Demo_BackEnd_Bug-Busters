@@ -150,4 +150,18 @@ public class UbicacionServiceImpl implements UbicacionService {
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
         return ubicacionRepository.estanConectadas(ubi1.getNombre(), ubi2.getNombre());
     }
+
+    @Override
+    public List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino) {
+        revisarId(idOrigen);
+        revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+
+        List<UbicacionNeo4J> camino = ubicacionRepository.encontrarCaminoMasCorto(ubi1.getNombre(), ubi2.getNombre());
+        if (camino.isEmpty()) {
+            // exception
+        }
+        return camino;
+    }
 }

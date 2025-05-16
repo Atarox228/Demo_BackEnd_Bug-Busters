@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -33,5 +34,14 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     @Query("MATCH (u:UbicacionNeo4J) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
+
+    @Query("""
+    MATCH (origen:UbicacionNeo4J {nombre: $origen}), (destino:UbicacionNeo4J {nombre: $destino}),
+          camino = allShortestPaths((origen)-[:CONECTADA*1..]->(destino))
+    RETURN nodes(camino)
+    LIMIT 1
+    """)
+    List<UbicacionNeo4J> encontarCaminoMasCorto(@Param("origen") String origen,
+                                                @Param("destino") String destino);
 }
 

@@ -628,6 +628,42 @@ public class UbicacionServiceTest {
         assertEquals(ubicacionesSobrecargadas.get(1).getNombre(), "cementerio2");
     }
 
+    @Test
+    void caminoMasCorto1Salto() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+
+        List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
+
+        assertEquals(2, camino.size());
+        assertEquals(camino.get(0), ubicacionService.recuperarPorNombre(fellwood.getNombre()));
+    }
+
+    @Test
+    void caminoMasCorto2Saltos() {
+        Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
+        ubicacionService.crear(jardinDePaz);
+        Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
+        ubicacionService.crear(sanIgnacio);
+
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), sanIgnacio.getId());
+
+        ubicacionService.conectar(fellwood.getId(), jardinDePaz.getId());
+        ubicacionService.conectar(jardinDePaz.getId(), sanIgnacio.getId());
+
+        List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  sanIgnacio.getId());
+        assertEquals(3, camino.size());
+    }
+
+
+
+
+
+
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();

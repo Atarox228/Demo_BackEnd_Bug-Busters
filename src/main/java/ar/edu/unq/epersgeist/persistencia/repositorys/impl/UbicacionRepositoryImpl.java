@@ -107,4 +107,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public Boolean estanConectadas(String origen, String destino) {
         return ubicacionDAONeo4J.estanConectadas(origen, destino);
     }
+
+    @Override
+    public List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino) {
+        return ubicacionDAONeo4J.encontarCaminoMasCorto(origen, destino);
+    }
 }

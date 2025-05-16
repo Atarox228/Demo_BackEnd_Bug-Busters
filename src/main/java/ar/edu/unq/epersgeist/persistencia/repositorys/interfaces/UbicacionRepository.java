@@ -25,4 +25,5 @@ public interface UbicacionRepository {
     void conectarUbicaciones(String origen, String destino);
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadas(String origen, String destino);
+    List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
 }
