@@ -116,12 +116,19 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         Double sumatoriaDistancia = 0.0;
         for (Ubicacion ubi : todasLasUbicaciones){
             if (! nombre.equals(ubi.getNombre())) {
-                sumatoriaDistancia = (double) + (ubicacionDAONeo4J.encontrarCaminoMasCorto(nombre, ubi.getNombre()).size() - 1);
+                sumatoriaDistancia += cantidadSaltos(nombre, ubi.getNombre());
             }
         }
         Double centralidad = 1.0 / sumatoriaDistancia;
         return new ClosenessResult(ubicacionDAONeo4J.recuperarPorNombre(nombre), centralidad);
     }
 
-
+    private double cantidadSaltos(String origen, String destino) {
+        List <UbicacionNeo4J> saltos = ubicacionDAONeo4J.encontrarCaminoMasCorto(origen, destino);
+        if (saltos.isEmpty()) {
+            return 10.0; // ESTO ES PARA PROBAR, PODRIA HACER UN METODO QUE TOMA EL MAS LARGO DE LOS CAMINOS Y SUMARSELO
+        } else {
+            return saltos.size() -1;
+        }
+    }
 }

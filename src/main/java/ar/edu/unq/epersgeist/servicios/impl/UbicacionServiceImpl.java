@@ -8,10 +8,7 @@ import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -166,6 +163,8 @@ public class UbicacionServiceImpl implements UbicacionService {
             ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
             closeness.add(recordCloseness);
         }
-        return closeness;
+        return closeness.stream()
+                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
+                .toList();
     }
 }

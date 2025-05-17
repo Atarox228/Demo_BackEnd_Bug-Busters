@@ -35,7 +35,4 @@ public class UbicacionNeo4J {
         this.flujoEnergia = flujoEnergia;
     }
 
-    public void conectarse(UbicacionNeo4J destino) {
-        this.ubicaciones.add(destino);
-    }
 }
