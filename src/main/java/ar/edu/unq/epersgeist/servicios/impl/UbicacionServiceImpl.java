@@ -7,9 +7,8 @@ import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionReposi
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -155,5 +154,17 @@ public class UbicacionServiceImpl implements UbicacionService {
             throw new UbicacionesNoConectadasException();
         }
         return camino;
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        List<ClosenessResult> closeness = new ArrayList<>();
+        for (Long id : ids) {
+            ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
+            closeness.add(recordCloseness);
+        }
+        return closeness.stream()
+                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
+                .toList();
     }
 }
