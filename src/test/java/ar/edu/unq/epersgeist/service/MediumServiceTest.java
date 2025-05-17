@@ -1255,6 +1255,26 @@ public class MediumServiceTest {
         });
     }
 
+    @Test
+    void moverConectadoAlReves(){
+        ubicacionService.conectar(santuario.getId(),bernal.getId());
+
+        assertThrows(UbicacionLejanaException.class, () -> {
+            mediumService.mover(medium.getId(), santuario.getId());
+        });
+    }
+
+    @Test
+    void moverNuevoBidireccional(){
+        ubicacionService.conectar(bernal.getId(),santuario.getId());
+        ubicacionService.conectar(santuario.getId(),bernal.getId());
+        mediumService.mover(medium.getId(), santuario.getId());
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
+    }
+
 
     @AfterEach
     void cleanUp() {
