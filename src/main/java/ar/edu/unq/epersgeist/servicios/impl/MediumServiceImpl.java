@@ -2,7 +2,9 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import jakarta.transaction.Transactional;
@@ -17,11 +19,13 @@ public class MediumServiceImpl implements MediumService {
     public final MediumDAO mediumDAO;
     public final EspirituDAO espirituDAO;
     public final UbicacionDAO ubicacionDAO;
+    private final UbicacionRepository ubicacionRepository;
 
-    public MediumServiceImpl(MediumDAO mediumDAO, EspirituDAO espirituDAO, UbicacionDAO ubicacionDAO) {
+    public MediumServiceImpl(MediumDAO mediumDAO, EspirituDAO espirituDAO, UbicacionDAO ubicacionDAO, UbicacionRepository ubicacionRepository) {
         this.mediumDAO = mediumDAO;
         this.espirituDAO = espirituDAO;
         this.ubicacionDAO = ubicacionDAO;
+        this.ubicacionRepository = ubicacionRepository;
     }
 
     @Override
@@ -138,8 +142,10 @@ public class MediumServiceImpl implements MediumService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicacion con ID " + ubicacionId + " no encontrada"));
         revisarEntidadEliminado(medium.getDeleted(),medium);
         revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+
         
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
+        if (! ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre())) throw new UbicacionLejanaException();
         medium.moverseA(ubicacion);
         mediumDAO.save(medium);
     }
