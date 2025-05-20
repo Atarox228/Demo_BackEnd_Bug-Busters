@@ -26,7 +26,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void crear(Ubicacion ubicacion) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
-
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
         ubicacionRepository.crear(ubicacion);
