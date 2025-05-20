@@ -11,12 +11,10 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -40,12 +38,9 @@ public class UbicacionServiceTest {
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
-    private UbicacionRepository repository;
-
 
     @BeforeEach
     void prepare() {
-
         fellwood = new Cementerio("Fellwood", 50);
         ubicacionService.crear(fellwood);
         ashenvale = new Santuario("Ashenvale",100);
@@ -95,9 +90,21 @@ public class UbicacionServiceTest {
         assertThrows(IdNoValidoException.class, () -> {
             ubicacionService.recuperar(null);
         });
-
     }
 
+    @Test
+    void recuperarUbicacionPorNombre(){
+        UbicacionNeo4J ubicacion2 = ubicacionService.recuperarPorNombre(fellwood.getNombre());
+        assertEquals(fellwood.getNombre(), ubicacion2.getNombre());
+    }
+
+    @Test
+    void recuperarUbicacionNoPersistidaPorNombre(){
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperarPorNombre("Juan Manuel");
+        });
+    }
+    
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
@@ -139,7 +146,6 @@ public class UbicacionServiceTest {
         Integer cantidadList = ubicacionService.recuperarTodos().size();
         assertEquals(0, cantidadList);
     }
-
 
     @Test
     void actualizarUbicacion(){
