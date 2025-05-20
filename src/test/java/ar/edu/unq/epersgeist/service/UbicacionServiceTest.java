@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -623,6 +624,11 @@ public class UbicacionServiceTest {
         ubicacionService.crear(cementerio2);
         List<UbicacionNeo4J> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(50);
         assertEquals(2, ubicacionesSobrecargadas.size());
+        List<String> nombres = ubicacionesSobrecargadas.stream()
+                .map(UbicacionNeo4J::getNombre)
+                .collect(Collectors.toList());
+        assertTrue(nombres.contains("santuario"));
+        assertTrue(nombres.contains("cementerio2"));
     }
 
     @Test

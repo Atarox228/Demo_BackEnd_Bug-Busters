@@ -941,6 +941,8 @@ public class MediumServiceTest {
         medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
         medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
 
+        ubicacionService.conectar(bernal.getId(),santuario.getId());
+
         mediumService.mover(medium.getId(), santuario.getId());
 
         Medium actualizado = mediumService.recuperar(medium.getId()).get();
@@ -965,6 +967,8 @@ public class MediumServiceTest {
         espirituService.actualizar(espiritu);
         medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
         medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
+
+        ubicacionService.conectar(bernal.getId(),cementerio.getId());
 
         mediumService.mover(medium.getId(), cementerio.getId());
 
@@ -994,6 +998,8 @@ public class MediumServiceTest {
         List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
         assertEquals(1, espiritusAntes.size());
 
+        ubicacionService.conectar(bernal.getId(),santuario.getId());
+
         mediumService.mover(medium.getId(), santuario.getId());
 
         Medium actualizado = mediumService.recuperar(medium.getId()).get();
@@ -1018,6 +1024,8 @@ public class MediumServiceTest {
 
         List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
         assertEquals(1, espiritusAntes.size());
+
+        ubicacionService.conectar(bernal.getId(),cementerio.getId());
 
         mediumService.mover(medium.getId(), cementerio.getId());
 
@@ -1227,6 +1235,44 @@ public class MediumServiceTest {
 
 
 
+    }
+
+    @Test
+    void moverNuevo(){
+        ubicacionService.conectar(bernal.getId(),santuario.getId());
+        mediumService.mover(medium.getId(), santuario.getId());
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
+    }
+
+    @Test
+    void moverNuevoException(){
+
+        assertThrows(UbicacionLejanaException.class, () -> {
+            mediumService.mover(medium.getId(), santuario.getId());
+        });
+    }
+
+    @Test
+    void moverConectadoAlReves(){
+        ubicacionService.conectar(santuario.getId(),bernal.getId());
+
+        assertThrows(UbicacionLejanaException.class, () -> {
+            mediumService.mover(medium.getId(), santuario.getId());
+        });
+    }
+
+    @Test
+    void moverNuevoBidireccional(){
+        ubicacionService.conectar(bernal.getId(),santuario.getId());
+        ubicacionService.conectar(santuario.getId(),bernal.getId());
+        mediumService.mover(medium.getId(), santuario.getId());
+
+        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
     }
 
 
