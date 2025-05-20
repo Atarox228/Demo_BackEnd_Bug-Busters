@@ -2,8 +2,10 @@ package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.ClosenessResult;
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
@@ -121,6 +124,23 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         }
         Double centralidad = 1.0 / sumatoriaDistancia;
         return new ClosenessResult(ubicacionDAONeo4J.recuperarPorNombre(nombre), centralidad);
+    }
+
+    @Override
+    public double relationships() {
+        return ubicacionDAONeo4J.relationships();
+    }
+
+    @Override
+    public DegreeQuery DegreeOf(List<String> names, DegreeType type) {
+        DegreeQuery q = ubicacionDAONeo4J.degreeOutcommingOf(names);
+        return q;
+        //DegreeQuery query = new DegreeQuery()
+    }
+
+    @Override
+    public List<String> namesOf(List<Long> ids) {
+        return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
     }
 
     private double cantidadSaltos(String origen, String destino) {

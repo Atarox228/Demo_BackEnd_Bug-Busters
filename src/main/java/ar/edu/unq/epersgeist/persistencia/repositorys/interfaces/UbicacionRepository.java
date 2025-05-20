@@ -1,8 +1,10 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ClosenessResult;
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,4 +29,8 @@ public interface UbicacionRepository {
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
 
     ClosenessResult definirCentralidad(String nombre);
+
+    double relationships();
+    DegreeQuery DegreeOf(List<String> names, DegreeType type);
+    List<String> namesOf(List<Long> ids);
 }

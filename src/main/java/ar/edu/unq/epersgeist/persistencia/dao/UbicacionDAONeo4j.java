@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -40,6 +41,21 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     @Query("MATCH (u:UbicacionNeo4J {nombre: $nombre}) RETURN u")
     UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
+
+    @Query("""
+            MATCH (n:UbicacionNeo4j) -[r:CONECTADA]-> ()
+            RETURN count(r)
+            """)
+    double relationships();
+
+    @Query("""
+            MATCH (n:UbicacionNeo4j) -[r:CONECTADA]-> ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeOutcommingOf(@Param("names") List<String> names);
 }
 
 

@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
@@ -36,11 +37,13 @@ public class UbicacionServiceTest {
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
     private Ubicacion santaMaria;
+    private Santuario catedral;
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
     private UbicacionRepository repository;
+
 
 
     @BeforeEach
@@ -52,6 +55,8 @@ public class UbicacionServiceTest {
         ubicacionService.crear(ashenvale);
         santaMaria = new Santuario("SantaMaria", 80);
         ubicacionService.crear(santaMaria);
+        catedral = new Santuario("catedral", 80);
+        ubicacionService.crear(catedral);
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -773,6 +778,24 @@ public class UbicacionServiceTest {
         List<Long> ids = List.of();
         List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
         assertEquals(0, closeness.size());
+    }
+
+    @Test
+    void DegreeTestOutcomming1(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.OUTCOMMING);
+
+
+        assertEquals(result.node().getNombre(),fellwood.getNombre());
+        assertEquals(result.centrality(), (double) 4 / 5 );
+        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
     }
 
     @AfterEach

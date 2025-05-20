@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
@@ -166,5 +168,14 @@ public class UbicacionServiceImpl implements UbicacionService {
         return closeness.stream()
                 .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
                 .toList();
+    }
+
+    @Override
+    public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
+        List<String> names = ubicacionRepository.namesOf(ids);
+        DegreeQuery query = ubicacionRepository.DegreeOf(names, type);
+        double cantRelationships = ubicacionRepository.relationships();
+        DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
+        return result;
     }
 }
