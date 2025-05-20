@@ -480,7 +480,7 @@ public class UbicacionServiceTest {
         assertEquals(1, origen.getUbicaciones().size());
     }
 
-    @Test void conectarDosVecesUnidireccional() {
+    @Test void conectarDosVecesUnidireccionalDistintoDestino() {
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
@@ -494,7 +494,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void conectarDosVecesMismoDestino() {
+    void conectarDosVecesUnidireccionalMismoDestino() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
 
@@ -506,15 +506,18 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void conectarDosVecesDistintoDestino() {
+    void conectarUnidireccionalCiclica() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
         ubicacionService.conectar(ashenvale.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
 
-        UbicacionNeo4J origen = ubicacionService.recuperarPorNombre(fellwood.getNombre());
-        UbicacionNeo4J destino = ubicacionService.recuperarPorNombre(ashenvale.getNombre());
+        UbicacionNeo4J ubiA = ubicacionService.recuperarPorNombre(fellwood.getNombre());
+        UbicacionNeo4J ubiB = ubicacionService.recuperarPorNombre(ashenvale.getNombre());
+        UbicacionNeo4J ubiC = ubicacionService.recuperarPorNombre(ashenvale.getNombre());
 
-        assertEquals(1, destino.getUbicaciones().size());
-        assertEquals(1, origen.getUbicaciones().size());
+        assertEquals(1, ubiA.getUbicaciones().size());
+        assertEquals(1, ubiB.getUbicaciones().size());
+        assertEquals(1, ubiC.getUbicaciones().size());
     }
 
     @Test
@@ -563,14 +566,25 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void estanConetcadasDosUbicacionesConectadas() {
+    void estanConetcadasDosUbicacionesConectadasUnidireccionalmente() {
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+
         assertTrue(ubicacionService.estanConectadas(fellwood.getId(), ashenvale.getId()));
+        assertFalse(ubicacionService.estanConectadas(ashenvale.getId(), fellwood.getId()));
     }
 
     @Test
-    void estanConetcadasDosUbicacionesDesconectadas() {
+    void estanConetcadasDosUbicacionesSinConexion() {
         assertFalse(ubicacionService.estanConectadas(fellwood.getId(), ashenvale.getId()));
+    }
+
+    @Test
+    void estanConetcadasDosUbicacionesBidireccionalemente() {
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        assertTrue(ubicacionService.estanConectadas(fellwood.getId(), ashenvale.getId()));
+        assertTrue(ubicacionService.estanConectadas(ashenvale.getId(), fellwood.getId()));
     }
 
     @Test
@@ -647,6 +661,8 @@ public class UbicacionServiceTest {
         List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
 
         assertEquals(2, camino.size());
+        assertEquals(camino.get(0).getNombre(), fellwood.getNombre());
+        assertEquals(camino.get(1).getNombre(), ashenvale.getNombre());
     }
 
     @Test
@@ -664,7 +680,11 @@ public class UbicacionServiceTest {
         ubicacionService.conectar(jardinDePaz.getId(), sanIgnacio.getId());
 
         List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  sanIgnacio.getId());
+
         assertEquals(3, camino.size());
+        assertEquals(camino.get(0).getNombre(), fellwood.getNombre());
+        assertEquals(camino.get(1).getNombre(), jardinDePaz.getNombre());
+        assertEquals(camino.get(2).getNombre(), sanIgnacio.getNombre());
     }
 
     @Test
@@ -686,10 +706,18 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void caminoSinConexion() {
-        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+    void caminoMasCortoSinConexion() {
         assertThrows(UbicacionesNoConectadasException.class,() -> {
             ubicacionService.caminoMasCorto(fellwood.getId(), ashenvale.getId());
+        });
+    }
+
+    @Test
+    void caminoMasCortoSoloConRelacionesInversas() {
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+
+        assertThrows(UbicacionesNoConectadasException.class, () -> {
+            ubicacionService.caminoMasCorto(fellwood.getId(), santaMaria.getId());
         });
     }
 
@@ -698,9 +726,14 @@ public class UbicacionServiceTest {
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
         ubicacionService.conectar(santaMaria.getId(),ashenvale.getId());
+
         List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
         assertEquals(3, camino.size());
+        assertEquals(camino.get(0).getNombre(), fellwood.getNombre());
+        assertEquals(camino.get(1).getNombre(), santaMaria.getNombre());
+        assertEquals(camino.get(2).getNombre(), ashenvale.getNombre());
     }
+
 
     @Test
     void ubicacionesConSusCloseness() {

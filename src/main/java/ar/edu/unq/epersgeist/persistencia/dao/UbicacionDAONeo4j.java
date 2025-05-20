@@ -41,5 +41,3 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query("MATCH (u:UbicacionNeo4J {nombre: $nombre}) RETURN u")
     UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
 }
-
-
