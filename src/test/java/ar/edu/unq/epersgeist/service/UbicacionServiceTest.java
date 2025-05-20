@@ -693,6 +693,88 @@ public class UbicacionServiceTest {
         });
     }
 
+    @Test
+    void caminoMasCortoConBidireccionales() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        ubicacionService.conectar(santaMaria.getId(),ashenvale.getId());
+        List<UbicacionNeo4J> camino = ubicacionService.caminoMasCorto(fellwood.getId(),  ashenvale.getId());
+        assertEquals(3, camino.size());
+    }
+
+    @Test
+    void ubicacionesConSusCloseness() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        List<Long> ids = List.of(fellwood.getId(), ashenvale.getId(), santaMaria.getId());
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(3, closeness.size());
+        assertEquals(closeness.get(0).ubicacion().getNombre(), fellwood.getNombre());
+        assertEquals(closeness.get(1).ubicacion().getNombre(), santaMaria.getNombre());
+        assertEquals(closeness.get(2).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals((double) 1 /2, closeness.get(0).closeness());
+        assertEquals((double) 1 /2, closeness.get(1).closeness());
+        assertEquals((double) 1 /3, closeness.get(2).closeness());
+    }
+
+    @Test
+    void closeness1UbicacionSinConexion() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        List<Long> ids = List.of(fellwood.getId(), ashenvale.getId(), santaMaria.getId());
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(3, closeness.size());
+        assertEquals(closeness.get(0).ubicacion().getNombre(), fellwood.getNombre());
+        assertEquals(closeness.get(1).ubicacion().getNombre(), santaMaria.getNombre());
+        assertEquals(closeness.get(2).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals((double) 1 /2, closeness.get(0).closeness());
+        assertEquals((double) 1 /3, closeness.get(1).closeness());
+        assertEquals((double) 1 /20, closeness.get(2).closeness());
+    }
+
+    @Test
+    void closeness1UbicacionSinDestinoNiOrigen() {
+        Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
+        ubicacionService.crear(jardinDePaz);
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+        List<Long> ids = List.of(fellwood.getId(), ashenvale.getId(), santaMaria.getId(), jardinDePaz.getId());
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(4, closeness.size());
+        assertEquals(closeness.get(0).ubicacion().getNombre(), fellwood.getNombre());
+        assertEquals(closeness.get(1).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals(closeness.get(2).ubicacion().getNombre(), santaMaria.getNombre());
+        assertEquals(closeness.get(3).ubicacion().getNombre(), jardinDePaz.getNombre());
+        assertEquals((double) 1 / 13, closeness.get(0).closeness());
+        assertEquals((double) 1 / 13, closeness.get(1).closeness());
+        assertEquals((double) 1 / 13, closeness.get(2).closeness());
+        assertEquals((double) 1 / 30, closeness.get(3).closeness());
+    }
+
+    @Test
+    void closenessSoloPidiendo1Id() {
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+        List<Long> ids = List.of(fellwood.getId());
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(1, closeness.size());
+        assertEquals(closeness.getFirst().ubicacion().getNombre(), fellwood.getNombre());
+        assertEquals((double) 1 / 3, closeness.getFirst().closeness());
+    }
+
+    @Test
+    void closenessSinIds() {
+        List<Long> ids = List.of();
+        List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
+        assertEquals(0, closeness.size());
+    }
+
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();

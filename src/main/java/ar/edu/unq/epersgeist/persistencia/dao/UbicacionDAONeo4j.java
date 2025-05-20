@@ -4,7 +4,7 @@ import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +28,18 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     boolean estanConectadasDirecta(@Param("origen") String origen, @Param("destino") String destino);
 
     @Query("MATCH (u:UbicacionNeo4J) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
-    List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
+    List<UbicacionNeo4J> ubicacionesSobrecargadas(@Param("umbralDeEnergia") Integer umbralDeEnergia);
 
     @Query("""
         MATCH (a:UbicacionNeo4J {nombre: $origen})
         MATCH (b:UbicacionNeo4J {nombre: $destino})
         MATCH camino = shortestPath((a)-[:CONECTADA*1..]->(b))
-        RETURN camino
+        RETURN nodes(camino)
     """)
-    List<UbicacionNeo4J> encontarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
+    List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
+
+    @Query("MATCH (u:UbicacionNeo4J {nombre: $nombre}) RETURN u")
+    UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
 }
+
 
