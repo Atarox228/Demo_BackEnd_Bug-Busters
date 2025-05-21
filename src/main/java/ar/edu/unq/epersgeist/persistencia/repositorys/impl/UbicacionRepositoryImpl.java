@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
@@ -93,10 +94,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
         return ubicacionDAONeo4J.ubicacionesSobrecargadas(umbralDeEnergia);
     }
-    @Override
-    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
-        return ubicacionDAONeo4J.ubicacionesConectadas(nombre);
-    }
 
     @Override
     public void conectarUbicaciones(String origen, String destino){
@@ -104,7 +101,34 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Boolean estanConectadas(String origen, String destino) {
-        return ubicacionDAONeo4J.estanConectadas(origen, destino);
+    public Boolean estanConectadasDirecta(String origen, String destino) {
+        return ubicacionDAONeo4J.estanConectadasDirecta(origen, destino);
+    }
+
+    @Override
+    public List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino) {
+        return ubicacionDAONeo4J.encontrarCaminoMasCorto(origen, destino);
+    }
+
+    @Override
+    public ClosenessResult definirCentralidad(String nombre) {
+        List<Ubicacion> todasLasUbicaciones = ubicacionDAO.recuperarTodosNoEliminados();
+        Double sumatoriaDistancia = 0.0;
+        for (Ubicacion ubi : todasLasUbicaciones){
+            if (! nombre.equals(ubi.getNombre())) {
+                sumatoriaDistancia += cantidadSaltos(nombre, ubi.getNombre());
+            }
+        }
+        Double centralidad = 1.0 / sumatoriaDistancia;
+        return new ClosenessResult(ubicacionDAONeo4J.recuperarPorNombre(nombre), centralidad);
+    }
+
+    private double cantidadSaltos(String origen, String destino) {
+        List <UbicacionNeo4J> saltos = ubicacionDAONeo4J.encontrarCaminoMasCorto(origen, destino);
+        if (saltos.isEmpty()) {
+            return 10.0; // ESTO ES PARA PROBAR, PODRIA HACER UN METODO QUE TOMA EL MAS LARGO DE LOS CAMINOS Y SUMARSELO
+        } else {
+            return saltos.size() -1;
+        }
     }
 }

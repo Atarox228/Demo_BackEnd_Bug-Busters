@@ -7,9 +7,8 @@ import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionReposi
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -27,7 +26,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void crear(Ubicacion ubicacion) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
-
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
         ubicacionRepository.crear(ubicacion);
@@ -96,14 +94,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
-
-
-    @Override
-    public Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre) {
-
-        return ubicacionRepository.ubicacionesConectadas(nombre);
-    }
-
     @Override
     public void conectar(Long idOrigen, Long idDestino){
         revisarId(idOrigen);
@@ -148,6 +138,32 @@ public class UbicacionServiceImpl implements UbicacionService {
         revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        return ubicacionRepository.estanConectadas(ubi1.getNombre(), ubi2.getNombre());
+        return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
+    }
+
+    @Override
+    public List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino) {
+        revisarId(idOrigen);
+        revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+
+        List<UbicacionNeo4J> camino = ubicacionRepository.encontrarCaminoMasCorto(ubi1.getNombre(), ubi2.getNombre());
+        if (camino.isEmpty()) {
+            throw new UbicacionesNoConectadasException();
+        }
+        return camino;
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        List<ClosenessResult> closeness = new ArrayList<>();
+        for (Long id : ids) {
+            ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
+            closeness.add(recordCloseness);
+        }
+        return closeness.stream()
+                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
+                .toList();
     }
 }

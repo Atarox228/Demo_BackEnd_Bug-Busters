@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
 
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 
@@ -13,7 +14,6 @@ public interface UbicacionRepository {
     Ubicacion recuperar(Long ubicacionId);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
-
     void actualizarNeo4J(UbicacionNeo4J ubicacion);
     void eliminar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
@@ -21,8 +21,10 @@ public interface UbicacionRepository {
     boolean existsById(Long id);
     void eliminarTodos();
     Ubicacion existeUbicacionConNombre(String nombre);
-    Collection<UbicacionNeo4J> ubicacionesConectadas(String nombre);
     void conectarUbicaciones(String origen, String destino);
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
-    Boolean estanConectadas(String origen, String destino);
+    Boolean estanConectadasDirecta(String origen, String destino);
+    List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
+
+    ClosenessResult definirCentralidad(String nombre);
 }
