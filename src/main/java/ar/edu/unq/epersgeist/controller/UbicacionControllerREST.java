@@ -79,7 +79,6 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
-
     @GetMapping("/ubicacionesSobrecargadas/{umbralDeEnergia}")
     public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia){
         return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
