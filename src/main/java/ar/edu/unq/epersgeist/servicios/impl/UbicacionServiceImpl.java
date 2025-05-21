@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
@@ -175,6 +176,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         List<String> names = ubicacionRepository.namesOf(ids);
         DegreeQuery query = ubicacionRepository.DegreeOf(names, type);
         double cantRelationships = ubicacionRepository.relationships();
+        if (query == null) throw new sinResultadosException();
         DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
         return result;
     }

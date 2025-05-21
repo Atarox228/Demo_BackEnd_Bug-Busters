@@ -133,9 +133,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public DegreeQuery DegreeOf(List<String> names, DegreeType type) {
-        DegreeQuery q = ubicacionDAONeo4J.degreeOutcommingOf(names);
-        return q;
-        //DegreeQuery query = new DegreeQuery()
+        DegreeQuery query;
+        if (type == DegreeType.OUTCOMMING){
+            query = ubicacionDAONeo4J.degreeOutcommingOf(names);
+        } else if (type == DegreeType.INCOMMING) {
+            query = ubicacionDAONeo4J.degreeIncommingOf(names);
+        } else {
+            query = ubicacionDAONeo4J.degreeAllOf(names);
+        }
+        return query;
     }
 
     @Override

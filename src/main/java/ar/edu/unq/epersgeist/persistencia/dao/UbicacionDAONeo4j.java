@@ -43,19 +43,37 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
 
     @Query("""
-            MATCH (n:UbicacionNeo4j) -[r:CONECTADA]-> ()
+            MATCH (n:UbicacionNeo4J) -[r:CONECTADA]-> ()
             RETURN count(r)
             """)
     double relationships();
 
     @Query("""
-            MATCH (n:UbicacionNeo4j) -[r:CONECTADA]-> ()
+            MATCH (n:UbicacionNeo4J) -[r:CONECTADA]-> ()
             WHERE n.nombre IN $names
             RETURN n AS node, count(r) AS degree
             ORDER BY count(r) DESC
             LIMIT 1
             """)
     DegreeQuery degreeOutcommingOf(@Param("names") List<String> names);
+
+    @Query("""
+            MATCH (n:UbicacionNeo4J) <-[r:CONECTADA]- ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeIncommingOf(@Param("names") List<String> names);
+
+    @Query("""
+            MATCH (n:UbicacionNeo4J) -[r:CONECTADA]- ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeAllOf(@Param("names") List<String> names);
 }
 
 
