@@ -162,8 +162,6 @@ public class UbicacionServiceImpl implements UbicacionService {
             ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
             closeness.add(recordCloseness);
         }
-        return closeness.stream()
-                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
-                .toList();
+        return closeness;
     }
 }

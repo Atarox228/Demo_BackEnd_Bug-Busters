@@ -713,11 +713,11 @@ public class UbicacionServiceTest {
 
         assertEquals(3, closeness.size());
         assertEquals(closeness.get(0).ubicacion().getNombre(), fellwood.getNombre());
-        assertEquals(closeness.get(1).ubicacion().getNombre(), santaMaria.getNombre());
-        assertEquals(closeness.get(2).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals(closeness.get(1).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals(closeness.get(2).ubicacion().getNombre(), santaMaria.getNombre());
         assertEquals((double) 1 /2, closeness.get(0).closeness());
-        assertEquals((double) 1 /2, closeness.get(1).closeness());
-        assertEquals((double) 1 /3, closeness.get(2).closeness());
+        assertEquals((double) 1 /3, closeness.get(1).closeness());
+        assertEquals((double) 1 /2, closeness.get(2).closeness());
     }
 
     @Test
@@ -731,11 +731,11 @@ public class UbicacionServiceTest {
 
         assertEquals(3, closeness.size());
         assertEquals(closeness.get(0).ubicacion().getNombre(), fellwood.getNombre());
-        assertEquals(closeness.get(1).ubicacion().getNombre(), santaMaria.getNombre());
-        assertEquals(closeness.get(2).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals(closeness.get(1).ubicacion().getNombre(), ashenvale.getNombre());
+        assertEquals(closeness.get(2).ubicacion().getNombre(), santaMaria.getNombre());
         assertEquals((double) 1 /2, closeness.get(0).closeness());
-        assertEquals((double) 1 /3, closeness.get(1).closeness());
-        assertEquals((double) 1 /20, closeness.get(2).closeness());
+        assertEquals((double) 1 /20, closeness.get(1).closeness());
+        assertEquals((double) 1 /3, closeness.get(2).closeness());
     }
 
     @Test

@@ -40,4 +40,21 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     @Query("MATCH (u:Ubicacion {nombre: $nombre}) RETURN u")
     UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
+
+    @Query ("""
+        MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
+        WHERE a <> b
+        MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
+        RETURN sum(length(p))
+    """)
+    Integer sumaDeDistancias(@Param("nombre") String nombre);
+
+    @Query ("""
+        MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
+        WHERE a <> b
+        MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
+        RETURN count(length(p))
+    """)
+    Integer cantidadDeConexiones(@Param("nombre") String nombre);
+
 }
