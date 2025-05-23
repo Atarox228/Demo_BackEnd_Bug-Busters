@@ -1,10 +1,8 @@
 package ar.edu.unq.epersgeist.controller;
 
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
-import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
-import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
-import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
+import ar.edu.unq.epersgeist.controller.dto.*;
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
@@ -82,6 +80,13 @@ public class UbicacionControllerREST {
     public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia){
         return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
                 .map(UbicacionDTO::desdeNeo)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/closeness/{ids}")
+    public List<ClosenessResultDTO> closenessOF(@PathVariable List<Long> ids) {
+        return ubicacionService.closenessOf(ids).stream()
+                .map(ClosenessResultDTO::desdeModelo)
                 .collect(Collectors.toList());
     }
 
