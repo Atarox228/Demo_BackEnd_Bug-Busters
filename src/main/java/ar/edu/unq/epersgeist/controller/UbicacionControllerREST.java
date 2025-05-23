@@ -6,7 +6,6 @@ import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

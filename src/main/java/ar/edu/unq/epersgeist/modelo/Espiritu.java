@@ -95,10 +95,6 @@ public abstract class Espiritu implements Serializable {
 
     public void moverSantuario() {}
 
-    public abstract boolean puedeRecuperarseEnCementerio();
-
-    public abstract boolean puedeRecuperarseEnSantuario();
-
     public void aumentarConexionEn(Ubicacion ubicacion) {
         ubicacion.aumentarConexionDe(this);
     }

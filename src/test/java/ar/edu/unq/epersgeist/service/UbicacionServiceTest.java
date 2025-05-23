@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.servicios.*;

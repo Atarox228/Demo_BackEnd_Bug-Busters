@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MediumControllerREST {
     private final MediumService mediumService;
 
-    public MediumControllerREST(MediumService mediumService, EspirituService espirituService, UbicacionService ubicacionService) {
+    public MediumControllerREST(MediumService mediumService) {
         this.mediumService = mediumService;
     }
 
