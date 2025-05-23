@@ -110,13 +110,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public ClosenessResult definirCentralidad(String nombre) {
-        double sumaDeDistancias = sumarSinConexion(ubicacionDAONeo4J.sumaDeDistancias(nombre),
-                ubicacionDAONeo4J.cantidadDeConexiones(nombre),
-                ubicacionDAO.findAll().size()-1);
-        return new ClosenessResult(ubicacionDAONeo4J.recuperarPorNombre(nombre),  1 / sumaDeDistancias);
+        return ubicacionDAONeo4J.closenessResult(nombre);
     }
 
-    private double sumarSinConexion(Integer suma, Integer cantConexiones, Integer totalUbicaciones) {
-        return suma + (totalUbicaciones - cantConexiones) * 10;
-    }
 }

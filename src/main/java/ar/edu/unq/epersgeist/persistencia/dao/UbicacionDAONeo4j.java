@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -44,17 +45,10 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query ("""
         MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
         WHERE a <> b
-        MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
-        RETURN sum(length(p))
+        OPTIONAL MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
+        RETURN a AS ubicacion, (1.0 / (sum(CASE WHEN p IS NULL THEN 0 ELSE length(p) END) + (count(b) - count(p)) * 10)) AS closeness
     """)
-    Integer sumaDeDistancias(@Param("nombre") String nombre);
+    ClosenessResult closenessResult(@Param("nombre") String nombre);
 
-    @Query ("""
-        MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
-        WHERE a <> b
-        MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
-        RETURN count(length(p))
-    """)
-    Integer cantidadDeConexiones(@Param("nombre") String nombre);
 
 }
