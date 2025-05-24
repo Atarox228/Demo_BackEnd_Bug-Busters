@@ -142,8 +142,4 @@ public class Medium implements Serializable {
         getEspiritus().remove(espiritu);
     }
 
-    public boolean tieneAngeles() {
-        return espiritus.stream()
-                .anyMatch(espiritu -> espiritu.getTipo() == TipoEspiritu.ANGELICAL);
-    }
 }

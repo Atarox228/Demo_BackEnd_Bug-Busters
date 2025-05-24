@@ -41,12 +41,6 @@ public record MediumDTO(
         );
     }
 
-    public Medium aModelo(Ubicacion ubicacion){
-            Medium medium = this.aModelo();
-            medium.setUbicacion(ubicacion);
-            return medium;
-    }
-
     public Medium aModelo(){
         Medium medium = new Medium(this.nombre, this.manaMaximo, this.mana);
         medium.setId(this.id);

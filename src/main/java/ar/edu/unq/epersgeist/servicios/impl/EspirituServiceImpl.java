@@ -20,12 +20,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
-    private final UbicacionDAO ubicacionDAO;
 
-    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionDAO ubicacionDAO) {
+    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao) {
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDao;
-        this.ubicacionDAO = ubicacionDAO;
     }
 
 
@@ -66,10 +64,6 @@ public class EspirituServiceImpl implements EspirituService {
         revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espiritu.setDeleted(true);
         espirituDAO.save(espiritu);
-    }
-
-    public void eliminarTodo(){
-        espirituDAO.deleteAll();
     }
 
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
