@@ -102,13 +102,6 @@ public class EspirituServiceImpl implements EspirituService {
         return espirituDAO.findDemonios(pageable).getContent();
     }
 
-    @Override
-    public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
-        revisarId(espirituId);
-        Espiritu espiritu = espirituDAO.findById(espirituId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
-        return Optional.of(espiritu);
-    }
 
     private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
         if(condicion){

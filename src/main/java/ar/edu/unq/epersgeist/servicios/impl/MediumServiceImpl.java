@@ -150,13 +150,7 @@ public class MediumServiceImpl implements MediumService {
         mediumDAO.save(medium);
     }
 
-    @Override
-    public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
-        revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
-        return Optional.of(medium);
-    }
+
 
     private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
         if(condicion){

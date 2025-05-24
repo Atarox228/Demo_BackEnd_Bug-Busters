@@ -79,12 +79,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         ubicacionRepository.eliminarTodos();
     }
 
-    @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
-        return Optional.of(ubicacion);
-    }
+
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {

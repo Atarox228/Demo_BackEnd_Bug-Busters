@@ -20,5 +20,5 @@ public interface MediumService {
     List<Espiritu> espiritus(Long idMedium);
     void eliminarTodo();
     void mover(Long mediumId, Long ubicacionId);
-    Optional<Medium> recuperarAunConSoftDelete(Long mediumId);
+
 }

@@ -1,7 +1,9 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +33,8 @@ public class EspirituServiceTest {
     private UbicacionService ubicacionService;
     @Autowired
     private DataService dataService;
+    @Autowired
+    private EspirituDAO espirituDAO;
     private Angel Casper;
     private Demonio Jinn;
     private Demonio Oni;
@@ -421,8 +426,8 @@ public class EspirituServiceTest {
         espirituService.eliminar(angelAct);
         espirituService.eliminar(demonioAct);
 
-        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
         assertTrue(demonioBorrado.getDeleted());
@@ -456,8 +461,8 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.recuperarTodos();
 
-        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
         assertTrue(demonioBorrado.getDeleted());
@@ -486,13 +491,27 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1,2);
 
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(demonioBorrado.getDeleted());
         assertThrows(EntidadEliminadaException.class, () -> {
             espirituService.recuperar(demonioAct.getId());
         });
         assertEquals(todos.size(),1);
+    }
+
+
+    public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
+        revisarId(espirituId);
+        Espiritu espiritu = espirituDAO.findById(espirituId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
+        return Optional.of(espiritu);
+    }
+
+    private void revisarId(Long id){
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
     }
 
     @AfterEach

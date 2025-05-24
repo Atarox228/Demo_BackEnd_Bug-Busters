@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,8 @@ public class UbicacionServiceTest {
     private MediumService mediumService;
     @Autowired
     private EspirituService espirituService;
-
+    @Autowired
+    private UbicacionRepository ubicacionRepository;
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
     private Ubicacion santaMaria;
@@ -425,8 +427,8 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-        Ubicacion santuarioBorrado= ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
-        Ubicacion cementerioBorrado = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
+        Ubicacion santuarioBorrado= this.recuperarAunConSoftDelete(santuarioAct.getId()).get();
+        Ubicacion cementerioBorrado = this.recuperarAunConSoftDelete(cementerioAct.getId()).get();
 
         assertThrows(EntidadEliminadaException.class, () -> {
             ubicacionService.recuperar(santuarioAct.getId());
@@ -459,8 +461,8 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(cementerioAct);
 
 
-        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuario.getId()).get();
-        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerio.getId()).get();
+        santuarioAct = this.recuperarAunConSoftDelete(santuario.getId()).get();
+        cementerioAct = this.recuperarAunConSoftDelete(cementerio.getId()).get();
 
         Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
 
@@ -475,6 +477,19 @@ public class UbicacionServiceTest {
         assertTrue(cementerioAct.getDeleted());
         assertEquals(1, todos.size());
     }
+
+    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
+        revisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
+        return Optional.of(ubicacion);
+    }
+
+    private void revisarId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
+    }
+
 
     @Test
     void conectarUnidireccional() {
