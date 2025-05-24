@@ -33,9 +33,9 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
     }
 
@@ -49,19 +49,19 @@ public class UbicacionServiceImpl implements UbicacionService {
         if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
         }
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
-        revisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        validacionesGenerales.revisarUbicacionConEntidades(ubicacion,!espiritusEn(ubicacion.getId()).isEmpty() || !mediumsEn(ubicacion.getId()).isEmpty());
         ubicacion.setDeleted(true);
         ubicacionRepository.actualizar(ubicacion);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        revisarId(ubicacion.getId());
+        validacionesGenerales.revisarId(ubicacion.getId());
         if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionRepository.actualizar(ubicacion);
     }
 
@@ -77,54 +77,33 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         return Optional.of(ubicacion);
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
     @Override
     public void conectar(Long idOrigen, Long idDestino){
-        revisarId(idOrigen);
-        revisarId(idDestino);
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
         if(idOrigen.equals(idDestino)){
             throw new MismaUbicacionException();
         }
         ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
-    }
-
-    private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
-        if(condicion){
-            throw new EntidadEliminadaException(entidad);
-        }
-    }
-    private void revisarId(Long id){
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
-
-    private <T> void revisarUbicacionConEntidades(Long id, T entidad){
-        if (!espiritusEn(id).isEmpty() || !mediumsEn(id).isEmpty()){
-            throw new EntidadConEntidadesConectadasException(entidad);
-        }
-    }
-
-    private List<Medium> mediumsEn(Long id){
-        return mediumDAO.mediumsEn(id);
     }
 
     @Override
@@ -134,8 +113,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Boolean estanConectadas(Long idOrigen, Long idDestino) {
-        revisarId(idOrigen);
-        revisarId(idDestino);
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
         return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
@@ -143,8 +122,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino) {
-        revisarId(idOrigen);
-        revisarId(idDestino);
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
 
@@ -163,5 +142,9 @@ public class UbicacionServiceImpl implements UbicacionService {
             closeness.add(recordCloseness);
         }
         return closeness;
+    }
+
+    private List<Medium> mediumsEn(Long id){
+        return mediumDAO.mediumsEn(id);
     }
 }
