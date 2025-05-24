@@ -70,12 +70,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.recuperarTodosNoEliminados();
     }
 
-    @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return Optional.of(ubicacion);
-    }
 
     @Override
     public boolean existsById(Long id) {

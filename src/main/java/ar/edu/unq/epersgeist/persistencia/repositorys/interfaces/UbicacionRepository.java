@@ -19,7 +19,6 @@ public interface UbicacionRepository {
     void actualizarNeo4J(UbicacionNeo4J ubicacion);
     void eliminar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
-    Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
     boolean existsById(Long id);
     void eliminarTodos();
     Ubicacion existeUbicacionConNombre(String nombre);
