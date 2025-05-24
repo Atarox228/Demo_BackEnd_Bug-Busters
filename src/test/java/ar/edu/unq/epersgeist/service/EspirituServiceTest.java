@@ -269,7 +269,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
         Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId()).get();

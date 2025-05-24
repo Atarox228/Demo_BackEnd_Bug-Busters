@@ -29,7 +29,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public void crear(Ubicacion ubicacion) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
-
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
         ubicacionRepository.crear(ubicacion);
@@ -166,6 +165,7 @@ public class UbicacionServiceImpl implements UbicacionService {
                 .toList();
     }
 
+
     @Override
     public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
         List<String> names = ubicacionRepository.namesOf(ids);
@@ -176,3 +176,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         return result;
     }
 }
+
+}
+

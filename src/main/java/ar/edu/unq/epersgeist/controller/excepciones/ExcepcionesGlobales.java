@@ -18,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
-public class ManejadorDeErrores {
+public class ExcepcionesGlobales {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> manejarErroresDeValidacion(MethodArgumentNotValidException ex) {
@@ -52,68 +52,14 @@ public class ManejadorDeErrores {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(NoHaySantuariosConDemoniosException.class)
-    public ResponseEntity<ErrorDetalle> manejarSantuarioDemoniacoNoEncontrado(NoHaySantuariosConDemoniosException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(MismoMediumException.class)
-    public ResponseEntity<ErrorDetalle> manejarExorcirsoConUnoMismo(MismoMediumException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(ExorcismoEnDiferenteUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarExorcismoEnUbicacionDiferente(ExorcismoEnDiferenteUbicacionException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(EspirituNoLibreException.class)
-    public ResponseEntity<ErrorDetalle> manejarEspirituNoLibre(EspirituNoLibreException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(MovimientoInvalidoException.class)
-    public ResponseEntity<ErrorDetalle> manejarMovimientoInvalido(MovimientoInvalidoException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UbicacionYaCreadaException.class)
-    public ResponseEntity<ErrorDetalle> manejarUbicacionYaCreada(UbicacionYaCreadaException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(EntidadConEntidadesConectadasException.class)
     public ResponseEntity<ErrorDetalle> manejarEliminarEntidadConEntidades(EntidadConEntidadesConectadasException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(NoHayAngelesException.class)
-    public ResponseEntity<ErrorDetalle> manejarSinAngeles(NoHayAngelesException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler(InvocacionFallidaPorUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarInvocacionNulaPorUbicacion(InvocacionFallidaPorUbicacionException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler(NoSePuedenConectarException.class)
-    public ResponseEntity<ErrorDetalle> manejarConexionFallida(NoSePuedenConectarException ex) {
-        ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
     @ExceptionHandler(EntidadSinUbicacionException.class)
-    public ResponseEntity<ErrorDetalle> manejarMediumSinUbicacion(EntidadSinUbicacionException ex) {
+    public ResponseEntity<ErrorDetalle> manejarEntidadSinUbicacion(EntidadSinUbicacionException ex) {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
@@ -165,7 +111,7 @@ public class ManejadorDeErrores {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetalle> manejarErroresGenerales(Exception ex) {
-        ex.printStackTrace();
+        ex.printStackTrace(); //exclusivo para debugeo
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), "Error interno del servidor");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -175,7 +121,7 @@ public class ManejadorDeErrores {
 
         if (root instanceof InvalidFormatException invalidFormat) {
 
-            String campo = invalidFormat.getPath().get(0).getFieldName();
+            String campo = invalidFormat.getPath().getFirst().getFieldName();
             Class<?> tipo = invalidFormat.getTargetType();
 
             if (tipo.isEnum()) {

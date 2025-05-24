@@ -1,9 +1,17 @@
 package ar.edu.unq.epersgeist.controller;
 
 
+
 import ar.edu.unq.epersgeist.controller.dto.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
+
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +72,7 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}/espiritus")
+    @GetMapping("/{id}/{espiritus}")
     public List<EspirituDTO> espiritusEn(@PathVariable Long id) {
         return ubicacionService.espiritusEn(id).stream()
                 .map(EspirituDTO::desdeModelo)
@@ -78,9 +86,17 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
+
     @GetMapping("/DegreeCentrality")
     public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
         return ubicacionService.degreeOf(dto.ids(), decider.decide(dto.degrreType()));
+
+    @GetMapping("/ubicacionesSobrecargadas/{umbralDeEnergia}")
+    public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia){
+        return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
+                .map(UbicacionDTO::desdeNeo)
+                .collect(Collectors.toList());
+
     }
 
 }
