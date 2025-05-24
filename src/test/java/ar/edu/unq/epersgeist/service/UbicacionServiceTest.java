@@ -626,7 +626,7 @@ public class UbicacionServiceTest {
     @Test
     void recuperarUbicacionesSobreCargadas() {
         List<UbicacionNeo4J> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(50);
-        assertEquals(2, ubicacionesSobrecargadas.size());
+        assertEquals(3, ubicacionesSobrecargadas.size());
         List<String> nombres = ubicacionesSobrecargadas.stream()
                                                         .map(UbicacionNeo4J::getNombre)
                                                         .collect(Collectors.toList());

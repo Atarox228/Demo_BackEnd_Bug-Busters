@@ -29,11 +29,9 @@ import jakarta.validation.Valid;
 public class UbicacionControllerREST {
 
     private final UbicacionService ubicacionService;
-    private final TypeDecider decider;
 
     public UbicacionControllerREST(UbicacionService ubicacionService) {
         this.ubicacionService = ubicacionService;
-        this.decider = new TypeDecider();
     }
 
     @PostMapping
@@ -86,13 +84,29 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
+    @PutMapping("/{id}/conectar/{idDestino}")
+    public ResponseEntity<Void> conectar(@PathVariable Long id, @PathVariable Long idDestino) {
+        ubicacionService.conectar(id, idDestino);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}/estanConectados/{idDestino}")
+    public ResponseEntity<String> estanConectados(@PathVariable Long id, @PathVariable Long idDestino) {
+
+        Boolean resultado = ubicacionService.estanConectadas(id, idDestino);
+        String mensaje = resultado ? "Conectado" : "Desconectado";
+
+        return ResponseEntity.status(HttpStatus.OK).body(mensaje);
+    }
 
     @GetMapping("/DegreeCentrality")
     public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
-        return ubicacionService.degreeOf(dto.ids(), decider.decide(dto.degrreType()));
+        return ubicacionService.degreeOf(dto.ids(), dto.degreeType());
+
+    }
 
     @GetMapping("/ubicacionesSobrecargadas/{umbralDeEnergia}")
-    public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia){
+    public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia) {
         return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
                 .map(UbicacionDTO::desdeNeo)
                 .collect(Collectors.toList());
