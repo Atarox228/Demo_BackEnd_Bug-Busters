@@ -56,6 +56,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         revisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
         ubicacion.setDeleted(true);
         ubicacionRepository.actualizar(ubicacion);
+        ubicacionRepository.eliminar(ubicacion);
     }
 
     @Override
@@ -160,9 +161,7 @@ public class UbicacionServiceImpl implements UbicacionService {
             ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
             closeness.add(recordCloseness);
         }
-        return closeness.stream()
-                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
-                .toList();
+        return closeness;
     }
 
 

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.DegreeQuery;
+import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -40,8 +41,15 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
 
     @Query("MATCH (u:Ubicacion {nombre: $nombre}) RETURN u")
-    UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
+    UbicacionNeo4J eliminar(@Param("nombre") String nombre);
 
+    @Query ("""
+        MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
+        WHERE a <> b
+        OPTIONAL MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
+        RETURN a AS ubicacion, (1.0 / (sum(CASE WHEN p IS NULL THEN 0 ELSE length(p) END) + (count(b) - count(p)) * 10)) AS closeness
+    """)
+    ClosenessResult closenessResult(@Param("nombre") String nombre);
 
     @Query("""
             MATCH (n:Ubicacion) -[r:CONECTADA]-> ()
@@ -76,8 +84,3 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
             """)
     DegreeQuery degreeAllOf(@Param("names") List<String> names);
 }
-
-
-
-
-

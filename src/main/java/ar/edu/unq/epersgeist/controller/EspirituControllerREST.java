@@ -20,11 +20,9 @@ import java.util.stream.Collectors;
 public class EspirituControllerREST {
 
     private final EspirituService espirituService;
-    private final MediumService mediumService;
 
-    public EspirituControllerREST(EspirituService espirituService, MediumService mediumService) {
+    public EspirituControllerREST(EspirituService espirituService) {
         this.espirituService = espirituService;
-        this.mediumService = mediumService;
     }
 
     @PostMapping
