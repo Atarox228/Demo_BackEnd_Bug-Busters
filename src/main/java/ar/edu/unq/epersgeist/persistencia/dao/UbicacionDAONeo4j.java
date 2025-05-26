@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long> {
+
     @Query("MATCH(u: Ubicacion) DETACH DELETE u")
     void detachDelete();
+
     Optional<UbicacionNeo4J> findByNombre(String nombre);
 
     @Query("""
@@ -29,7 +31,12 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     """)
     boolean estanConectadasDirecta(@Param("origen") String origen, @Param("destino") String destino);
 
-    @Query("MATCH (u:Ubicacion) WHERE u.flujoEnergia > $umbralDeEnergia RETURN u")
+    @Query("""
+         MATCH (u:Ubicacion)
+         WHERE u.flujoEnergia > $umbralDeEnergia
+         OPTIONAL MATCH (u)-[r:CONECTADA]->(destino:Ubicacion)
+         RETURN u, collect(r), collect(destino)
+    """)
     List<UbicacionNeo4J> ubicacionesSobrecargadas(@Param("umbralDeEnergia") Integer umbralDeEnergia);
 
     @Query("""
@@ -39,9 +46,6 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
         RETURN nodes(camino)
     """)
     List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
-
-    @Query("MATCH (u:Ubicacion {nombre: $nombre}) RETURN u")
-    UbicacionNeo4J eliminar(@Param("nombre") String nombre);
 
     @Query ("""
         MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
