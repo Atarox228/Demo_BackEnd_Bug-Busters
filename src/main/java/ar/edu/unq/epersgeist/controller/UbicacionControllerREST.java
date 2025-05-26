@@ -98,7 +98,6 @@ public class UbicacionControllerREST {
     @GetMapping("/DegreeCentrality")
     public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
         return ubicacionService.degreeOf(dto.ids(), dto.degreeType());
-
     }
 
     @GetMapping("/ubicacionesSobrecargadas/{umbralDeEnergia}")
@@ -106,7 +105,13 @@ public class UbicacionControllerREST {
         return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
                 .map(UbicacionDTO::desdeNeo)
                 .collect(Collectors.toList());
+    }
 
+    @GetMapping("/{id}/caminoMasCorto/{idDestino}")
+    public List<UbicacionDTO> caminoMasCorto(@PathVariable Long id, @PathVariable Long idDestino){
+        return ubicacionService.caminoMasCorto(id, idDestino).stream()
+                .map(UbicacionDTO::desdeNeo)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/closeness/{ids}")
