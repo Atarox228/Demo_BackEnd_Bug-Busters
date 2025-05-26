@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
+import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -13,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,14 +32,17 @@ public class UbicacionServiceTest {
     private MediumService mediumService;
     @Autowired
     private EspirituService espirituService;
-
+    @Autowired
+    private UbicacionRepository ubicacionRepository;
     private Ubicacion fellwood;
     private Ubicacion ashenvale;
     private Ubicacion santaMaria;
+    private Santuario catedral;
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
+
 
     @BeforeEach
     void prepare() {
@@ -46,6 +52,8 @@ public class UbicacionServiceTest {
         ubicacionService.crear(ashenvale);
         santaMaria = new Santuario("SantaMaria", 80);
         ubicacionService.crear(santaMaria);
+        catedral = new Santuario("catedral", 80);
+        ubicacionService.crear(catedral);
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -134,11 +142,12 @@ public class UbicacionServiceTest {
     @Test
     void recuperarTodasLasUbicaciones(){
         Integer cantidadList = ubicacionService.recuperarTodos().size();
-        assertEquals(3, cantidadList);
+        assertEquals(4, cantidadList);
     }
 
     @Test
     void recuperarTodosSinUbicaciones(){
+        ubicacionService.eliminar(catedral);
         ubicacionService.eliminar(ashenvale);
         ubicacionService.eliminar(fellwood);
         ubicacionService.eliminar(santaMaria);
@@ -394,8 +403,8 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-        Ubicacion santuarioBorrado= ubicacionService.recuperarAunConSoftDelete(santuarioAct.getId()).get();
-        Ubicacion cementerioBorrado = ubicacionService.recuperarAunConSoftDelete(cementerioAct.getId()).get();
+        Ubicacion santuarioBorrado= this.recuperarAunConSoftDelete(santuarioAct.getId()).get();
+        Ubicacion cementerioBorrado = this.recuperarAunConSoftDelete(cementerioAct.getId()).get();
 
         assertThrows(EntidadEliminadaException.class, () -> {
             ubicacionService.recuperar(santuarioAct.getId());
@@ -424,8 +433,11 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-        santuarioAct = ubicacionService.recuperarAunConSoftDelete(santuario.getId()).get();
-        cementerioAct = ubicacionService.recuperarAunConSoftDelete(cementerio.getId()).get();
+
+
+        santuarioAct = this.recuperarAunConSoftDelete(santuario.getId()).get();
+        cementerioAct = this.recuperarAunConSoftDelete(cementerio.getId()).get();
+
 
         Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
 
@@ -439,6 +451,19 @@ public class UbicacionServiceTest {
         assertTrue(cementerioAct.getDeleted());
         assertEquals(1, todos.size());
     }
+
+    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
+        revisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
+        return Optional.of(ubicacion);
+    }
+
+    private void revisarId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
+    }
+
 
     @Test
     void conectarUnidireccional() {
@@ -600,7 +625,7 @@ public class UbicacionServiceTest {
     @Test
     void recuperarUbicacionesSobreCargadas() {
         List<UbicacionNeo4J> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(50);
-        assertEquals(2, ubicacionesSobrecargadas.size());
+        assertEquals(3, ubicacionesSobrecargadas.size());
         List<String> nombres = ubicacionesSobrecargadas.stream()
                                                         .map(UbicacionNeo4J::getNombre)
                                                         .collect(Collectors.toList());
@@ -700,6 +725,7 @@ public class UbicacionServiceTest {
 
     @Test
     void ubicacionesConSusCloseness() {
+        ubicacionService.eliminar(catedral);
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -721,6 +747,7 @@ public class UbicacionServiceTest {
 
     @Test
     void closeness1UbicacionSinConexion() {
+        ubicacionService.eliminar(catedral);
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
         ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
@@ -739,6 +766,7 @@ public class UbicacionServiceTest {
 
     @Test
     void closeness1UbicacionSinDestinoNiOrigen() {
+        ubicacionService.eliminar(catedral);
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
         ubicacionService.crear(jardinDePaz);
 
@@ -762,6 +790,7 @@ public class UbicacionServiceTest {
 
     @Test
     void closenessSoloPidiendo1Id() {
+        ubicacionService.eliminar(catedral);
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
         ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
@@ -779,6 +808,172 @@ public class UbicacionServiceTest {
         List<Long> ids = List.of();
         List<ClosenessResult> closeness = ubicacionService.closenessOf(ids);
         assertEquals(0, closeness.size());
+    }
+
+    @Test
+    void DegreeTestOutcomming1(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.OUTCOMMING);
+
+
+        assertEquals(result.node().getNombre(),fellwood.getNombre());
+        assertEquals(result.centrality(), (double) 3 / 5 );
+        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+    }
+
+    @Test
+    void DegreeTestOutcommingEmpate(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), catedral.getId());
+        ubicacionService.conectar(santaMaria.getId(), fellwood.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.OUTCOMMING);
+
+        List<String> posiblesGanadores = List.of(fellwood.getNombre(),santaMaria.getNombre());
+        assertTrue(posiblesGanadores.contains(result.node().getNombre()));
+        assertEquals(result.centrality(), (double) 3 / 7 );
+        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+    }
+
+    @Test
+    void OutcommingWithNoId(){
+        List<Long> ids = List.of();
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.OUTCOMMING);
+        });
+    }
+
+    @Test
+    void OutcommingWithInexistentId(){
+        List<Long> ids = List.of((long) -1);
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.OUTCOMMING);
+        });
+    }
+
+    @Test
+    void DegreeTestIncomming1(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.INCOMMING);
+
+
+        assertEquals(result.node().getNombre(),ashenvale.getNombre());
+        assertEquals(result.centrality(), (double) 2 / 5 );
+        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+    }
+
+    @Test
+    void DegreeTestIncommingEmpate(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), catedral.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.INCOMMING);
+
+
+        List<String> posiblesGanadores = List.of(catedral.getNombre(),ashenvale.getNombre());
+        assertTrue(posiblesGanadores.contains(result.node().getNombre()));
+        assertEquals(result.centrality(), (double) 2 / 5 );
+        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+    }
+
+    @Test
+    void IncommingWithNoId(){
+        List<Long> ids = List.of();
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.INCOMMING);
+        });
+    }
+
+    @Test
+    void IncommingWithInexistentId(){
+        List<Long> ids = List.of((long) -1);
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.INCOMMING);
+        });
+    }
+
+    @Test
+    void DegreeTestAll(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
+        ubicacionService.conectar(ashenvale.getId(), fellwood.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.ALL);
+
+
+        assertEquals(result.node().getNombre(),fellwood.getNombre());
+        assertEquals(result.centrality(), (double) 4 / 5 );
+        assertEquals(result.typeResult(), DegreeType.ALL);
+    }
+
+    @Test
+    void DegreeTestAllEmpate(){
+        ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
+        ubicacionService.conectar(fellwood.getId(), catedral.getId());
+        ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
+        ubicacionService.conectar(santaMaria.getId(), catedral.getId());
+        ubicacionService.conectar(ashenvale.getId(), catedral.getId());
+
+        List<Long> ids = List.of(fellwood.getId(),santaMaria.getId(),ashenvale.getId(),catedral.getId());
+
+        DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.ALL);
+
+
+        List<String> posiblesGanadores = List.of(catedral.getNombre(),fellwood.getNombre());
+        assertTrue(posiblesGanadores.contains(result.node().getNombre()));
+        assertEquals(result.centrality(), (double) 3 / 5 );
+        assertEquals(result.typeResult(), DegreeType.ALL);
+    }
+
+    @Test
+    void AllWithNoId(){
+        List<Long> ids = List.of();
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.ALL);
+        });
+    }
+
+    @Test
+    void AllWithInexistentId(){
+        List<Long> ids = List.of((long) -1);
+
+        assertThrows(sinResultadosException.class,() -> {
+            ubicacionService.degreeOf(ids, DegreeType.ALL);
+        });
     }
 
     @AfterEach

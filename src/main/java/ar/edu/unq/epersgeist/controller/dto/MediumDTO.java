@@ -41,6 +41,7 @@ public record MediumDTO(
         );
     }
 
+
     public Medium aModelo(){
         Medium medium = new Medium(this.nombre, this.manaMaximo, this.mana);
         medium.setId(this.id);

@@ -6,7 +6,6 @@ if [ -z "$1" ]; then
   echo "Uso: ./stats_defaults.sh <branch> [sinceDate]"
   exit 1
 fi
-
 branch="$1"
 sinceDate="${2:-$(date -d '2 weeks ago' +%Y-%m-%d)}"
 

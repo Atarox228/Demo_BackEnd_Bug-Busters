@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -40,7 +41,7 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
 
     @Query("MATCH (u:Ubicacion {nombre: $nombre}) RETURN u")
-    UbicacionNeo4J recuperarPorNombre(@Param("nombre") String nombre);
+    UbicacionNeo4J eliminar(@Param("nombre") String nombre);
 
     @Query ("""
         MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
@@ -50,5 +51,36 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     """)
     ClosenessResult closenessResult(@Param("nombre") String nombre);
 
+    @Query("""
+            MATCH (n:Ubicacion) -[r:CONECTADA]-> ()
+            RETURN count(r)
+            """)
+    double relationships();
 
+    @Query("""
+            MATCH (n:Ubicacion) -[r:CONECTADA]-> ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeOutcommingOf(@Param("names") List<String> names);
+
+    @Query("""
+            MATCH (n:Ubicacion) <-[r:CONECTADA]- ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeIncommingOf(@Param("names") List<String> names);
+
+    @Query("""
+            MATCH (n:Ubicacion) -[r:CONECTADA]- ()
+            WHERE n.nombre IN $names
+            RETURN n AS node, count(r) AS degree
+            ORDER BY count(r) DESC
+            LIMIT 1
+            """)
+    DegreeQuery degreeAllOf(@Param("names") List<String> names);
 }

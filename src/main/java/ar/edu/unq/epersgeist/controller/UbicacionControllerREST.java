@@ -2,7 +2,11 @@ package ar.edu.unq.epersgeist.controller;
 
 
 import ar.edu.unq.epersgeist.controller.dto.*;
-import ar.edu.unq.epersgeist.modelo.ClosenessResult;
+import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
@@ -76,11 +80,33 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
+    @PutMapping("/{id}/conectar/{idDestino}")
+    public ResponseEntity<Void> conectar(@PathVariable Long id, @PathVariable Long idDestino) {
+        ubicacionService.conectar(id, idDestino);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}/estanConectados/{idDestino}")
+    public ResponseEntity<String> estanConectados(@PathVariable Long id, @PathVariable Long idDestino) {
+
+        Boolean resultado = ubicacionService.estanConectadas(id, idDestino);
+        String mensaje = resultado ? "Conectado" : "Desconectado";
+
+        return ResponseEntity.status(HttpStatus.OK).body(mensaje);
+    }
+
+    @GetMapping("/DegreeCentrality")
+    public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
+        return ubicacionService.degreeOf(dto.ids(), dto.degreeType());
+
+    }
+
     @GetMapping("/ubicacionesSobrecargadas/{umbralDeEnergia}")
     public List<UbicacionDTO> ubicacionesSobrecargadas(@PathVariable Integer umbralDeEnergia){
         return ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia).stream()
                 .map(UbicacionDTO::desdeNeo)
                 .collect(Collectors.toList());
+
     }
 
     @GetMapping("/closeness/{ids}")

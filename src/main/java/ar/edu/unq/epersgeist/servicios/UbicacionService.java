@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,4 +24,5 @@ public interface UbicacionService {
     List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino);
 
     List<ClosenessResult> closenessOf(List<Long> ids);
+    DegreeResult degreeOf(List<Long> ids, DegreeType type);
 }

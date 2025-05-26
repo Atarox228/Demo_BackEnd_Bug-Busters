@@ -44,6 +44,7 @@ public final class Angel extends Espiritu {
         this.reducirConexionYdesvincularSiEsNecesario(5);
     }
 
+
     @Override
     public void aumentarConexionDeSantuario(Integer flujoEnergia) {
         this.setNivelConexion(Math.min(this.getNivelConexion()+flujoEnergia,100));

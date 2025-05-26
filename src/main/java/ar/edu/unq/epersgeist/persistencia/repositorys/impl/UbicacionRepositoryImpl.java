@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
@@ -56,7 +57,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public void eliminar(Ubicacion ubicacion) {
         UbicacionNeo4J ubicacionNeo = ubicacionDAONeo4J.findByNombre(ubicacion.getNombre()).get();
-        ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.delete(ubicacionNeo);
     }
 
@@ -65,12 +65,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.recuperarTodosNoEliminados();
     }
 
-    @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return Optional.of(ubicacion);
-    }
 
     @Override
     public boolean existsById(Long id) {
@@ -111,6 +105,29 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public ClosenessResult definirCentralidad(String nombre) {
         return ubicacionDAONeo4J.closenessResult(nombre);
+    }
+
+    @Override
+    public double relationships() {
+        return ubicacionDAONeo4J.relationships();
+    }
+
+    @Override
+    public DegreeQuery DegreeOf(List<String> names, DegreeType type) {
+        DegreeQuery query;
+        if (type == DegreeType.OUTCOMMING){
+            query = ubicacionDAONeo4J.degreeOutcommingOf(names);
+        } else if (type == DegreeType.INCOMMING) {
+            query = ubicacionDAONeo4J.degreeIncommingOf(names);
+        } else {
+            query = ubicacionDAONeo4J.degreeAllOf(names);
+        }
+        return query;
+    }
+
+    @Override
+    public List<String> namesOf(List<Long> ids) {
+        return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
     }
 
 }

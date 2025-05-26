@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -18,6 +19,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +38,8 @@ public class MediumServiceTest {
     private UbicacionService ubicacionService;
     @Autowired
     private EspirituService espirituService;
+    @Autowired
+    private MediumDAO mediumDAO;
     private Medium medium;
     private Medium medium2;
     private GeneradorNumeros dado;
@@ -1180,7 +1184,7 @@ public class MediumServiceTest {
 
         mediumService.eliminar(mediumAct);
 
-        Medium mediumBorrado = mediumService.recuperarAunConSoftDelete(mediumAct.getId()).get();
+        Medium mediumBorrado = this.recuperarAunConSoftDelete(mediumAct.getId()).get();
         assertThrows(EntidadEliminadaException.class, () -> {
             mediumService.recuperar(mediumAct.getId());
         });
@@ -1204,7 +1208,7 @@ public class MediumServiceTest {
         Collection<Medium> todos = mediumService.recuperarTodos();
 
 
-        Medium mediumBorrado = mediumService.recuperarAunConSoftDelete(mediumAct.getId()).get();
+        Medium mediumBorrado = this.recuperarAunConSoftDelete(mediumAct.getId()).get();
 
         assertThrows(EntidadEliminadaException.class, () -> {
             mediumService.recuperar(mediumAct.getId());
@@ -1233,8 +1237,18 @@ public class MediumServiceTest {
         });
 
 
+    }
 
-
+    public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
+        revisarId(mediumId);
+        Medium medium = mediumDAO.findById(mediumId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
+        return Optional.of(medium);
+    }
+    private void revisarId(Long id){
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
     }
 
     @Test
