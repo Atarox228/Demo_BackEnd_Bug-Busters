@@ -7,8 +7,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 public record UbicacionDTO(
         Long id,
+        List<String> nombresDestino,
         @NotBlank String nombre,
         @NotNull TipoUbicacion tipoDeUbicacion,
         @Min(0) @Max(100) Integer flujoDeEnergia)
@@ -18,6 +21,7 @@ public record UbicacionDTO(
     public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
         return new UbicacionDTO(
                 ubicacion.getId(),
+                List.of(),
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()
@@ -25,8 +29,14 @@ public record UbicacionDTO(
     }
 
     public static UbicacionDTO desdeNeo(UbicacionNeo4J ubicacion) {
+        List<String> conexiones = ubicacion.getUbicaciones()
+                .stream()
+                .map(UbicacionNeo4J::getNombre)
+                .toList();
+
         return new UbicacionDTO(
                 ubicacion.getId(),
+                conexiones,
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()
