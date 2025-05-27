@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;

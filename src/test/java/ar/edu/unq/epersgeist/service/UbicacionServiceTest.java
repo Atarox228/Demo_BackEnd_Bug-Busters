@@ -811,7 +811,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestOutcomming1(){
+    void degreeTestOutcomming1(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -829,7 +829,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestOutcommingEmpate(){
+    void degreeTestOutcommingEmpate(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -849,7 +849,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void OutcommingWithNoId(){
+    void outcommingWithNoId(){
         List<Long> ids = List.of();
 
         assertThrows(sinResultadosException.class,() -> {
@@ -858,7 +858,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void OutcommingWithInexistentId(){
+    void outcommingWithInexistentId(){
         List<Long> ids = List.of((long) -1);
 
         assertThrows(sinResultadosException.class,() -> {
@@ -867,7 +867,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestIncomming1(){
+    void degreeTestIncomming1(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -885,7 +885,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestIncommingEmpate(){
+    void degreeTestIncommingEmpate(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -904,7 +904,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void IncommingWithNoId(){
+    void incommingWithNoId(){
         List<Long> ids = List.of();
 
         assertThrows(sinResultadosException.class,() -> {
@@ -913,7 +913,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void IncommingWithInexistentId(){
+    void incommingWithInexistentId(){
         List<Long> ids = List.of((long) -1);
 
         assertThrows(sinResultadosException.class,() -> {
@@ -922,7 +922,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestAll(){
+    void degreeTestAll(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -940,7 +940,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void DegreeTestAllEmpate(){
+    void degreeTestAllEmpate(){
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(fellwood.getId(), catedral.getId());
         ubicacionService.conectar(fellwood.getId(), ashenvale.getId());
@@ -959,7 +959,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void AllWithNoId(){
+    void allWithNoId(){
         List<Long> ids = List.of();
 
         assertThrows(sinResultadosException.class,() -> {
@@ -968,7 +968,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void AllWithInexistentId(){
+    void allWithInexistentId(){
         List<Long> ids = List.of((long) -1);
 
         assertThrows(sinResultadosException.class,() -> {

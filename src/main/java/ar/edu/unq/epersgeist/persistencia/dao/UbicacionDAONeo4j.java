@@ -43,7 +43,10 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
         MATCH (a:Ubicacion {nombre: $origen})
         MATCH (b:Ubicacion {nombre: $destino})
         MATCH camino = shortestPath((a)-[:CONECTADA*1..]->(b))
-        RETURN nodes(camino)
+        WITH nodes(camino) AS nodos, relationships(camino) AS relaciones
+        UNWIND nodos AS u
+        OPTIONAL MATCH (u)-[r:CONECTADA]->(destino:Ubicacion)
+        RETURN u, collect(r), collect(destino)
     """)
     List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
 
