@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.controller;
 
-
 import ar.edu.unq.epersgeist.controller.dto.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
@@ -12,7 +11,6 @@ import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.Collection;
 import java.util.List;
