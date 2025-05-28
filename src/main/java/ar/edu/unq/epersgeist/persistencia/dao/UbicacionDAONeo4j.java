@@ -17,6 +17,13 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
 
     Optional<UbicacionNeo4J> findByNombre(String nombre);
 
+        @Query("""
+            MATCH (u:Ubicacion {nombre: $nombreViejo})
+            SET u.nombre = $nombreNuevo,
+                u.flujoEnergia = $energia
+        """)
+        void actualizarNeo(@Param("nombreViejo")String nombreViejo,@Param("nombreNuevo")String nombre, @Param("energia") Integer energia);
+
     @Query("""
         MATCH (a:Ubicacion {nombre: $origenNombre})
         MATCH (b:Ubicacion {nombre: $destinoNombre})

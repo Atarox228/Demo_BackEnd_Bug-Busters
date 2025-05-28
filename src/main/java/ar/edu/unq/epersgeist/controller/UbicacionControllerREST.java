@@ -50,10 +50,11 @@ public class UbicacionControllerREST {
     public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarUbicacionRequestDTO dto) {
         Ubicacion ubicacion = ubicacionService.recuperar(id).get();
 
+        String nombreViejo = ubicacion.getNombre();
         ubicacion.setNombre(dto.nombre());
         ubicacion.setFlujoEnergia(dto.flujoDeEnergia());
 
-        ubicacionService.actualizar(ubicacion);
+        ubicacionService.actualizar(ubicacion,nombreViejo);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

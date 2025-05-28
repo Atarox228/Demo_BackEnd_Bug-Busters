@@ -60,13 +60,15 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacion) {
+    public void actualizar(Ubicacion ubicacion, String nombreViejo) {
         validacionesGenerales.revisarId(ubicacion.getId());
         if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
         ubicacionRepository.actualizar(ubicacion);
+
     }
 
     @Override
