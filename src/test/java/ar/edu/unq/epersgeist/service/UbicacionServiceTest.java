@@ -74,7 +74,7 @@ public class UbicacionServiceTest {
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        assertThrows(UbicacionYaCreadaException.class, () -> {
+        assertThrows(UbicacionYaCreadaException.class, () ->{
             ubicacionService.crear(fellwood);
         });
     }
@@ -159,7 +159,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacion(){
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
-        ubicacionService.actualizar(fellwood);
+        ubicacionService.actualizar(fellwood,nombrePre);
         Ubicacion ubiCambiada = ubicacionService.recuperar(fellwood.getId()).get();
         assertNotEquals(nombrePre , ubiCambiada.getNombre());
     }
@@ -168,14 +168,14 @@ public class UbicacionServiceTest {
     void actualizarUbicacionNoRegistrada(){
         Ubicacion ardenweald = new Cementerio("Ardenweald", 100);
         assertThrows(IdNoValidoException.class, () -> {
-            ubicacionService.actualizar(ardenweald);
+            ubicacionService.actualizar(ardenweald,"Ardenweald");
         });
     }
 
     @Test
     void actualizarUbicacionNula(){
         assertThrows(NullPointerException.class, () -> {
-            ubicacionService.actualizar(null);
+            ubicacionService.actualizar(null, "");
         });
     }
 
@@ -183,7 +183,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
         assertThrows(EntidadEliminadaException.class, () -> {
-            ubicacionService.actualizar(fellwood);
+            ubicacionService.actualizar(fellwood,"Fellwood");
         });
     }
 
@@ -193,8 +193,8 @@ public class UbicacionServiceTest {
         String nombrePre2 = ashenvale.getNombre();
         fellwood.setNombre("Bosque Vil");
         ashenvale.setNombre("Ardenweald");
-        ubicacionService.actualizar(fellwood);
-        ubicacionService.actualizar(ashenvale);
+        ubicacionService.actualizar(fellwood,nombrePre1);
+        ubicacionService.actualizar(ashenvale,nombrePre2);
         Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId()).get();
         Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId()).get();
 
@@ -206,7 +206,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
         assertThrows(DataIntegrityViolationException.class, () -> {
-            ubicacionService.actualizar(fellwood);
+            ubicacionService.actualizar(fellwood,"Fellwood");
         });
     }
 
@@ -347,11 +347,11 @@ public class UbicacionServiceTest {
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,ashenvale.getNombre());
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
 
         cementerioAct.setNombre("cAct");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,fellwood.getNombre());
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
 
         int comparison = santuarioAct.getUpdatedAt().compareTo(santuarioAct.getCreatedAt());
@@ -369,23 +369,23 @@ public class UbicacionServiceTest {
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,ashenvale.getNombre());
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
         Date lastUpdate = santuarioAct.getUpdatedAt();
 
         cementerioAct.setNombre("cAct");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,fellwood.getNombre());
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
         Date lastUpdate2 = cementerioAct.getUpdatedAt();
 
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct2");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,"santAct");
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
 
         cementerioAct.setNombre("cAct2");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,"cAct");
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
 
         int comparison = santuarioAct.getUpdatedAt().compareTo(lastUpdate);
