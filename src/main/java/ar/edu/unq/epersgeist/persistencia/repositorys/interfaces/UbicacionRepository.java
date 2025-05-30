@@ -16,7 +16,7 @@ public interface UbicacionRepository {
     Ubicacion recuperar(Long ubicacionId);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
-    void actualizarNeo4J(UbicacionNeo4J ubicacion);
+    void actualizarNeo4J(Ubicacion ubicacion,String nombreViejo);
     void eliminar(Ubicacion ubicacion);
     Collection<Ubicacion> recuperarTodos();
     boolean existsById(Long id);

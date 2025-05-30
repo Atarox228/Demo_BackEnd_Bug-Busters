@@ -12,10 +12,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,7 +72,7 @@ public class UbicacionServiceTest {
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        assertThrows(UbicacionYaCreadaException.class, () -> {
+        assertThrows(UbicacionYaCreadaException.class, () ->{
             ubicacionService.crear(fellwood);
         });
     }
@@ -159,7 +157,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacion(){
         String nombrePre = fellwood.getNombre();
         fellwood.setNombre("Bosque Vil");
-        ubicacionService.actualizar(fellwood);
+        ubicacionService.actualizar(fellwood,nombrePre);
         Ubicacion ubiCambiada = ubicacionService.recuperar(fellwood.getId()).get();
         assertNotEquals(nombrePre , ubiCambiada.getNombre());
     }
@@ -168,14 +166,14 @@ public class UbicacionServiceTest {
     void actualizarUbicacionNoRegistrada(){
         Ubicacion ardenweald = new Cementerio("Ardenweald", 100);
         assertThrows(IdNoValidoException.class, () -> {
-            ubicacionService.actualizar(ardenweald);
+            ubicacionService.actualizar(ardenweald,"Ardenweald");
         });
     }
 
     @Test
     void actualizarUbicacionNula(){
         assertThrows(NullPointerException.class, () -> {
-            ubicacionService.actualizar(null);
+            ubicacionService.actualizar(null, "");
         });
     }
 
@@ -183,7 +181,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacionEliminada(){
         ubicacionService.eliminar(fellwood);
         assertThrows(EntidadEliminadaException.class, () -> {
-            ubicacionService.actualizar(fellwood);
+            ubicacionService.actualizar(fellwood,"Fellwood");
         });
     }
 
@@ -193,8 +191,8 @@ public class UbicacionServiceTest {
         String nombrePre2 = ashenvale.getNombre();
         fellwood.setNombre("Bosque Vil");
         ashenvale.setNombre("Ardenweald");
-        ubicacionService.actualizar(fellwood);
-        ubicacionService.actualizar(ashenvale);
+        ubicacionService.actualizar(fellwood,nombrePre1);
+        ubicacionService.actualizar(ashenvale,nombrePre2);
         Ubicacion ubiCambiada1 = ubicacionService.recuperar(fellwood.getId()).get();
         Ubicacion ubiCambiada2 = ubicacionService.recuperar(ashenvale.getId()).get();
 
@@ -206,7 +204,7 @@ public class UbicacionServiceTest {
     void actualizarUbicacionConValoresInvalidos(){
         fellwood.setNombre("");
         assertThrows(DataIntegrityViolationException.class, () -> {
-            ubicacionService.actualizar(fellwood);
+            ubicacionService.actualizar(fellwood,"Fellwood");
         });
     }
 
@@ -347,11 +345,11 @@ public class UbicacionServiceTest {
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,ashenvale.getNombre());
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
 
         cementerioAct.setNombre("cAct");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,fellwood.getNombre());
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
 
         int comparison = santuarioAct.getUpdatedAt().compareTo(santuarioAct.getCreatedAt());
@@ -369,23 +367,23 @@ public class UbicacionServiceTest {
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,ashenvale.getNombre());
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
         Date lastUpdate = santuarioAct.getUpdatedAt();
 
         cementerioAct.setNombre("cAct");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,fellwood.getNombre());
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
         Date lastUpdate2 = cementerioAct.getUpdatedAt();
 
         Thread.sleep(1000);
 
         santuarioAct.setNombre("santAct2");
-        ubicacionService.actualizar(santuarioAct);
+        ubicacionService.actualizar(santuarioAct,"santAct");
         santuarioAct = ubicacionService.recuperar(santuarioAct.getId()).get();
 
         cementerioAct.setNombre("cAct2");
-        ubicacionService.actualizar(cementerioAct);
+        ubicacionService.actualizar(cementerioAct,"cAct");
         cementerioAct = ubicacionService.recuperar(cementerioAct.getId()).get();
 
         int comparison = santuarioAct.getUpdatedAt().compareTo(lastUpdate);
@@ -453,17 +451,10 @@ public class UbicacionServiceTest {
     }
 
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        revisarId(ubicacionId);
+        dataService.revisarId(ubicacionId);
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         return Optional.of(ubicacion);
     }
-
-    private void revisarId(Long id) {
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
-
 
     @Test
     void conectarUnidireccional() {
@@ -824,8 +815,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),fellwood.getNombre());
-        assertEquals(result.centrality(), (double) 3 / 5 );
-        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+        assertEquals((double) 3 / 5 , result.centrality());
+        assertEquals(DegreeType.OUTCOMMING, result.typeResult());
     }
 
     @Test
@@ -844,8 +835,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(fellwood.getNombre(),santaMaria.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 3 / 7 );
-        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+        assertEquals( (double) 3 / 7 ,result.centrality()) ;
+        assertEquals(DegreeType.OUTCOMMING, result.typeResult());
     }
 
     @Test
@@ -880,8 +871,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),ashenvale.getNombre());
-        assertEquals(result.centrality(), (double) 2 / 5 );
-        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+        assertEquals((double) 2 / 5 , result.centrality());
+        assertEquals(DegreeType.INCOMMING, result.typeResult());
     }
 
     @Test
@@ -899,8 +890,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(catedral.getNombre(),ashenvale.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 2 / 5 );
-        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+        assertEquals((double) 2 / 5, result.centrality());
+        assertEquals(DegreeType.INCOMMING, result.typeResult());
     }
 
     @Test
@@ -935,8 +926,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),fellwood.getNombre());
-        assertEquals(result.centrality(), (double) 4 / 5 );
-        assertEquals(result.typeResult(), DegreeType.ALL);
+        assertEquals((double) 4 / 5, result.centrality());
+        assertEquals(DegreeType.ALL, result.typeResult());
     }
 
     @Test
@@ -954,8 +945,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(catedral.getNombre(),fellwood.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 3 / 5 );
-        assertEquals(result.typeResult(), DegreeType.ALL);
+        assertEquals((double) 3 / 5 , result.centrality());
+        assertEquals(DegreeType.ALL, result.typeResult());
     }
 
     @Test
@@ -974,6 +965,26 @@ public class UbicacionServiceTest {
         assertThrows(sinResultadosException.class,() -> {
             ubicacionService.degreeOf(ids, DegreeType.ALL);
         });
+    }
+
+    //@Test
+    void testGenerarCienDatos() {
+        Random random = new Random();
+        for (int i = 1; i <= 100; i++) {
+            Ubicacion ubi = new Santuario("UBI-" + i,  20);
+            ubicacionService.crear(ubi);
+        }
+
+        List<Ubicacion> ubis = (List<Ubicacion>) ubicacionService.recuperarTodos();
+
+        for (Ubicacion ubi : ubis) {
+            for (int i = 0; i < 10; i++) {
+                Ubicacion candidato = ubis.get(random.nextInt(ubis.size()));
+                if (!candidato.equals(ubi)) {
+                    ubicacionService.conectar(candidato.getId(), ubi.getId());
+                }
+            }
+        }
     }
 
     @AfterEach

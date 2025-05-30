@@ -50,10 +50,11 @@ public class UbicacionControllerREST {
     public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarUbicacionRequestDTO dto) {
         Ubicacion ubicacion = ubicacionService.recuperar(id).get();
 
+        String nombreViejo = ubicacion.getNombre();
         ubicacion.setNombre(dto.nombre());
         ubicacion.setFlujoEnergia(dto.flujoDeEnergia());
 
-        ubicacionService.actualizar(ubicacion);
+        ubicacionService.actualizar(ubicacion,nombreViejo);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -94,7 +95,7 @@ public class UbicacionControllerREST {
     }
 
     @GetMapping("/DegreeCentrality")
-    public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
+    public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequestDTO dto) {
         return ubicacionService.degreeOf(dto.ids(), dto.degreeType());
     }
 
@@ -112,9 +113,9 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/closeness/{ids}")
-    public List<ClosenessResultDTO> closenessOF(@PathVariable List<Long> ids) {
-        return ubicacionService.closenessOf(ids).stream()
+    @GetMapping("/closeness")
+    public List<ClosenessResultDTO> closenessOf(@RequestBody @Valid ClosenessRequestDTO closeness) {
+        return ubicacionService.closenessOf(closeness.ids()).stream()
                 .map(ClosenessResultDTO::desdeModelo)
                 .collect(Collectors.toList());
     }

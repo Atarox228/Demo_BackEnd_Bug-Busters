@@ -1235,21 +1235,15 @@ public class MediumServiceTest {
         assertThrows(NoHayAngelesException.class, () -> {
             mediumService.exorcizar(medium.getId(), medium2.getId());
         });
-
-
     }
 
     public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
-        revisarId(mediumId);
+        dataService.revisarId(mediumId);
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         return Optional.of(medium);
     }
-    private void revisarId(Long id){
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
+
 
     @Test
     void moverNuevo(){

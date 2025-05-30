@@ -50,8 +50,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void actualizarNeo4J(UbicacionNeo4J ubicacion) {
-        ubicacionDAONeo4J.save(ubicacion);
+    public void actualizarNeo4J(Ubicacion ubicacion, String nombreViejo) {
+        ubicacionDAONeo4J.actualizarNeo(nombreViejo,ubicacion.getNombre(),ubicacion.getFlujoEnergia());
     }
 
     @Override

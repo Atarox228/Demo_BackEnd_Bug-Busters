@@ -60,13 +60,15 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacion) {
+    public void actualizar(Ubicacion ubicacion, String nombreViejo) {
         validacionesGenerales.revisarId(ubicacion.getId());
         if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
         ubicacionRepository.actualizar(ubicacion);
+
     }
 
     @Override
@@ -78,14 +80,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     public void clearAll() {
         ubicacionRepository.eliminarTodos();
     }
-
-    @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        validacionesGenerales.revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
-        return Optional.of(ubicacion);
-    }
-
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
@@ -152,7 +146,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     private List<Medium> mediumsEn(Long id){
         return mediumDAO.mediumsEn(id);
     }
-
 
     @Override
     public DegreeResult degreeOf(List<Long> ids, DegreeType type) {

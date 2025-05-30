@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record DegreeRequest(
+public record DegreeRequestDTO(
         @NotNull List<Long> ids,
         @NotNull DegreeType degreeType
 ) {

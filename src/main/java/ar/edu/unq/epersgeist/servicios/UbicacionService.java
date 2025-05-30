@@ -12,12 +12,11 @@ public interface UbicacionService {
     Optional<Ubicacion> recuperar(Long ubicacionId);
     UbicacionNeo4J recuperarPorNombre(String nombre);
     void eliminar(Ubicacion ubicacion);
-    void actualizar(Ubicacion ubicacion);
+    void actualizar(Ubicacion ubicacion,String nombreViejo);
     Collection<Ubicacion> recuperarTodos();
     List<Espiritu> espiritusEn(Long ubicacionId);
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
     void clearAll();
-    Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId);
     void conectar (Long idOrigen, Long idDestino);
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadas(Long idOrigen, Long idDestino);

@@ -149,14 +149,4 @@ public class MediumServiceImpl implements MediumService {
         medium.moverseA(ubicacion);
         mediumDAO.save(medium);
     }
-
-    @Override
-    public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
-        validacionesGenerales.revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
-        return Optional.of(medium);
-    }
-
-
 }
