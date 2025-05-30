@@ -1235,8 +1235,6 @@ public class MediumServiceTest {
         assertThrows(NoHayAngelesException.class, () -> {
             mediumService.exorcizar(medium.getId(), medium2.getId());
         });
-
-
     }
 
     public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
@@ -1245,6 +1243,7 @@ public class MediumServiceTest {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         return Optional.of(medium);
     }
+
     private void revisarId(Long id){
         if (id == null || id <= 0) {
             throw new IdNoValidoException();

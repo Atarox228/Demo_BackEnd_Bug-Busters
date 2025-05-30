@@ -822,8 +822,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),fellwood.getNombre());
-        assertEquals(result.centrality(), (double) 3 / 5 );
-        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+        assertEquals((double) 3 / 5 , result.centrality());
+        assertEquals(DegreeType.OUTCOMMING, result.typeResult());
     }
 
     @Test
@@ -842,8 +842,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(fellwood.getNombre(),santaMaria.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 3 / 7 );
-        assertEquals(result.typeResult(), DegreeType.OUTCOMMING);
+        assertEquals( (double) 3 / 7 ,result.centrality()) ;
+        assertEquals(DegreeType.OUTCOMMING, result.typeResult());
     }
 
     @Test
@@ -878,8 +878,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),ashenvale.getNombre());
-        assertEquals(result.centrality(), (double) 2 / 5 );
-        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+        assertEquals((double) 2 / 5 , result.centrality());
+        assertEquals(DegreeType.INCOMMING, result.typeResult());
     }
 
     @Test
@@ -897,8 +897,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(catedral.getNombre(),ashenvale.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 2 / 5 );
-        assertEquals(result.typeResult(), DegreeType.INCOMMING);
+        assertEquals((double) 2 / 5, result.centrality());
+        assertEquals(DegreeType.INCOMMING, result.typeResult());
     }
 
     @Test
@@ -933,8 +933,8 @@ public class UbicacionServiceTest {
 
 
         assertEquals(result.node().getNombre(),fellwood.getNombre());
-        assertEquals(result.centrality(), (double) 4 / 5 );
-        assertEquals(result.typeResult(), DegreeType.ALL);
+        assertEquals((double) 4 / 5, result.centrality());
+        assertEquals(DegreeType.ALL, result.typeResult());
     }
 
     @Test
@@ -952,8 +952,8 @@ public class UbicacionServiceTest {
 
         List<String> posiblesGanadores = List.of(catedral.getNombre(),fellwood.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
-        assertEquals(result.centrality(), (double) 3 / 5 );
-        assertEquals(result.typeResult(), DegreeType.ALL);
+        assertEquals((double) 3 / 5 , result.centrality());
+        assertEquals(DegreeType.ALL, result.typeResult());
     }
 
     @Test

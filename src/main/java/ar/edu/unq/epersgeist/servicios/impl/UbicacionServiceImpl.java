@@ -82,14 +82,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        validacionesGenerales.revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
-        return Optional.of(ubicacion);
-    }
-
-
-    @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
         validacionesGenerales.revisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);
@@ -154,7 +146,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     private List<Medium> mediumsEn(Long id){
         return mediumDAO.mediumsEn(id);
     }
-
 
     @Override
     public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
