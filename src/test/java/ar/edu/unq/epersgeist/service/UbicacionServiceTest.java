@@ -12,10 +12,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -974,6 +972,26 @@ public class UbicacionServiceTest {
         assertThrows(sinResultadosException.class,() -> {
             ubicacionService.degreeOf(ids, DegreeType.ALL);
         });
+    }
+
+    //@Test
+    void testGenerarCienDatos() {
+        Random random = new Random();
+        for (int i = 1; i <= 100; i++) {
+            Ubicacion ubi = new Santuario("UBI-" + i,  20);
+            ubicacionService.crear(ubi);
+        }
+
+        List<Ubicacion> ubis = (List<Ubicacion>) ubicacionService.recuperarTodos();
+
+        for (Ubicacion ubi : ubis) {
+            for (int i = 0; i < 10; i++) {
+                Ubicacion candidato = ubis.get(random.nextInt(ubis.size()));
+                if (!candidato.equals(ubi)) {
+                    ubicacionService.conectar(candidato.getId(), ubi.getId());
+                }
+            }
+        }
     }
 
     @AfterEach

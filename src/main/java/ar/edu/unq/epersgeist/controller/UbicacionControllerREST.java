@@ -95,7 +95,7 @@ public class UbicacionControllerREST {
     }
 
     @GetMapping("/DegreeCentrality")
-    public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequest dto) {
+    public DegreeResult degreeCentrality(@Valid @RequestBody DegreeRequestDTO dto) {
         return ubicacionService.degreeOf(dto.ids(), dto.degreeType());
     }
 
@@ -113,9 +113,9 @@ public class UbicacionControllerREST {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/closeness/{ids}")
-    public List<ClosenessResultDTO> closenessOF(@PathVariable List<Long> ids) {
-        return ubicacionService.closenessOf(ids).stream()
+    @GetMapping("/closeness")
+    public List<ClosenessResultDTO> closenessOf(@RequestBody @Valid ClosenessRequestDTO closeness) {
+        return ubicacionService.closenessOf(closeness.ids()).stream()
                 .map(ClosenessResultDTO::desdeModelo)
                 .collect(Collectors.toList());
     }
