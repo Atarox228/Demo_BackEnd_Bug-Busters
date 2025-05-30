@@ -12,6 +12,7 @@ public final class Dado implements GeneradorNumeros{
     public static Dado getInstance(){
         if (dado == null){
             dado = new Dado();
+            dado.setModo(new ModoRandom());
         }
         return dado;
     }

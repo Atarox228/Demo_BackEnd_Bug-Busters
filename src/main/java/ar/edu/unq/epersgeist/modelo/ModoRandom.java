@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import static java.lang.Math.random;
 
 public class ModoRandom implements Modo {
 

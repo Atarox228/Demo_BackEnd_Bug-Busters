@@ -1,14 +1,22 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import java.util.Collection;
 
-public interface UbicacionDAO {
-    void guardar(Ubicacion ubicacion);
-    Ubicacion recuperar(Long ubicacionId);
-    void eliminar(Ubicacion ubicacion);
-    Collection<Ubicacion> recuperarTodos();
-    void eliminarTodo();
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-    void actualizar(Ubicacion ubicacion);
+import java.util.List;
+
+
+@Repository
+public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
+
+    @Query("SELECT u FROM Ubicacion u WHERE u.deleted = false ORDER BY u.nombre ASC")
+    List<Ubicacion> recuperarTodosNoEliminados();
+
+
+    @Query("SELECT u FROM Ubicacion u WHERE u.deleted = false AND u.nombre = :nombreUbicacion")
+    Ubicacion existeUbicacionConNombre(@Param("nombreUbicacion")String nombre);
 }

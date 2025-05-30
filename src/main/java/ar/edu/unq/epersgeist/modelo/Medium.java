@@ -1,17 +1,13 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.NoHayAngelesException;
-import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.Check;
-
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter @Setter @ToString @EqualsAndHashCode @NoArgsConstructor
 
@@ -26,25 +22,40 @@ public class Medium implements Serializable {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) CHECK (char_length(nombre) > 0)")
     private String nombre;
     @Column(nullable = false)
+    @Min(1)
     private Integer manaMax;
     @Column(nullable = false)
+    @Min(0)
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Espiritu> espiritus = new HashSet<>();
 
     @ManyToOne
     private Ubicacion ubicacion;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(nullable = false)
+    private Boolean deleted = false;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt  = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt  = new Date();
+    }
+
     public Medium(@NonNull String nombre, @NonNull Integer manaMax, @NonNull Integer mana) {
-        if (manaMax >= mana) {
-            this.mana = mana;
-        } else {
-            this.mana = manaMax;
-        }
+        this.mana = (manaMax >= mana) ? mana : manaMax;
         this.nombre = nombre;
         this.manaMax = manaMax;
-
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -56,19 +67,20 @@ public class Medium implements Serializable {
         espiritu.setMedium(this);
     }
 
-
-    public boolean puedeConectarse( Espiritu espiritu){
+    public boolean puedeConectarse(Espiritu espiritu){
         return Objects.equals(this.getUbicacion().getNombre(), espiritu.getUbicacion().getNombre()) && espiritu.estaLibre();
     }
 
-
     public void descansar() {
-        this.aumentarMana(15);
-        espiritus.stream().forEach(espiritu -> espiritu.aumentarConexion(5));
+        this.aumentarMana(this.ubicacion.valorDeRecuperacionMedium());
+        for (Espiritu espiritu : espiritus) {
+            espiritu.aumentarConexionEn(this.ubicacion);
+        }
+
     }
 
     public void aumentarMana(Integer mana) {
-        this.setMana(Math.min(this.getMana() + 15, manaMax));
+        this.setMana(Math.min(this.getMana() + mana, manaMax));
     }
 
     public void reducirMana(Integer mana) {
@@ -77,46 +89,61 @@ public class Medium implements Serializable {
 
     public void invocar(Espiritu espiritu) {
         if (this.mana > 10) {
-            this.verificarSiEstaLibre(espiritu);
+            this.verificarSiPuedeInvocar(espiritu);
             this.reducirMana(10);
-            espiritu.invocarme(this,this.ubicacion);
+            espiritu.invocarseA(this.ubicacion);
         }
     }
 
-    private void verificarSiEstaLibre(Espiritu espiritu) {
-        if (!espiritu.estaLibre()) {
+    private void verificarSiPuedeInvocar(Espiritu espiritu) {
+        //Indica si el espiritu esta libre y si la ubicacion del medium permite invocarlo
+        if (! espiritu.estaLibre()) {
             throw new EspirituNoLibreException(espiritu);
         }
+
+        if (! ubicacion.permiteInvocarTipo(espiritu.getTipo())) {
+            throw new InvocacionFallidaPorUbicacionException(espiritu, ubicacion);
+        }
     }
 
-    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws NoHayAngelesException {
-        if(angeles.isEmpty()){
-            throw new NoHayAngelesException();
-        }
-        List<Espiritu> angelicalesRestantes = angeles;
-        List<Espiritu> demoniacosRestantes = demonios;
-        while (angelicalesRestantes.size() >= 1 & demoniacosRestantes.size() >= 1) {
-            Espiritu atacante = angelicalesRestantes.getFirst();
-            Espiritu defensor = demoniacosRestantes.getFirst();
-             if (atacante.getProbAtaque() > defensor.getProbDefensa()) {
-                 defensor.reducirConexionYdesvincularSiEsNecesario(atacante.getNivelConexion() / 2);
-                 if (defensor.getNivelConexion() == 0 & demoniacosRestantes.size() >= 2) {
-                     demoniacosRestantes.remove(defensor);
-                     defensor = demoniacosRestantes.getFirst();
-                 }
-             } else {
-                 atacante.reducirConexionYdesvincularSiEsNecesario(5);
-             }
-            angelicalesRestantes.remove(atacante);
+    public void exorcizar(Medium medium2, List<Espiritu> angeles, List<Espiritu> demonios) throws ExorcismoEnDiferenteUbicacionException, NoHayAngelesException, MismoMediumException {
 
+        if (this.getId() == medium2.getId()) throw new MismoMediumException();
+
+        if (this.estaEnOtraUbicacion(medium2)) throw new ExorcismoEnDiferenteUbicacionException();
+
+
+        if(angeles.isEmpty()) throw new NoHayAngelesException();
+
+
+        List<Espiritu> demoniacosRestantes = demonios;
+
+        for (Espiritu atacante : angeles){
+            if (demoniacosRestantes.isEmpty()) break;
+            demoniacosRestantes = atacante.ataque(demoniacosRestantes);
         }
+    }
+
+    public boolean estaEnOtraUbicacion(Medium medium2) {
+        return !(this.ubicacion.getId() == medium2.getUbicacion().getId());
     }
 
     public void setMana(int mana) {
-        if (mana > this.manaMax) {
-            this.mana = this.manaMax;
-        }else{
-            this.mana = mana;
-        }
+        this.mana = (mana > this.manaMax) ? this.manaMax : mana;
+    }
+
+    public void moverseA(Ubicacion ubicacion){
+        setUbicacion(ubicacion);
+        List<Espiritu> copia = new ArrayList<>(espiritus);
+        copia.forEach(espiritu -> ubicacion.moverAEspiritu(espiritu));
+    }
+
+    public void desconectarse(Espiritu espiritu) {
+        getEspiritus().remove(espiritu);
+    }
+
+    public boolean tieneAngeles() {
+        return espiritus.stream()
+                .anyMatch(espiritu -> espiritu.getTipo() == TipoEspiritu.ANGELICAL);
     }
 }

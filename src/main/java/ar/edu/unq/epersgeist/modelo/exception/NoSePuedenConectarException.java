@@ -17,7 +17,7 @@ public class NoSePuedenConectarException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "El medium [" + medium + "] y el espiritu [" + espiritu + "] no pueden conectarse";
+        return "El medium con ID:" + medium.getId() + " y el espiritu con ID:" + espiritu.getId() + " no pueden conectarse";
     }
 
 }

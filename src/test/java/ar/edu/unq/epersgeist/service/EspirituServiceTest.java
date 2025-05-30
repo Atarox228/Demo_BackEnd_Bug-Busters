@@ -1,37 +1,40 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
+import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
-import ar.edu.unq.epersgeist.service.dataService.impl.DataServiceImpl;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
-import ar.edu.unq.epersgeist.servicios.exception.PaginaInvalidaException;
-import ar.edu.unq.epersgeist.servicios.impl.*;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.modelo.exception.NoSePuedenConectarException;
-import jakarta.persistence.OptimisticLockException;
+import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+
+import java.util.Date;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class EspirituServiceTest {
 
-    private DataService dataService;
+    @Autowired
     private EspirituService espirituService;
+    @Autowired
     private MediumService mediumService;
+    @Autowired
     private UbicacionService ubicacionService;
-    private Espiritu Casper;
-    private Espiritu Jinn;
-    private Espiritu Oni;
-    private Espiritu Anabelle;
-    private Espiritu Volac;
+    @Autowired
+    private DataService dataService;
+    private Angel Casper;
+    private Demonio Jinn;
+    private Demonio Oni;
+    private Demonio Anabelle;
+    private Demonio Volac;
     private Medium medium;
     private Medium  medium2;
     private Ubicacion Bernal;
@@ -39,13 +42,9 @@ public class EspirituServiceTest {
 
     @BeforeEach
     void setUp(){
-        dataService = new DataServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(), new HibernateUbicacionDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO(),new HibernateUbicacionDAO());
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(), new HibernateEspirituDAO());
 
-        ubicacionService = new UbicacionServiceImpl( new HibernateUbicacionDAO(),new HibernateMediumDAO(), new HibernateEspirituDAO());
-        Bernal = new Ubicacion("Bernal");
-        Quilmes = new Ubicacion("Quilmes");
+        Bernal = new Cementerio("Bernal", 100);
+        Quilmes = new Cementerio("Quilmes", 100);
         ubicacionService.crear(Bernal);
         ubicacionService.crear(Quilmes);
 
@@ -61,6 +60,7 @@ public class EspirituServiceTest {
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
+
     }
 
     @Test
@@ -76,10 +76,10 @@ public class EspirituServiceTest {
     @Test
     void actualizarEspiritu(){
         espirituService.crear(Casper);
-        Espiritu sinActualizar = espirituService.recuperar(Casper.getId());
+        Espiritu sinActualizar = espirituService.recuperar(Casper.getId()).get();
         Casper.setNombre("Lala");
         espirituService.actualizar(Casper);
-        Espiritu actualizado = espirituService.recuperar(Casper.getId());
+        Espiritu actualizado = espirituService.recuperar(Casper.getId()).get();
         assertEquals(sinActualizar.getId(), Casper.getId());
         assertEquals("Casper", sinActualizar.getNombre());
         assertEquals("Lala", actualizado.getNombre());
@@ -87,7 +87,6 @@ public class EspirituServiceTest {
 
     @Test
     void actualizarEspirituNoRegistrado(){
-        Casper.setNombre("Lala");
         assertThrows(IdNoValidoException.class, () -> {
             espirituService.actualizar(Casper);
         });
@@ -98,7 +97,7 @@ public class EspirituServiceTest {
         espirituService.crear(Casper);
         Casper.setNombre("Lala");
         espirituService.eliminar(Casper);
-        assertThrows(OptimisticLockException.class, () -> {
+        assertThrows(EntidadEliminadaException.class, () -> {
             espirituService.actualizar(Casper);
         });
     }
@@ -107,7 +106,7 @@ public class EspirituServiceTest {
     @Test
     void recuperarEspiritu(){
         espirituService.crear(Casper);
-        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId());
+        Espiritu espirituRecuperado = espirituService.recuperar(Casper.getId()).get();
         assertEquals("Casper", espirituRecuperado.getNombre());
         assertEquals(TipoEspiritu.ANGELICAL, espirituRecuperado.getTipo());
         assertEquals(0, espirituRecuperado.getNivelConexion());
@@ -120,18 +119,12 @@ public class EspirituServiceTest {
         });
     }
 
-    @Test
-    void recuperarEspirituConIdNoPersistido(){
-        assertThrows(IdNoValidoException.class, () -> {
-            espirituService.recuperar(10L);
-        });
-    }
 
     @Test
     void recuperarEspirituEliminado() {
         espirituService.crear(Casper);
         espirituService.eliminar(Casper);
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(EntidadEliminadaException.class, () -> {
             espirituService.recuperar(Casper.getId());
         });
     }
@@ -155,19 +148,11 @@ public class EspirituServiceTest {
         Long espirituId = Casper.getId();
         assertNotNull(espirituService.recuperar(espirituId));
         espirituService.eliminar(Casper);
-        assertThrows(IdNoValidoException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             espirituService.recuperar(espirituId);
         });
     }
 
-    @Test
-    void eliminarEspirituDosVeces() {
-        espirituService.crear(Casper);
-        espirituService.eliminar(Casper);
-        assertThrows(OptimisticLockException.class, () -> {
-            espirituService.eliminar(Casper);
-        });
-    }
 
     @Test
     void obtenerEspiritusDemoniacos() {
@@ -279,13 +264,12 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
 
         assertEquals(0, medium.getEspiritus().size());
-        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId());
-        Espiritu espirituConectado = espirituService.recuperar(Casper.getId());
+        Medium mediumConectado = espirituService.conectar(Casper.getId(), medium.getId()).get();
+        Espiritu espirituConectado = espirituService.recuperar(Casper.getId()).get();
         assertEquals(mediumConectado.getId(), medium.getId());
-        assertEquals(mediumConectado.getEspiritus().size(),1);
+        assertEquals(1, mediumConectado.getEspiritus().size());
         assertFalse(espirituConectado.estaLibre());
         assertEquals(10, espirituConectado.getNivelConexion());
     }
@@ -299,9 +283,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
-//
-
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
@@ -320,8 +301,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium2);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Bernal.getId());
-//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
@@ -330,9 +309,191 @@ public class EspirituServiceTest {
         });
     }
 
+    //test de soft delete
+    @Test
+    void creacionTimeStampUpdateAndNoDelete(){
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Demonio("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        assertNotNull(angelAct.getCreatedAt());
+        assertNotNull(angelAct.getUpdatedAt());
+        assertFalse(angelAct.getDeleted());
+        assertNotNull(demonioAct.getCreatedAt());
+        assertNotNull(demonioAct.getUpdatedAt());
+        assertFalse(demonioAct.getDeleted());
+
+    }
+
+    //test de sauditoria de datos
+    @Test
+    void updateTimeStamp() throws InterruptedException {
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Demonio("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("juancho");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+
+        demonioAct.setNombre("DobleDemonio");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+
+        int comparison = angelAct.getUpdatedAt().compareTo(angelAct.getCreatedAt());
+        int comparison2 = angelAct.getUpdatedAt().compareTo(demonioAct.getCreatedAt());
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    @Test
+    void updateTimeStampDoble() throws InterruptedException {
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Demonio("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("juancho");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+        Date lastUpdate = angelAct.getUpdatedAt();
+
+        demonioAct.setNombre("DobleDemonio");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+        Date lastUpdate2 = demonioAct.getUpdatedAt();
+
+        Thread.sleep(1000);
+
+        angelAct.setNombre("miphiel");
+        espirituService.actualizar(angelAct);
+        angelAct = espirituService.recuperar(angelAct.getId()).get();
+
+        demonioAct.setNombre("sartorias");
+        espirituService.actualizar(demonioAct);
+        demonioAct = espirituService.recuperar(demonioAct.getId()).get();
+
+        int comparison = angelAct.getUpdatedAt().compareTo(lastUpdate);
+        int comparison2 = demonioAct.getUpdatedAt().compareTo(lastUpdate2);
+
+        assertTrue(comparison > 0);
+        assertTrue(comparison2 > 0);
+
+    }
+
+    @Test
+    void softDeletion(){
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Demonio("belcebu");
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(angelAct);
+        espirituService.eliminar(demonioAct);
+
+        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(angelBorrado.getDeleted());
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(angelAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
+
+    }
+
+    @Test
+    void noRecuperaTodosConSoftdelete(){
+        dataService.eliminarTodo();
+        Espiritu angel = new Angel("azael");
+        Espiritu demonio = new Demonio("belcebu");
+        Espiritu demonio2 = new Demonio("miras");
+
+
+        espirituService.crear(angel);
+        espirituService.crear(demonio);
+        espirituService.crear(demonio2);
+
+        Espiritu angelAct = espirituService.recuperar(angel.getId()).get();
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(angelAct);
+        espirituService.eliminar(demonioAct);
+
+
+        List<Espiritu> todos = espirituService.recuperarTodos();
+
+        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(angelBorrado.getDeleted());
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(angelAct.getId());
+        });
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
+        assertEquals(todos.size(),1);
+
+    }
+
+    @Test
+    void noRecuperaEspiritusDemoniacosConSoftDelete(){
+        dataService.eliminarTodo();
+        Espiritu demonio = new Demonio("belcebu");
+        Espiritu demonio2 = new Demonio("miras");
+
+        espirituService.crear(demonio);
+        espirituService.crear(demonio2);
+
+        Espiritu demonioAct = espirituService.recuperar(demonio.getId()).get();
+
+        espirituService.eliminar(demonioAct);
+
+        List<Espiritu> todos = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1,2);
+
+        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+
+        assertTrue(demonioBorrado.getDeleted());
+        assertThrows(EntidadEliminadaException.class, () -> {
+            espirituService.recuperar(demonioAct.getId());
+        });
+        assertEquals(todos.size(),1);
+    }
+
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
+
+
     }
 
 }

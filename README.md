@@ -17,8 +17,8 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
 
 ## Entregas
 - [Entrega 1 - JDBC](enunciado/entrega1/entrega1.md)
-- Entrega 2 - ORM - Hibernate
-- Entrega 3 - ORM - Spring
+- [Entrega 2 - ORM - Hibernate](enunciado/entrega2/entrega2.md)
+- [Entrega 3 - ORM - Spring](/enunciado/entrega3/enunciado_tp3.md)
 - Entrega 4 - NoSQL - Neo4j - Spring
 - Entrega 5 - NoSQL - MongoDB - Spring
 
@@ -29,3 +29,19 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
 - Tambien se evaluará la debida implementacion de GitFlow.
 - Se espera que trabajen en el TP durante las dos primeras horas de clase todos los viernes, pero eso no resta que para llegar a cumplir con los tiempos de entrega tengan que trabajar en casa. ¡Planeen conforme a ello! Un TP no entregado a tiempo es un TP reentregado. **Solo cuentan con 3 reentregas durante la cursada.**
 - Si algo no les funciona o algo no entienden, avisen antes! En el día de la entrega o el anterior ya es demasiado tarde.
+
+## Implementaciones Agregadas
+-En applicacition.properties: 
+-
+  - spring.mvc.throw-exception-if-no-handler-found=true
+  - spring.web.resources.add-mappings=false
+
+  - Sirven para el control preciso de rutas inexistentes, esto permite hacer un Handleo de error en vez de tirar un 404 cuando la ruta esta equivocada. Lo usamos para tener mayor precision de los errores pero esto hace que los archivos estaticos manejados de manera automatica por Spring sea desactivado. Se eligio usar debido a que por el momento no estamos usando frontend y, por lo tanto, no necesitamos rutas para archivos estáticos.
+    
+-En build.gradle:
+-
+  - implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+  - implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+
+  - Mientras que la primera nos permite agregar validaciones como @Max, @Min para nuestros atributos y @Valid para validar los cuerpos pasados por HTTP. El segundo permite realizar las validaciones durante el tiempo de ejecucion, permitiendo que se ejecuten validaciones automaticas para las consultas REST. En sintesis, el primero es el API que nos da los recursos(anotaciones) mientras que el segundo es quien nos permite implementar dichos recursos(validaciones) 
+

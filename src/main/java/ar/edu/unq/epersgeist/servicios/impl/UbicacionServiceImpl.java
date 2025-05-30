@@ -1,26 +1,26 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.controller.excepciones.*;
+import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-
-
+import ar.edu.unq.epersgeist.servicios.exception.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
+
+@Service
+@Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
     private final UbicacionDAO ubicacionDAO;
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO){
+    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
         this.ubicacionDAO = ubicacionDAO;
         this.mediumDAO = mediumDAO;
         this.espirituDAO = espirituDAO;
@@ -28,54 +28,92 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        HibernateTransactionRunner.runTrx(() -> {
-            ubicacionDAO.guardar(ubicacion);
-            return null;
-        });
+        if(ubicacionDAO.existeUbicacionConNombre(ubicacion.getNombre()) != null){
+
+            throw new UbicacionYaCreadaException(ubicacion.getNombre());
+        }
+        ubicacionDAO.save(ubicacion);
     }
 
     @Override
-    public Ubicacion recuperar(Long ubicacionId) {
-        if (ubicacionId == null) {
-            throw new IdNoValidoException(ubicacionId);
-        }
-        return HibernateTransactionRunner.runTrx(() -> ubicacionDAO.recuperar(ubicacionId));
+    public Optional<Ubicacion> recuperar(Long ubicacionId) {
+        revisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        return Optional.of(ubicacion);
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-
-        HibernateTransactionRunner.runTrx(() -> {
-            ubicacionDAO.eliminar(ubicacion);
-            return null;
-        });
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
+        }
+        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        revisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
+        ubicacion.setDeleted(true);
+        ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if(ubicacion.getId() == null){
-            throw new IdNoValidoException(null);
+        revisarId(ubicacion.getId());
+        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+            throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
-        HibernateTransactionRunner.runTrx(() -> {
-            ubicacionDAO.actualizar(ubicacion);
-            return null;
-        });
+        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> ubicacionDAO.recuperarTodos());
+        return ubicacionDAO.recuperarTodosNoEliminados();
+    }
+
+    @Override
+    public void clearAll() {
+        ubicacionDAO.deleteAll();
+    }
+
+    @Override
+    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
+        revisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
+        return Optional.of(ubicacion);
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return HibernateTransactionRunner.runTrx(() -> espirituDAO.espiritusEn(ubicacionId));
+        revisarId(ubicacionId);
+        return espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return HibernateTransactionRunner.runTrx(() -> mediumDAO.mediumsSinEspiritusEn(ubicacionId));
+        revisarId(ubicacionId);
+        return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
+    private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
+        if(condicion){
+            throw new EntidadEliminadaException(entidad);
+        }
+    }
+    private void revisarId(Long id){
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
+    }
+
+    private <T> void revisarUbicacionConEntidades(Long id, T entidad){
+        if (!espiritusEn(id).isEmpty() || !mediumsEn(id).isEmpty()){
+            throw new EntidadConEntidadesConectadasException(entidad);
+        }
+    }
+
+    private List<Medium> mediumsEn(Long id){
+        return mediumDAO.mediumsEn(id);
+    }
 
 }
