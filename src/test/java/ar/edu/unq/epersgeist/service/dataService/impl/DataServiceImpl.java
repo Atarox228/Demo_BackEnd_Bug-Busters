@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
+import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,5 +25,11 @@ public class DataServiceImpl implements DataService {
             espirituDAO.deleteAll();
             mediumDAO.deleteAll();
             ubicacionRepository.eliminarTodos();
+    }
+
+    public void revisarId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IdNoValidoException();
+        }
     }
 }

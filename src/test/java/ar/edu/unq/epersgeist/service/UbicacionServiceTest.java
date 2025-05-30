@@ -451,17 +451,10 @@ public class UbicacionServiceTest {
     }
 
     public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        revisarId(ubicacionId);
+        dataService.revisarId(ubicacionId);
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         return Optional.of(ubicacion);
     }
-
-    private void revisarId(Long id) {
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
-
 
     @Test
     void conectarUnidireccional() {

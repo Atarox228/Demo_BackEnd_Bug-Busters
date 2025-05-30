@@ -498,17 +498,12 @@ public class EspirituServiceTest {
 
 
     public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
-        revisarId(espirituId);
+        dataService.revisarId(espirituId);
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
         return Optional.of(espiritu);
     }
 
-    private void revisarId(Long id){
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
-    }
 
     @AfterEach
     void cleanUp() {
