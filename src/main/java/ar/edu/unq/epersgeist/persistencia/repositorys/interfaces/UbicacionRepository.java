@@ -26,10 +26,10 @@ public interface UbicacionRepository {
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadasDirecta(String origen, String destino);
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
-
-    ClosenessResult definirCentralidad(String nombre);
-
+    List<ClosenessResult> closenessOf(List<String> names);
     double relationships();
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);
+
+
 }

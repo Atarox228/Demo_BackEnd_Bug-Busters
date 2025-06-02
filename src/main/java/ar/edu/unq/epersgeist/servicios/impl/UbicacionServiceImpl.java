@@ -135,11 +135,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<ClosenessResult> closenessOf(List<Long> ids) {
-        List<ClosenessResult> closeness = new ArrayList<>();
-        for (Long id : ids) {
-            ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
-            closeness.add(recordCloseness);
-        }
+        List<String> names = ubicacionRepository.namesOf(ids);
+        List<ClosenessResult> closeness = ubicacionRepository.closenessOf(names);
         return closeness;
     }
 

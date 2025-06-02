@@ -103,11 +103,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public ClosenessResult definirCentralidad(String nombre) {
-        return ubicacionDAONeo4J.closenessResult(nombre);
-    }
-
-    @Override
     public double relationships() {
         return ubicacionDAONeo4J.relationships();
     }
@@ -128,6 +123,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<String> namesOf(List<Long> ids) {
         return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<String> names) {
+        return ubicacionDAONeo4J.closenessResult(names);
     }
 
 }
