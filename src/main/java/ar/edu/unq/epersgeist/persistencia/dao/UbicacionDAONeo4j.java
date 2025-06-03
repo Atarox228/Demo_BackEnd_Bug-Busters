@@ -63,6 +63,7 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
         WHERE a <> b
         OPTIONAL MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
         RETURN a AS ubicacion, (1.0 / (sum(CASE WHEN p IS NULL THEN 0 ELSE length(p) END) + (count(b) - count(p)) * 10)) AS closeness
+        ORDER BY a.nombre ASC
     """)
     List<ClosenessResult> closenessResult(@Param("nombres") List<String> nombres);
 
