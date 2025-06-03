@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
+package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.DegreeQuery;
@@ -8,7 +8,6 @@ import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface UbicacionRepository {
 
