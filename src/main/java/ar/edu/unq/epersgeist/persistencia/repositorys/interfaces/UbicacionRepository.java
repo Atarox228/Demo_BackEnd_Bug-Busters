@@ -1,9 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
 
-import ar.edu.unq.epersgeist.modelo.ClosenessResult;
-import ar.edu.unq.epersgeist.modelo.DegreeQuery;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.UbicacionNeo4J;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 
 import java.util.Collection;
@@ -12,7 +9,7 @@ import java.util.Optional;
 
 public interface UbicacionRepository {
 
-    void crear(Ubicacion ubicacion);
+    void crear(UbicacionMongo ubicacion);
     Ubicacion recuperar(Long ubicacionId);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);

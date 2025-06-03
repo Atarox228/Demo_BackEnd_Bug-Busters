@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionService {
-    void crear(Ubicacion ubicacion);
+    void crear(UbicacionMongo ubicacion);
     Optional<Ubicacion> recuperar(Long ubicacionId);
     UbicacionNeo4J recuperarPorNombre(String nombre);
     void eliminar(Ubicacion ubicacion);

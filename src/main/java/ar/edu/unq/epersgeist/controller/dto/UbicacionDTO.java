@@ -12,15 +12,18 @@ import java.util.List;
 public record UbicacionDTO(
         Long id,
         List<String> nombresDestino,
+        List<Coordenada> area,
         @NotBlank String nombre,
         @NotNull TipoUbicacion tipoDeUbicacion,
         @Min(0) @Max(100) Integer flujoDeEnergia)
+
 {
 
 
     public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
         return new UbicacionDTO(
                 ubicacion.getId(),
+                List.of(),
                 List.of(),
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
@@ -37,6 +40,7 @@ public record UbicacionDTO(
         return new UbicacionDTO(
                 ubicacion.getId(),
                 conexiones,
+                List.of(),
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()
@@ -48,5 +52,9 @@ public record UbicacionDTO(
             case SANTUARIO -> new Santuario(nombre, flujoDeEnergia);
             case CEMENTERIO -> new Cementerio(nombre, flujoDeEnergia);
         };
+    }
+
+    public UbicacionMongo aMongo(){
+        return new UbicacionMongo(nombre, tipoDeUbicacion ,flujoDeEnergia, area);
     }
 }
