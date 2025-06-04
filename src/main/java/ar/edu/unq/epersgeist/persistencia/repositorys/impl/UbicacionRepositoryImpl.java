@@ -80,6 +80,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public void eliminarTodos() {
         ubicacionDAO.deleteAll();
         ubicacionDAONeo4J.detachDelete();
+        ubicacionDAOMongo.deleteAll();
     }
 
     @Override

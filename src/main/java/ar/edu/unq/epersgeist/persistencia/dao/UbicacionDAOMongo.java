@@ -6,5 +6,4 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface UbicacionDAOMongo extends MongoRepository<UbicacionMongo, String>{
 
-
 }
