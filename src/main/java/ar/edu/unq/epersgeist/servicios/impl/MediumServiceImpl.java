@@ -4,7 +4,7 @@ import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import jakarta.transaction.Transactional;

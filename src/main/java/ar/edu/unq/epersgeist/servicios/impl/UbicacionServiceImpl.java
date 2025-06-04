@@ -6,7 +6,7 @@ import ar.edu.unq.epersgeist.modelo.DegreeQuery;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.stereotype.Service;
@@ -27,11 +27,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion) {
+    public void crear(Ubicacion ubicacion, List<Coordenada> area) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
-        ubicacionRepository.crear(ubicacion);
+        ubicacionRepository.crear(ubicacion, area);
     }
 
     @Override

@@ -2,7 +2,7 @@ package ar.edu.unq.epersgeist.service.dataService.impl;
 
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
 import org.springframework.stereotype.Service;

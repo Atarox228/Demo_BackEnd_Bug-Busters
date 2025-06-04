@@ -30,7 +30,7 @@ public class UbicacionControllerREST {
 
     @PostMapping
     public ResponseEntity<Void> crearUbicacion(@RequestBody @Valid UbicacionDTO ubicacion) {
-        ubicacionService.crear(ubicacion.aModelo());
+        ubicacionService.crear(ubicacion.aModelo(), ubicacion.getArea());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

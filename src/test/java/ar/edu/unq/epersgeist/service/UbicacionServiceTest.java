@@ -3,7 +3,7 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -44,14 +44,18 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         fellwood = new Cementerio("Fellwood", 50);
-        ubicacionService.crear(fellwood);
+        ubicacionService.crear(fellwood, area);
         ashenvale = new Santuario("Ashenvale",100);
-        ubicacionService.crear(ashenvale);
+        ubicacionService.crear(ashenvale, area);
         santaMaria = new Santuario("SantaMaria", 80);
-        ubicacionService.crear(santaMaria);
+        ubicacionService.crear(santaMaria, area);
         catedral = new Santuario("catedral", 80);
-        ubicacionService.crear(catedral);
+        ubicacionService.crear(catedral, area);
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -72,8 +76,11 @@ public class UbicacionServiceTest {
 
     @Test
     void crearMismaUbicacionDosVeces(){
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
         assertThrows(UbicacionYaCreadaException.class, () ->{
-            ubicacionService.crear(fellwood);
+            ubicacionService.crear(fellwood, area);
         });
     }
 
@@ -416,14 +423,18 @@ public class UbicacionServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         dataService.eliminarTodo();
         Ubicacion santuario = new Santuario("santuario",100);
         Ubicacion cementerio = new Cementerio("cementerio", 100);
         Ubicacion cementerio2 = new Cementerio("cementerio2", 100);
 
-        ubicacionService.crear(santuario);
-        ubicacionService.crear(cementerio);
-        ubicacionService.crear(cementerio2);
+        ubicacionService.crear(santuario, area);
+        ubicacionService.crear(cementerio, area);
+        ubicacionService.crear(cementerio2, area);
 
         Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
         Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
@@ -646,10 +657,14 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCorto2Saltos() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz);
+        ubicacionService.crear(jardinDePaz, area);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
-        ubicacionService.crear(sanIgnacio);
+        ubicacionService.crear(sanIgnacio, area);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -668,10 +683,14 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCortoConDosCaminosIguales() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz);
+        ubicacionService.crear(jardinDePaz, area);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
-        ubicacionService.crear(sanIgnacio);
+        ubicacionService.crear(sanIgnacio, area);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -757,9 +776,13 @@ public class UbicacionServiceTest {
 
     @Test
     void closeness1UbicacionSinDestinoNiOrigen() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         ubicacionService.eliminar(catedral);
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz);
+        ubicacionService.crear(jardinDePaz, area);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -969,10 +992,13 @@ public class UbicacionServiceTest {
 
     //@Test
     void testGenerarCienDatos() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
         Random random = new Random();
         for (int i = 1; i <= 100; i++) {
             Ubicacion ubi = new Santuario("UBI-" + i,  20);
-            ubicacionService.crear(ubi);
+            ubicacionService.crear(ubi, area);
         }
 
         List<Ubicacion> ubis = (List<Ubicacion>) ubicacionService.recuperarTodos();

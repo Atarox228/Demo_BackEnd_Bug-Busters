@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,11 +46,14 @@ public class EspirituServiceTest {
 
     @BeforeEach
     void setUp(){
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
 
         Bernal = new Cementerio("Bernal", 100);
         Quilmes = new Cementerio("Quilmes", 100);
-        ubicacionService.crear(Bernal);
-        ubicacionService.crear(Quilmes);
+        ubicacionService.crear(Bernal, area);
+        ubicacionService.crear(Quilmes, area);
 
         Casper = new Angel("Casper");
         Oni = new Demonio("Otakemaru");

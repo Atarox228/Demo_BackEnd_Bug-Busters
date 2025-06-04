@@ -1,11 +1,12 @@
-package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
+package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.stereotype.Repository;
 
 
@@ -18,17 +19,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAO ubicacionDAO;
     private final UbicacionDAONeo4j ubicacionDAONeo4J;
+    private final UbicacionDAOMongo ubicacionDAOMongo;
 
-    public UbicacionRepositoryImpl(UbicacionDAO ubicacionDAO, UbicacionDAONeo4j ubicacionDAONeo4J) {
+    public UbicacionRepositoryImpl(UbicacionDAO ubicacionDAO, UbicacionDAONeo4j ubicacionDAONeo4J, UbicacionDAOMongo ubicacionDAOMongo) {
         this.ubicacionDAO = ubicacionDAO;
         this.ubicacionDAONeo4J = ubicacionDAONeo4J;
+        this.ubicacionDAOMongo = ubicacionDAOMongo;
     }
 
     @Override
-    public void crear(Ubicacion ubicacion){
+    public void crear(Ubicacion ubicacion, List<Coordenada> area){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
+        UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
         ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.save(ubicacionNeo);
+        ubicacionDAOMongo.save(ubicacionMongo);
     }
 
     @Override
@@ -75,6 +80,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public void eliminarTodos() {
         ubicacionDAO.deleteAll();
         ubicacionDAONeo4J.detachDelete();
+        ubicacionDAOMongo.deleteAll();
     }
 
     @Override
