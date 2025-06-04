@@ -35,7 +35,6 @@ public final class Angel extends Espiritu {
         } else {
             this.reducirConexionYdesvincularSiEsNecesario(5);
         }
-
         return demoniacosDefensores;
     }
 
@@ -43,7 +42,6 @@ public final class Angel extends Espiritu {
     public void moverCementerio() {
         this.reducirConexionYdesvincularSiEsNecesario(5);
     }
-
 
     @Override
     public void aumentarConexionDeSantuario(Integer flujoEnergia) {

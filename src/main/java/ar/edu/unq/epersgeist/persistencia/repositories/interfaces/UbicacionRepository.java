@@ -2,8 +2,8 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -11,6 +11,7 @@ public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Ubicacion recuperar(Long ubicacionId);
+    Ubicacion recupoerarPorNombre (String nombre);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
     void actualizarNeo4J(Ubicacion ubicacion,String nombreViejo);
@@ -28,4 +29,7 @@ public interface UbicacionRepository {
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);
     List<UbicacionMongo> recuperarPorInterseccion(GeoJsonPolygon area);
+    UbicacionMongo recuperarPorCoordenada(GeoJsonPoint coordenada);
+    Boolean estaDentroDelArea(String nombreUbicacion, GeoJsonPoint coordenadaDestino);
+    Double distanciaEntre(GeoJsonPoint punto1, GeoJsonPoint punto2);
 }

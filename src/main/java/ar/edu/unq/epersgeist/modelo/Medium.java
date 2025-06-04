@@ -140,5 +140,4 @@ public class Medium implements Serializable {
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);
     }
-
 }

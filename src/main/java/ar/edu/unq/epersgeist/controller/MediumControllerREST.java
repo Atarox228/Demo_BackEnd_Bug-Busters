@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,11 +84,11 @@ public class MediumControllerREST {
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
     }
-
+/*
     @PutMapping("/{id}/mover/{ubicacionId}")
     public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
         mediumService.mover(id,ubicacionId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
+*/
 }

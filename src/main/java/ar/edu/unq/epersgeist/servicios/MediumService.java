@@ -19,5 +19,5 @@ public interface MediumService {
     Optional<Espiritu> invocar(Long mediumId, Long espirituId);
     List<Espiritu> espiritus(Long idMedium);
     void eliminarTodo();
-    void mover(Long mediumId, Long ubicacionId);
+    void mover(Long mediumId, Double latitud, Double longitud);
 }
