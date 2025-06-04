@@ -11,8 +11,8 @@ import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+import java.util.List;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -32,6 +32,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
+
         List<UbicacionMongo> ubicacionesEnArea = ubicacionRepository.recuperarPorInterseccion(area);
         if (!ubicacionesEnArea.isEmpty()) {
             throw new UbicacionAreaSolapadaException("El área ya está ocupada por otra ubicación");

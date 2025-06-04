@@ -17,12 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
-
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-
 
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)

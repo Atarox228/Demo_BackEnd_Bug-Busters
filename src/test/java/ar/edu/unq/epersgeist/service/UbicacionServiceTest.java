@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,7 +80,6 @@ public class UbicacionServiceTest {
         );
         areaCatedral = new GeoJsonPolygon(area4);
 
-
         fellwood = new Cementerio("Fellwood", 50);
         ubicacionService.crear(fellwood, areaFellwood);
         ashenvale = new Santuario("Ashenvale",100);
@@ -104,7 +102,6 @@ public class UbicacionServiceTest {
 
     @Test
     void crearUbicacion(){
-
         assertNotNull(ashenvale.getId());
     }
 
@@ -112,6 +109,44 @@ public class UbicacionServiceTest {
     void crearMismaUbicacionDosVeces(){
         assertThrows(UbicacionYaCreadaException.class, () ->{
             ubicacionService.crear(fellwood, areaFellwood);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnAreaCompletaOcupada(){
+        Ubicacion solano = new Cementerio("Solano", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(solano, areaAshenvale);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnLimiteOcupado(){
+        List<Point> area7 = List.of(
+                new Point(-58.2730, -34.7210),  // Punto A, limite de Ashenvale
+                new Point(-58.2700, -34.7230),  // Punto B, limite de Ashenvale
+                new Point(-58.2750, -34.7180),
+                new Point(-58.2730, -34.7210)
+        );
+        GeoJsonPolygon areaConBordeCoincidente = new GeoJsonPolygon(area7);
+        Ubicacion sanFrancisco = new Cementerio("San Francisco", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(sanFrancisco, areaConBordeCoincidente);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnCoordenadaInternaOcupada() {
+        List<Point> area8 = List.of(
+                new Point(-58.2703, -34.7213),  // Punto interno a Ashenvale
+                new Point(-58.2715, -34.7195),
+                new Point(-58.2695, -34.7190),
+                new Point(-58.2703, -34.7213)
+        );
+        GeoJsonPolygon areaSolapadaPorInterior = new GeoJsonPolygon(area8);
+        Ubicacion santaMarta = new Santuario("Santa Marta", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(santaMarta, areaSolapadaPorInterior);
         });
     }
 
