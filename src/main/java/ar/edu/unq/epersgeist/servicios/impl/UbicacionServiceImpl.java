@@ -32,6 +32,10 @@ public class UbicacionServiceImpl implements UbicacionService {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
+        List<UbicacionMongo> ubicacionesEnArea = ubicacionRepository.recuperarPorInterseccion(area);
+        if (!ubicacionesEnArea.isEmpty()) {
+            throw new UbicacionAreaSolapadaException("El área ya está ocupada por otra ubicación");
+        }
         ubicacionRepository.crear(ubicacion, area);
     }
 
@@ -157,5 +161,4 @@ public class UbicacionServiceImpl implements UbicacionService {
         DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
         return result;
     }
-
 }

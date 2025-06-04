@@ -45,25 +45,42 @@ public class EstadisticaServiceTest {
     private Ubicacion santuario;
     private Espiritu angel1;
     private Espiritu angel2;
-    private GeoJsonPolygon area;
-
+    private GeoJsonPolygon areaSantuario;
+    private GeoJsonPolygon areaCemeterio;
+    private GeoJsonPolygon areaFellwood;
 
     @BeforeEach
     public void prepare() {
-        List<Point> contorno = List.of(
-                new Point(-58.4000, -34.6000),
-                new Point(-58.4010, -34.6010),
-                new Point(-58.4020, -34.6005),
-                new Point(-58.4000, -34.6000)
+        List<Point> area1 = List.of(
+            new Point(-58.2730, -34.7210),
+            new Point(-58.2700, -34.7230),
+            new Point(-58.2680, -34.7200),
+            new Point(-58.2730, -34.7210)
+    );
+        areaSantuario = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
         );
-        area = new GeoJsonPolygon(contorno);
+        areaFellwood = new GeoJsonPolygon(area2);
+
+        List<Point> area3 = List.of(
+                new Point(-58.3610, -34.6600),
+                new Point(-58.3590, -34.6620),
+                new Point(-58.3570, -34.6590),
+                new Point(-58.3610, -34.6600)
+        );
+        areaCemeterio = new GeoJsonPolygon(area3);
 
         santuario = new Santuario("Catolistres", 50);
         fellwood = new Santuario("Fellwood", 100);
         cementerio = new Cementerio("Ashenvale", 80);
-        ubicacionService.crear(santuario, area);
-        ubicacionService.crear(fellwood, area);
-        ubicacionService.crear(cementerio, area);
+        ubicacionService.crear(santuario, areaSantuario);
+        ubicacionService.crear(fellwood, areaFellwood);
+        ubicacionService.crear(cementerio, areaCemeterio);
 
         demonio1 = new Demonio( "Casper");
         demonio2 = new Demonio("Marids");

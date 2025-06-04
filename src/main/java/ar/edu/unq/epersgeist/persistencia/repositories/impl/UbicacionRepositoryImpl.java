@@ -9,8 +9,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
-
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +40,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.findById(ubicacionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
     }
-
 
     @Override
     public UbicacionNeo4J findByNombre(String nombre) {
@@ -137,4 +134,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
     }
 
+    @Override
+    public List<UbicacionMongo> recuperarPorInterseccion(GeoJsonPolygon area) {
+        return ubicacionDAOMongo.recuperarPorInterseccion(area);
+    }
 }

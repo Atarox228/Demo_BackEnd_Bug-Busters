@@ -22,7 +22,6 @@ public interface UbicacionService {
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadas(Long idOrigen, Long idDestino);
     List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino);
-
     List<ClosenessResult> closenessOf(List<Long> ids);
     DegreeResult degreeOf(List<Long> ids, DegreeType type);
 }

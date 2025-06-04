@@ -43,22 +43,32 @@ public class EspirituServiceTest {
     private Medium  medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
-    private GeoJsonPolygon area;
+    private GeoJsonPolygon areaBernal;
+    private GeoJsonPolygon areaQuilmes;
 
     @BeforeEach
     void setUp(){
-        List<Point> contorno = List.of(
-                new Point(-58.4000, -34.6000),
-                new Point(-58.4010, -34.6010),
-                new Point(-58.4020, -34.6005),
-                new Point(-58.4000, -34.6000)
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
         );
-        GeoJsonPolygon area = new GeoJsonPolygon(contorno);
+        GeoJsonPolygon areaBernal = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        GeoJsonPolygon areaQuilmes = new GeoJsonPolygon(area2);
+
 
         Bernal = new Cementerio("Bernal", 100);
         Quilmes = new Cementerio("Quilmes", 100);
-        ubicacionService.crear(Bernal, area);
-        ubicacionService.crear(Quilmes, area);
+        ubicacionService.crear(Bernal, areaBernal);
+        ubicacionService.crear(Quilmes, areaQuilmes);
 
         Casper = new Angel("Casper");
         Oni = new Demonio("Otakemaru");
@@ -129,7 +139,6 @@ public class EspirituServiceTest {
             espirituService.recuperar(Casper.getId());
         });
     }
-
 
     @Test
     void recuperarEspirituEliminado() {
