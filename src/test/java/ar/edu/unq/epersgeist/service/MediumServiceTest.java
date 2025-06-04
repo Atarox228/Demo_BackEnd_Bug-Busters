@@ -14,7 +14,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.*;
@@ -1086,9 +1088,9 @@ public class MediumServiceTest {
     }
 
     @Test
-    void movimientoDeMediumAUbicacionConIdInexistente() {
-        assertThrows(RecursoNoEncontradoException.class,() -> {
-            mediumService.mover(medium2.getId(), -58.2630, -34.7070);;
+    void movimientoDeMediumAUbicacionConCoordenadasInvalidas() {
+        assertThrows(UncategorizedMongoDbException.class,() -> {
+            mediumService.mover(medium2.getId(), -358.0, -34.7070);;
         });
     }
 
@@ -1098,14 +1100,14 @@ public class MediumServiceTest {
             mediumService.mover(null, -58.2630, -34.7070);;
         });
     }
-/*
+
     @Test
-    void movimientoDeMediumAUbicacionConIdNulo() {
-        assertThrows(InvalidDataAccessApiUsageException.class,() -> {
-            mediumService.mover(medium2.getId(), null);
+    void movimientoDeMediumAUbicacionConCoordenadasQueNoPertencenANingunaUbicacion() {
+        assertThrows(RecursoNoEncontradoException.class,() -> {
+            mediumService.mover(medium2.getId(), 152.5, 55.5);
         });
     }
-*/
+
     @Test
     void exorcismoEnDiferentesUbicaciones(){
         espiritu.setUbicacion(cementerio);
@@ -1314,7 +1316,5 @@ public class MediumServiceTest {
         dataService.eliminarTodo();
         dado.setModo(new ModoRandom());
     }
-
-
 }
 

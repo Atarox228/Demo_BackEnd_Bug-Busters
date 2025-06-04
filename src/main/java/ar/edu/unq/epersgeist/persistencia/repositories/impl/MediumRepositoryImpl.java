@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Collection;
 import java.util.List;
 

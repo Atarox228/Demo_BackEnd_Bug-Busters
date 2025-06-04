@@ -33,9 +33,9 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void crear(Medium medium) {
-        MediumMongo mediumMongo = new MediumMongo(medium.getId());
-        mediumDAO.save(medium);
-        //mediumDAOMongo.save(mediumMongo);
+        Medium mediumGuardado = mediumDAO.save(medium);
+        MediumMongo mediumMongo = new MediumMongo(mediumGuardado.getId());
+        mediumDAOMongo.save(mediumMongo);
     }
 
     @Override
@@ -143,22 +143,21 @@ public class MediumServiceImpl implements MediumService {
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
-
         MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID SQL " + mediumId + " no encontrada"));
-
         GeoJsonPoint coordenadaDestino = new GeoJsonPoint(latitud, longitud);
-        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(coordenadaDestino);
 
+        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(coordenadaDestino);
         Ubicacion ubicacion = ubicacionRepository.recupoerarPorNombre(ubicacionMongo.getNombre());
 
-        if (! ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre())
-                || ubicacionRepository.distanciaEntre(mediumMongo.getCoordenada(), coordenadaDestino) > 30) {
+        if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
+        if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre())) {
             throw new UbicacionLejanaException();
         }
 
         medium.moverseA(ubicacion);
         mediumMongo.moverseA(coordenadaDestino);
         mediumDAO.save(medium);
+        mediumDAOMongo.save(mediumMongo);
     }
 }
