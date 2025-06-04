@@ -30,10 +30,10 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public void crear(Ubicacion ubicacion, GeoJsonPolygon area){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
-        //UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
+        UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
         ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.save(ubicacionNeo);
-        //ubicacionDAOMongo.save(ubicacionMongo);
+        ubicacionDAOMongo.save(ubicacionMongo);
     }
 
     @Override
