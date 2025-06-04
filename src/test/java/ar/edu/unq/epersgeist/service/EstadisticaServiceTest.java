@@ -30,7 +30,6 @@ public class EstadisticaServiceTest {
     @Autowired
     private UbicacionService ubicacionService;
 
-
     private Ubicacion fellwood;
     private Ubicacion cementerio;
     private Espiritu demonio1;

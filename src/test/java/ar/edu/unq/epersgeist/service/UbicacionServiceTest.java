@@ -1104,5 +1104,6 @@ public class UbicacionServiceTest {
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
+        ubicacionRepository.eliminarTodos();
     }
 }

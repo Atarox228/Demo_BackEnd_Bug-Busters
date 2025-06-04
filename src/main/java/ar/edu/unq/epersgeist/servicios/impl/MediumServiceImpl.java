@@ -35,7 +35,7 @@ public class MediumServiceImpl implements MediumService {
     public void crear(Medium medium) {
         MediumMongo mediumMongo = new MediumMongo(medium.getId());
         mediumDAO.save(medium);
-        mediumDAOMongo.save(mediumMongo);
+        //mediumDAOMongo.save(mediumMongo);
     }
 
     @Override
@@ -66,13 +66,13 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void eliminarTodo() {
-        ubicacionRepository.eliminarTodos();
+        mediumDAO.deleteAll();
     }
 
     @Override
     public void actualizar(Medium medium) {
         validacionesGenerales.revisarId(medium.getId());
-        if (!ubicacionRepository.existsById(medium.getId())) {
+        if (!mediumDAO.existsById(medium.getId())) {
             throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
