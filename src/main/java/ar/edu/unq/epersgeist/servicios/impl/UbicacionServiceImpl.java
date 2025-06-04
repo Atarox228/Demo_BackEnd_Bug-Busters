@@ -27,11 +27,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void crear(UbicacionMongo ubicacion) {
+    public void crear(Ubicacion ubicacion, List<Coordenada> area) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
-        ubicacionRepository.crear(ubicacion);
+        ubicacionRepository.crear(ubicacion, area);
     }
 
     @Override

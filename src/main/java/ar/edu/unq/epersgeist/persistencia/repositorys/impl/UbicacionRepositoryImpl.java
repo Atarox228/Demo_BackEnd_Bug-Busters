@@ -28,16 +28,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void crear(UbicacionMongo ubicacion){
+    public void crear(Ubicacion ubicacion, List<Coordenada> area){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
-        Ubicacion ubicacionSql = null;
-        switch (ubicacion.getTipo()) {
-            case SANTUARIO -> ubicacionSql = new Santuario(ubicacion.getNombre(), ubicacion.getFlujoEnergia());
-            case CEMENTERIO -> ubicacionSql = new Cementerio(ubicacion.getNombre(), ubicacion.getFlujoEnergia());
-        }
-        ubicacionDAO.save(ubicacionSql);
+        UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
+        ubicacionDAO.save(ubicacion);
         ubicacionDAONeo4J.save(ubicacionNeo);
-        ubicacionDAOMongo.save(ubicacion);
+        ubicacionDAOMongo.save(ubicacionMongo);
     }
 
     @Override

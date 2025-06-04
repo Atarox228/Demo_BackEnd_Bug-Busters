@@ -19,6 +19,9 @@ public record UbicacionDTO(
 
 {
 
+    public List<Coordenada> getArea(){
+        return this.area;
+    }
 
     public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
         return new UbicacionDTO(

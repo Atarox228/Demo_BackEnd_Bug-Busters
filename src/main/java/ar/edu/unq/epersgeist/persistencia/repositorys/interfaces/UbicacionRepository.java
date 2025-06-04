@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UbicacionRepository {
 
-    void crear(UbicacionMongo ubicacion);
+    void crear(Ubicacion ubicacion, List<Coordenada> area);
     Ubicacion recuperar(Long ubicacionId);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
