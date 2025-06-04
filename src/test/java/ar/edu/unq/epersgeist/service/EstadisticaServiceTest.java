@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -44,12 +46,16 @@ public class EstadisticaServiceTest {
 
     @BeforeEach
     public void prepare() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         santuario = new Santuario("Catolistres", 50);
         fellwood = new Santuario("Fellwood", 100);
         cementerio = new Cementerio("Ashenvale", 80);
-        ubicacionService.crear(santuario);
-        ubicacionService.crear(fellwood);
-        ubicacionService.crear(cementerio);
+        ubicacionService.crear(santuario, area);
+        ubicacionService.crear(fellwood, area);
+        ubicacionService.crear(cementerio, area);
 
         demonio1 = new Demonio( "Casper");
         demonio2 = new Demonio("Marids");

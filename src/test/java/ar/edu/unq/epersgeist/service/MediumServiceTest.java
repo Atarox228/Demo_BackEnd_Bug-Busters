@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,14 +49,18 @@ public class MediumServiceTest {
 
     @BeforeEach
     void setUp() {
+        List<Coordenada> area = new ArrayList<>();
+        area.add(new Coordenada(-34.6000, -58.4000));
+        area.add(new Coordenada(-34.6010, -58.4010));
+
         bernal = new Cementerio("Bernal", 50);
-        ubicacionService.crear(bernal);
+        ubicacionService.crear(bernal, area);
 
         santuario = new Santuario("Abadía de St. Carta", 30);
-        ubicacionService.crear(santuario);
+        ubicacionService.crear(santuario, area);
 
         cementerio = new Cementerio("Cementerio de Derry", 50);
-        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio, area);
 
         medium = new Medium("Lizzie",150,0);
         medium.setUbicacion(bernal);
