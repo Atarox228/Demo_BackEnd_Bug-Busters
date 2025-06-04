@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +45,18 @@ public class EstadisticaServiceTest {
     private Ubicacion santuario;
     private Espiritu angel1;
     private Espiritu angel2;
+    private GeoJsonPolygon area;
+
 
     @BeforeEach
     public void prepare() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> contorno = List.of(
+                new Point(-58.4000, -34.6000),
+                new Point(-58.4010, -34.6010),
+                new Point(-58.4020, -34.6005),
+                new Point(-58.4000, -34.6000)
+        );
+        area = new GeoJsonPolygon(contorno);
 
         santuario = new Santuario("Catolistres", 50);
         fellwood = new Santuario("Fellwood", 100);

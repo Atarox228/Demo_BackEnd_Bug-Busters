@@ -5,7 +5,6 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-
 public class Coordenada {
     private double latitud;
     private double longitud;

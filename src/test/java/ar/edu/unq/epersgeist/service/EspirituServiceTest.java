@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+import org.springframework.data.geo.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,12 +43,17 @@ public class EspirituServiceTest {
     private Medium  medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
+    private GeoJsonPolygon area;
 
     @BeforeEach
     void setUp(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> contorno = List.of(
+                new Point(-58.4000, -34.6000),
+                new Point(-58.4010, -34.6010),
+                new Point(-58.4020, -34.6005),
+                new Point(-58.4000, -34.6000)
+        );
+        GeoJsonPolygon area = new GeoJsonPolygon(contorno);
 
         Bernal = new Cementerio("Bernal", 100);
         Quilmes = new Cementerio("Quilmes", 100);
@@ -67,7 +72,6 @@ public class EspirituServiceTest {
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
-
     }
 
     @Test

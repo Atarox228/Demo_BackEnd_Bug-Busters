@@ -2,13 +2,14 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface UbicacionRepository {
 
-    void crear(Ubicacion ubicacion, List<Coordenada> area);
+    void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Ubicacion recuperar(Long ubicacionId);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);

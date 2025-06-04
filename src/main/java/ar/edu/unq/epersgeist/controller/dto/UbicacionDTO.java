@@ -6,20 +6,20 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.List;
 
 public record UbicacionDTO(
         Long id,
         List<String> nombresDestino,
-        List<Coordenada> area,
+        GeoJsonPolygon area,
         @NotBlank String nombre,
         @NotNull TipoUbicacion tipoDeUbicacion,
         @Min(0) @Max(100) Integer flujoDeEnergia)
 
 {
 
-    public List<Coordenada> getArea(){
+    public GeoJsonPolygon getArea(){
         return this.area;
     }
 
@@ -27,7 +27,7 @@ public record UbicacionDTO(
         return new UbicacionDTO(
                 ubicacion.getId(),
                 List.of(),
-                List.of(),
+                null,
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()
@@ -43,7 +43,7 @@ public record UbicacionDTO(
         return new UbicacionDTO(
                 ubicacion.getId(),
                 conexiones,
-                List.of(),
+                null,
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()

@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
 
@@ -28,7 +29,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion, List<Coordenada> area){
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon area){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
         UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
         ubicacionDAO.save(ubicacion);

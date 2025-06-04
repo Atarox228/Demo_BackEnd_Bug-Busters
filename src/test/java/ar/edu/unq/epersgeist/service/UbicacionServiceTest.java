@@ -12,6 +12,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,13 +42,17 @@ public class UbicacionServiceTest {
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
-
+    private GeoJsonPolygon area;
 
     @BeforeEach
     void prepare() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> contorno = List.of(
+                new Point(-58.4000, -34.6000),
+                new Point(-58.4010, -34.6010),
+                new Point(-58.4020, -34.6005),
+                new Point(-58.4000, -34.6000)
+        );
+        area = new GeoJsonPolygon(contorno);
 
         fellwood = new Cementerio("Fellwood", 50);
         ubicacionService.crear(fellwood, area);
@@ -76,9 +82,6 @@ public class UbicacionServiceTest {
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
         assertThrows(UbicacionYaCreadaException.class, () ->{
             ubicacionService.crear(fellwood, area);
         });
@@ -423,18 +426,9 @@ public class UbicacionServiceTest {
 
     @Test
     void noRecuperaTodosConSoftdelete(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
         dataService.eliminarTodo();
         Ubicacion santuario = new Santuario("santuario",100);
         Ubicacion cementerio = new Cementerio("cementerio", 100);
-        Ubicacion cementerio2 = new Cementerio("cementerio2", 100);
-
-        ubicacionService.crear(santuario, area);
-        ubicacionService.crear(cementerio, area);
-        ubicacionService.crear(cementerio2, area);
 
         Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
         Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
@@ -442,11 +436,8 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-
-
         santuarioAct = this.recuperarAunConSoftDelete(santuario.getId()).get();
         cementerioAct = this.recuperarAunConSoftDelete(cementerio.getId()).get();
-
 
         Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
 
@@ -657,10 +648,6 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCorto2Saltos() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
         ubicacionService.crear(jardinDePaz, area);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
@@ -683,10 +670,6 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCortoConDosCaminosIguales() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
         ubicacionService.crear(jardinDePaz, area);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
@@ -776,10 +759,6 @@ public class UbicacionServiceTest {
 
     @Test
     void closeness1UbicacionSinDestinoNiOrigen() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
         ubicacionService.eliminar(catedral);
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
         ubicacionService.crear(jardinDePaz, area);
@@ -992,9 +971,6 @@ public class UbicacionServiceTest {
 
     //@Test
     void testGenerarCienDatos() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
         Random random = new Random();
         for (int i = 1; i <= 100; i++) {
             Ubicacion ubi = new Santuario("UBI-" + i,  20);

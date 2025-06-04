@@ -15,6 +15,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.*;
 
@@ -46,12 +48,18 @@ public class MediumServiceTest {
     private Ubicacion santuario;
     private Ubicacion cementerio;
     private Medium medium3;
+    private GeoJsonPolygon area;
+
 
     @BeforeEach
     void setUp() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> contorno = List.of(
+                new Point(-58.4000, -34.6000),
+                new Point(-58.4010, -34.6010),
+                new Point(-58.4020, -34.6005),
+                new Point(-58.4000, -34.6000)
+        );
+        area = new GeoJsonPolygon(contorno);
 
         bernal = new Cementerio("Bernal", 50);
         ubicacionService.crear(bernal, area);

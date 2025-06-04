@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +28,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion, List<Coordenada> area) {
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon area) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
