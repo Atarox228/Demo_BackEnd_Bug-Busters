@@ -9,24 +9,21 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepos
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import jakarta.transaction.Transactional;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.geo.Point;
 
 @Service
 @Transactional
 public class MediumServiceImpl implements MediumService {
-    public final MediumDAO mediumDAO;
-    public final MediumDAOMongo mediumDAOMongo;
     public final EspirituDAO espirituDAO;
     private final UbicacionRepository ubicacionRepository;
     private final MediumRepository mediumRepository;
+    private DistanciaGeografica distanciaGeografica;
 
-    public MediumServiceImpl(MediumRepository mediumRepository, MediumDAO mediumDAO, MediumDAOMongo mediumDAOMongo, EspirituDAO espirituDAO, UbicacionRepository ubicacionRepository) {
-        this.mediumDAO = mediumDAO;
-        this.mediumDAOMongo = mediumDAOMongo;
+    public MediumServiceImpl(MediumRepository mediumRepository, EspirituDAO espirituDAO, UbicacionRepository ubicacionRepository) {
         this.espirituDAO = espirituDAO;
         this.ubicacionRepository = ubicacionRepository;
         this.mediumRepository = mediumRepository;
@@ -47,24 +44,29 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
+    public MediumMongo recuperarMongo(Long id) {
+        return mediumRepository.recuperarPorIdSQL(id);
+    }
+
+    @Override
     public Collection<Medium> recuperarTodos() {
-        return mediumDAO.recuperarTodosNoEliminados();
+        return mediumRepository.recuperarTodosNoEliminados();
     }
 
     @Override
     public void eliminar(Medium medium) {
-        if (!mediumDAO.existsById(medium.getId())) {
+        if (!mediumRepository.existsById(medium.getId())) {
             throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         validacionesGenerales.revisarUbicacionConEntidades(medium,!espiritus(medium.getId()).isEmpty());
         medium.setDeleted(true);
-        mediumDAO.save(medium);
+        mediumRepository.actualizar(medium);
     }
 
     @Override
     public void eliminarTodo() {
-        mediumDAO.deleteAll();
+        mediumRepository.eliminarTodos();
     }
 
     @Override
@@ -137,18 +139,23 @@ public class MediumServiceImpl implements MediumService {
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         MediumMongo mediumMongo = mediumRepository.recuperarPorIdSQL(mediumId);
 
-        GeoJsonPoint coordenadaDestino = new GeoJsonPoint(latitud, longitud);
+        Point origen = mediumMongo.getCoordenada();
+        Point destino = new Point(longitud, latitud);
+        double distancia = distanciaGeografica.calcularDistancia(
+                origen.getY(), origen.getX(),  // latitud, longitud de origen
+                destino.getY(), destino.getX() // latitud, longitud de destino
+        );
 
-        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(coordenadaDestino);
+        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(destino);
         Ubicacion ubicacion = ubicacionRepository.recupoerarPorNombre(ubicacionMongo.getNombre());
 
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
-        if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre())) {
+        if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre()) || distancia > 30000) {
             throw new UbicacionLejanaException();
         }
 
         medium.moverseA(ubicacion);
-        mediumMongo.moverseA(coordenadaDestino);
+        mediumMongo.moverseA(destino);
 
         mediumRepository.actualizar(medium);
     }

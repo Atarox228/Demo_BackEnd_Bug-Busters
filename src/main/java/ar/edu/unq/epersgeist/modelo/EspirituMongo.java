@@ -1,9 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
-
+import org.springframework.data.geo.Point;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 @ToString
 @Setter
@@ -16,10 +14,9 @@ public class EspirituMongo {
     @Id
     private String id;
     private Long espirituIdSQL;
-    private GeoJsonPoint coordenada;
+    private Point coordenada;
 
-    public EspirituMongo(String id, GeoJsonPoint coordenada) {
-        this.id = id;
-        this.coordenada = coordenada;
+    public EspirituMongo(Long espirituIdSQL) {
+        this.espirituIdSQL = espirituIdSQL;
     }
 }

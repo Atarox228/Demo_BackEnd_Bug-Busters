@@ -12,6 +12,7 @@ public interface UbicacionService {
     void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Optional<Ubicacion> recuperar(Long ubicacionId);
     UbicacionNeo4J recuperarPorNombre(String nombre);
+    UbicacionMongo recuperarMongo(String nombre);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion,String nombreViejo);
     Collection<Ubicacion> recuperarTodos();

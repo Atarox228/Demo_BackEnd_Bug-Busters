@@ -49,6 +49,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public UbicacionMongo recuperarMongo(String nombre) {
+        return ubicacionRepository.findByNombreMongo(nombre);
+    }
+
+    @Override
     public UbicacionNeo4J recuperarPorNombre(String nombre) {
         return ubicacionRepository.findByNombre(nombre);
     }

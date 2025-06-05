@@ -2,7 +2,7 @@ package ar.edu.unq.epersgeist.servicios;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-
+import ar.edu.unq.epersgeist.modelo.MediumMongo;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +11,7 @@ public interface MediumService {
 
     void crear(Medium medium);
     Medium recuperar(Long id);
+    MediumMongo recuperarMongo(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void actualizar(Medium medium);
