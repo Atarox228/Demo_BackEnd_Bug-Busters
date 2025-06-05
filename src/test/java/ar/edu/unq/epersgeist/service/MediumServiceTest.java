@@ -98,14 +98,14 @@ public class MediumServiceTest {
         medium2 = new Medium("Lala", 100, 0);
         medium2.setUbicacion(bernal);
         mediumService.crear(medium2);
-        MediumMongo mediumMongo2 = mediumService.recuperarMongo(medium.getId());
+        MediumMongo mediumMongo2 = mediumService.recuperarMongo(medium2.getId());
         mediumMongo2.setCoordenada(puntoBernal);
         mediumService.actualizarMongo(mediumMongo2);
 
         medium3 = new Medium("Lorraine", 100, 50);
         medium3.setUbicacion(bernal);
         mediumService.crear(medium3);
-        MediumMongo mediumMongo3 = mediumService.recuperarMongo(medium.getId());
+        MediumMongo mediumMongo3 = mediumService.recuperarMongo(medium3.getId());
         mediumMongo3.setCoordenada(puntoBernal);
         mediumService.actualizar(medium3);
         mediumService.actualizarMongo(mediumMongo3);
@@ -1093,7 +1093,7 @@ public class MediumServiceTest {
     @Test
     void movimientoDeMediumAMismaUbicacion() {
         assertThrows(MovimientoInvalidoException.class, () -> {
-            mediumService.mover(medium2.getId(), -58.2730, -34.7210);
+            mediumService.mover(medium2.getId(), -58.2700, -34.7230);
         });
     }
 

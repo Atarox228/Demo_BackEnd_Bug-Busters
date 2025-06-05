@@ -146,7 +146,7 @@ public class MediumServiceImpl implements MediumService {
         MediumMongo mediumMongo = mediumRepository.recuperarPorIdSQL(mediumId);
 
         Point origen = mediumMongo.getCoordenada();
-        Point destino = new Point(longitud, latitud);
+        Point destino = new Point(latitud, longitud);
         double distancia = DistanciaGeografica.calcularDistancia(
                 origen.getY(), origen.getX(),
                 destino.getY(), destino.getX()
@@ -164,5 +164,6 @@ public class MediumServiceImpl implements MediumService {
         mediumMongo.moverseA(destino);
 
         mediumRepository.actualizar(medium);
+        mediumRepository.actualizarMongo(mediumMongo);
     }
 }

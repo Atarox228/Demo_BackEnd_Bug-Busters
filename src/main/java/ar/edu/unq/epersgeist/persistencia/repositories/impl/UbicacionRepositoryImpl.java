@@ -45,7 +45,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Ubicacion recupoerarPorNombre(String nombre) {
-        return ubicacionDAO.recuperarPorNombre(nombre);
+        return ubicacionDAO.recuperarPorNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
     @Override
