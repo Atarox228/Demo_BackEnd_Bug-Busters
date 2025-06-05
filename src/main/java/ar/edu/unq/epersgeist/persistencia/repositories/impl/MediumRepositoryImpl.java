@@ -20,8 +20,8 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public void crear(Medium medium){
-        MediumMongo mediumMongo = new MediumMongo(medium.getId());
-        mediumDAO.save(medium);
+        Medium mediumGuardado = mediumDAO.save(medium);
+        MediumMongo mediumMongo = new MediumMongo(mediumGuardado.getId());
         mediumDAOMongo.save(mediumMongo);
     }
 

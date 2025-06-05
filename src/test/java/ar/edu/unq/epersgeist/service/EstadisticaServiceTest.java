@@ -151,11 +151,11 @@ public class EstadisticaServiceTest {
         ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio2.getId(), medium1.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -166,12 +166,12 @@ public class EstadisticaServiceTest {
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio4.getId(), medium2.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
         // ACA SE DEMUESTRA QUE ELIJE POR ORDEN ALFABETICO YA QUE UNO ES C Y EL OTRO F
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -183,11 +183,11 @@ public class EstadisticaServiceTest {
         ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -205,11 +205,11 @@ public class EstadisticaServiceTest {
         espirituService.actualizar(angel2);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -223,11 +223,11 @@ public class EstadisticaServiceTest {
         medium1.setUbicacion(santuario);
         mediumService.actualizar(medium1);
         espirituService.conectar(demonio1.getId(), medium1.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -246,11 +246,11 @@ public class EstadisticaServiceTest {
         mediumService.actualizar(medium2);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium2.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium2.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }

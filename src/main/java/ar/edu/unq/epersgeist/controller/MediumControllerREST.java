@@ -32,7 +32,7 @@ public class MediumControllerREST {
     @GetMapping("/{id}")
     public ResponseEntity<MediumDTO> recuperarMedium(@PathVariable Long id) {
 
-        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.recuperar(id).get()));
+        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.recuperar(id)));
     }
 
     @GetMapping
@@ -44,13 +44,13 @@ public class MediumControllerREST {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> borrarMedium(@PathVariable Long id) {
-        mediumService.eliminar(mediumService.recuperar(id).get());
+        mediumService.eliminar(mediumService.recuperar(id));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
     public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarMediumRequestDTO dto) {
-        Medium mediumUpdate = mediumService.recuperar(id).orElseThrow();
+        Medium mediumUpdate = mediumService.recuperar(id);
         mediumUpdate.setNombre(dto.nombre());
         mediumUpdate.setMana(dto.mana());
         mediumUpdate.setManaMax(dto.manaMaximo());
