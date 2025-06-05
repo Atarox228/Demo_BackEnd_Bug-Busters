@@ -27,9 +27,11 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public void actualizar(Medium medium) {
-        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(medium.getId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL " + medium.getId() + " no encontrada"));
         mediumDAO.save(medium);
+    }
+
+    @Override
+    public void actualizarMongo(MediumMongo mediumMongo) {
         mediumDAOMongo.save(mediumMongo);
     }
 
@@ -51,7 +53,6 @@ public class MediumRepositoryImpl implements MediumRepository {
         return mediumDAO.existsById(id);
     }
 
-
     @Override
     public Medium recuperar(long idMedium) {
         return mediumDAO.findById(idMedium)
@@ -72,5 +73,11 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public Collection<Medium> recuperarTodosNoEliminados() {
         return mediumDAO.recuperarTodosNoEliminados();
+    }
+
+    @Override
+    public MediumMongo recuperarCoordenada(Long idSQL) {
+        return mediumDAOMongo.recuperarSoloCoordenada(idSQL)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL" + idSQL + " no encontrada"));
     }
 }

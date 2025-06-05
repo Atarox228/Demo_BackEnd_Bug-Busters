@@ -80,6 +80,13 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
+    public void actualizarMongo(MediumMongo medium) {
+        mediumRepository.actualizarMongo(medium);
+    }
+
+
+
+    @Override
     public void exorcizar(long idMedium, long idMedium2) {
         validacionesGenerales.revisarId(idMedium);
         validacionesGenerales.revisarId(idMedium2);
@@ -142,8 +149,8 @@ public class MediumServiceImpl implements MediumService {
         Point origen = mediumMongo.getCoordenada();
         Point destino = new Point(longitud, latitud);
         double distancia = distanciaGeografica.calcularDistancia(
-                origen.getY(), origen.getX(),  // latitud, longitud de origen
-                destino.getY(), destino.getX() // latitud, longitud de destino
+                origen.getY(), origen.getX(),
+                destino.getY(), destino.getX()
         );
 
         UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(destino);

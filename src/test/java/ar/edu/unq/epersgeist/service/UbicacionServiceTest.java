@@ -197,6 +197,13 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void recuperarUbicacionMongoPorCoordenada() {
+        Point coordendada = new Point(-58.2730, -34.7210);
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(coordendada);
+        assertEquals(ashenvale.getNombre(), ubicacionMongo.getNombre());
+    }
+
+    @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
         ubicacionService.eliminar(fellwood);

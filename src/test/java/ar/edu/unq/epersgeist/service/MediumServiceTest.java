@@ -89,18 +89,18 @@ public class MediumServiceTest {
 
         medium = new Medium("Lizzie",150,0);
         medium.setUbicacion(bernal);
-        mediumService.crear(medium);mediumService.recuperarMongo(medium.getId());
+        mediumService.crear(medium);
         MediumMongo mediumMongo = mediumService.recuperarMongo(medium.getId());
         Point puntoBernal = new Point(-58.2730, -34.7210);
         mediumMongo.setCoordenada(puntoBernal);
-        mediumService.actualizar(medium);
+        mediumService.actualizarMongo(mediumMongo);
 
         medium2 = new Medium("Lala", 100, 0);
         medium2.setUbicacion(bernal);
         mediumService.crear(medium2);
         MediumMongo mediumMongo2 = mediumService.recuperarMongo(medium.getId());
         mediumMongo2.setCoordenada(puntoBernal);
-        mediumService.actualizar(medium2);
+        mediumService.actualizarMongo(mediumMongo2);
 
         medium3 = new Medium("Lorraine", 100, 50);
         medium3.setUbicacion(bernal);
@@ -108,6 +108,7 @@ public class MediumServiceTest {
         MediumMongo mediumMongo3 = mediumService.recuperarMongo(medium.getId());
         mediumMongo3.setCoordenada(puntoBernal);
         mediumService.actualizar(medium3);
+        mediumService.actualizarMongo(mediumMongo3);
 
         espiritu = new Angel("Casper");
         espiritu.setNivelConexion(5);
@@ -159,6 +160,8 @@ public class MediumServiceTest {
     void recuperarMediumMongo() {
         MediumMongo medium = mediumService.recuperarMongo(medium2.getId());
         assertEquals(medium2.getId(), medium.getMediumIdSQL());
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(medium.getCoordenada());
+        assertEquals(medium2.getUbicacion().getNombre(), ubicacionMongo.getNombre());
     }
 
     @Test
