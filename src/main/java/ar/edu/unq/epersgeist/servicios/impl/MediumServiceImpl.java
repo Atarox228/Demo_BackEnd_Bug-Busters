@@ -21,7 +21,6 @@ public class MediumServiceImpl implements MediumService {
     public final EspirituDAO espirituDAO;
     private final UbicacionRepository ubicacionRepository;
     private final MediumRepository mediumRepository;
-    private DistanciaGeografica distanciaGeografica;
 
     public MediumServiceImpl(MediumRepository mediumRepository, EspirituDAO espirituDAO, UbicacionRepository ubicacionRepository) {
         this.espirituDAO = espirituDAO;
@@ -148,7 +147,7 @@ public class MediumServiceImpl implements MediumService {
 
         Point origen = mediumMongo.getCoordenada();
         Point destino = new Point(longitud, latitud);
-        double distancia = distanciaGeografica.calcularDistancia(
+        double distancia = DistanciaGeografica.calcularDistancia(
                 origen.getY(), origen.getX(),
                 destino.getY(), destino.getX()
         );
