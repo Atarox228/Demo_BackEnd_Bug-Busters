@@ -52,7 +52,6 @@ public abstract class Ubicacion implements Serializable{
 
     public abstract Integer valorDeRecuperacionMedium();
 
-
     public abstract void moverAEspiritu(Espiritu espiritu);
 
     public abstract boolean permiteInvocarTipo(TipoEspiritu tipo);

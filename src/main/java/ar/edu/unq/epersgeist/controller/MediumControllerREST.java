@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class MediumControllerREST {
     @GetMapping("/{id}")
     public ResponseEntity<MediumDTO> recuperarMedium(@PathVariable Long id) {
 
-        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.recuperar(id).get()));
+        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.recuperar(id)));
     }
 
     @GetMapping
@@ -45,13 +44,13 @@ public class MediumControllerREST {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> borrarMedium(@PathVariable Long id) {
-        mediumService.eliminar(mediumService.recuperar(id).get());
+        mediumService.eliminar(mediumService.recuperar(id));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}/actualizar")
     public ResponseEntity<Void> actualizar(@PathVariable Long id, @Valid @RequestBody ActualizarMediumRequestDTO dto) {
-        Medium mediumUpdate = mediumService.recuperar(id).orElseThrow();
+        Medium mediumUpdate = mediumService.recuperar(id);
         mediumUpdate.setNombre(dto.nombre());
         mediumUpdate.setMana(dto.mana());
         mediumUpdate.setManaMax(dto.manaMaximo());
@@ -85,11 +84,11 @@ public class MediumControllerREST {
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
     }
-
+/*
     @PutMapping("/{id}/mover/{ubicacionId}")
     public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
         mediumService.mover(id,ubicacionId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
+*/
 }

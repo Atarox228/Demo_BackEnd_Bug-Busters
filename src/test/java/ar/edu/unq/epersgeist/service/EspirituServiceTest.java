@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+import org.springframework.data.geo.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,17 +43,32 @@ public class EspirituServiceTest {
     private Medium  medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
+    private GeoJsonPolygon areaBernal;
+    private GeoJsonPolygon areaQuilmes;
 
     @BeforeEach
     void setUp(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        GeoJsonPolygon areaBernal = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        GeoJsonPolygon areaQuilmes = new GeoJsonPolygon(area2);
+
 
         Bernal = new Cementerio("Bernal", 100);
         Quilmes = new Cementerio("Quilmes", 100);
-        ubicacionService.crear(Bernal, area);
-        ubicacionService.crear(Quilmes, area);
+        ubicacionService.crear(Bernal, areaBernal);
+        ubicacionService.crear(Quilmes, areaQuilmes);
 
         Casper = new Angel("Casper");
         Oni = new Demonio("Otakemaru");
@@ -67,7 +82,6 @@ public class EspirituServiceTest {
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
-
     }
 
     @Test
@@ -125,7 +139,6 @@ public class EspirituServiceTest {
             espirituService.recuperar(Casper.getId());
         });
     }
-
 
     @Test
     void recuperarEspirituEliminado() {

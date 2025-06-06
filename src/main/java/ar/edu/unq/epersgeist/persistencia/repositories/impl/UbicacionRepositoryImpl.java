@@ -7,9 +7,10 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
-
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion, List<Coordenada> area){
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon area){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
         UbicacionMongo ubicacionMongo = new UbicacionMongo(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia(), area);
         ubicacionDAO.save(ubicacion);
@@ -42,10 +43,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
     }
 
+    @Override
+    public Ubicacion recupoerarPorNombre(String nombre) {
+        return ubicacionDAO.recuperarPorNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
+    }
 
     @Override
     public UbicacionNeo4J findByNombre(String nombre) {
         return ubicacionDAONeo4J.findByNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
+    }
+
+    @Override
+    public UbicacionMongo findByNombreMongo(String nombre) {
+        return ubicacionDAOMongo.findByNombreMongo(nombre)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
@@ -136,4 +148,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
     }
 
+    @Override
+    public List<UbicacionMongo> recuperarPorInterseccion(GeoJsonPolygon area) {
+        return ubicacionDAOMongo.recuperarPorInterseccion(area);
+    }
+
+    @Override
+    public UbicacionMongo recuperarPorCoordenada(Point coordenada) {
+        GeoJsonPoint geoJsonPoint = new GeoJsonPoint(coordenada.getX(), coordenada.getY());
+        return ubicacionDAOMongo.recuperarPorCoordenada(geoJsonPoint)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación no encontrada"));
+    }
 }

@@ -9,9 +9,11 @@ import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+import java.util.List;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -27,9 +29,14 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion, List<Coordenada> area) {
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon area) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
+        }
+
+        List<UbicacionMongo> ubicacionesEnArea = ubicacionRepository.recuperarPorInterseccion(area);
+        if (!ubicacionesEnArea.isEmpty()) {
+            throw new UbicacionAreaSolapadaException("El área ya está ocupada por otra ubicación");
         }
         ubicacionRepository.crear(ubicacion, area);
     }
@@ -40,6 +47,11 @@ public class UbicacionServiceImpl implements UbicacionService {
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
+    }
+
+    @Override
+    public UbicacionMongo recuperarMongo(String nombre) {
+        return ubicacionRepository.findByNombreMongo(nombre);
     }
 
     @Override
@@ -68,7 +80,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
         ubicacionRepository.actualizar(ubicacion);
-
     }
 
     @Override
@@ -157,4 +168,8 @@ public class UbicacionServiceImpl implements UbicacionService {
         return result;
     }
 
+    @Override
+    public UbicacionMongo recuperarPorCoordenada(Point coordenada) {
+        return ubicacionRepository.recuperarPorCoordenada(coordenada);
+    }
 }

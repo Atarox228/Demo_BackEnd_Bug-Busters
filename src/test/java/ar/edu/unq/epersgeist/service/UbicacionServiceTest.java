@@ -12,7 +12,8 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,22 +41,53 @@ public class UbicacionServiceTest {
     private Espiritu espiritu2;
     private Medium medium1;
     private Medium medium2;
-
+    private GeoJsonPolygon areaAshenvale;
+    private GeoJsonPolygon areaFellwood;
+    private GeoJsonPolygon areaSantaMaria;
+    private GeoJsonPolygon areaCatedral;
 
     @BeforeEach
     void prepare() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaAshenvale = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaFellwood = new GeoJsonPolygon(area2);
+
+        List<Point> area3 = List.of(
+                new Point(-58.3610, -34.6600),
+                new Point(-58.3590, -34.6620),
+                new Point(-58.3570, -34.6590),
+                new Point(-58.3610, -34.6600)
+        );
+        areaSantaMaria = new GeoJsonPolygon(area3);
+
+        List<Point> area4 = List.of(
+                new Point(-58.4000, -34.7000),
+                new Point(-58.3980, -34.7020),
+                new Point(-58.3960, -34.6990),
+                new Point(-58.4000, -34.7000)
+        );
+        areaCatedral = new GeoJsonPolygon(area4);
 
         fellwood = new Cementerio("Fellwood", 50);
-        ubicacionService.crear(fellwood, area);
+        ubicacionService.crear(fellwood, areaFellwood);
         ashenvale = new Santuario("Ashenvale",100);
-        ubicacionService.crear(ashenvale, area);
+        ubicacionService.crear(ashenvale, areaAshenvale);
         santaMaria = new Santuario("SantaMaria", 80);
-        ubicacionService.crear(santaMaria, area);
+        ubicacionService.crear(santaMaria, areaSantaMaria);
         catedral = new Santuario("catedral", 80);
-        ubicacionService.crear(catedral, area);
+        ubicacionService.crear(catedral, areaCatedral);
 
         espiritu1 = new Demonio( "Casper");
         espirituService.crear(espiritu1);
@@ -70,17 +102,51 @@ public class UbicacionServiceTest {
 
     @Test
     void crearUbicacion(){
-
         assertNotNull(ashenvale.getId());
     }
 
     @Test
     void crearMismaUbicacionDosVeces(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
         assertThrows(UbicacionYaCreadaException.class, () ->{
-            ubicacionService.crear(fellwood, area);
+            ubicacionService.crear(fellwood, areaFellwood);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnAreaCompletaOcupada(){
+        Ubicacion solano = new Cementerio("Solano", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(solano, areaAshenvale);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnLimiteOcupado(){
+        List<Point> area7 = List.of(
+                new Point(-58.2730, -34.7210),  // Punto A, limite de Ashenvale
+                new Point(-58.2700, -34.7230),  // Punto B, limite de Ashenvale
+                new Point(-58.2750, -34.7180),
+                new Point(-58.2730, -34.7210)
+        );
+        GeoJsonPolygon areaConBordeCoincidente = new GeoJsonPolygon(area7);
+        Ubicacion sanFrancisco = new Cementerio("San Francisco", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(sanFrancisco, areaConBordeCoincidente);
+        });
+    }
+
+    @Test
+    void crearUbicacionEnCoordenadaInternaOcupada() {
+        List<Point> area8 = List.of(
+                new Point(-58.2703, -34.7213),  // Punto interno a Ashenvale
+                new Point(-58.2715, -34.7195),
+                new Point(-58.2695, -34.7190),
+                new Point(-58.2703, -34.7213)
+        );
+        GeoJsonPolygon areaSolapadaPorInterior = new GeoJsonPolygon(area8);
+        Ubicacion santaMarta = new Santuario("Santa Marta", 50);
+        assertThrows(UbicacionAreaSolapadaException.class, () ->{
+            ubicacionService.crear(santaMarta, areaSolapadaPorInterior);
         });
     }
 
@@ -116,7 +182,27 @@ public class UbicacionServiceTest {
             ubicacionService.recuperarPorNombre("Juan Manuel");
         });
     }
-    
+
+    @Test
+    void recuperarUbicacionMongo() {
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarMongo(fellwood.getNombre());
+        assertEquals(fellwood.getNombre(), ubicacionMongo.getNombre());
+    }
+
+    @Test
+    void recuperarUbicacionMongoNoPersistida() {
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperarMongo("Juan Manuel");
+        });
+    }
+
+    @Test
+    void recuperarUbicacionMongoPorCoordenada() {
+        Point coordendada = new Point(-58.2730, -34.7210);
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(coordendada);
+        assertEquals(ashenvale.getNombre(), ubicacionMongo.getNombre());
+    }
+
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();
@@ -422,19 +508,39 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void noRecuperaTodosConSoftdelete(){
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
+    void noRecuperaTodosConSoftdelete() {
         dataService.eliminarTodo();
-        Ubicacion santuario = new Santuario("santuario",100);
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaFellwood = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaAshenvale = new GeoJsonPolygon(area2);
+
+        List<Point> area3 = List.of(
+                new Point(-58.3610, -34.6600),
+                new Point(-58.3590, -34.6620),
+                new Point(-58.3570, -34.6590),
+                new Point(-58.3610, -34.6600)
+        );
+        areaSantaMaria = new GeoJsonPolygon(area3);
+
+        Ubicacion santuario = new Santuario("santuario", 100);
         Ubicacion cementerio = new Cementerio("cementerio", 100);
         Ubicacion cementerio2 = new Cementerio("cementerio2", 100);
 
-        ubicacionService.crear(santuario, area);
-        ubicacionService.crear(cementerio, area);
-        ubicacionService.crear(cementerio2, area);
+        ubicacionService.crear(santuario, areaAshenvale);
+        ubicacionService.crear(cementerio, areaFellwood);
+        ubicacionService.crear(cementerio2, areaSantaMaria);
 
         Ubicacion santuarioAct = ubicacionService.recuperar(santuario.getId()).get();
         Ubicacion cementerioAct = ubicacionService.recuperar(cementerio.getId()).get();
@@ -442,11 +548,8 @@ public class UbicacionServiceTest {
         ubicacionService.eliminar(santuarioAct);
         ubicacionService.eliminar(cementerioAct);
 
-
-
         santuarioAct = this.recuperarAunConSoftDelete(santuario.getId()).get();
         cementerioAct = this.recuperarAunConSoftDelete(cementerio.getId()).get();
-
 
         Collection<Ubicacion> todos = ubicacionService.recuperarTodos();
 
@@ -657,14 +760,26 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCorto2Saltos() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> area5 = List.of(
+                new Point(-58.3700, -34.6200),
+                new Point(-58.3680, -34.6220),
+                new Point(-58.3660, -34.6190),
+                new Point(-58.3700, -34.6200)
+        );
+        GeoJsonPolygon areaJardinDePaz = new GeoJsonPolygon(area5);
+
+        List<Point> area6 = List.of(
+                new Point(-58.3200, -34.6800),
+                new Point(-58.3180, -34.6820),
+                new Point(-58.3160, -34.6790),
+                new Point(-58.3200, -34.6800)
+        );
+        GeoJsonPolygon areaSanIgnacio = new GeoJsonPolygon(area6);
 
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz, area);
+        ubicacionService.crear(jardinDePaz, areaJardinDePaz);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
-        ubicacionService.crear(sanIgnacio, area);
+        ubicacionService.crear(sanIgnacio, areaSanIgnacio);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -683,14 +798,26 @@ public class UbicacionServiceTest {
 
     @Test
     void caminoMasCortoConDosCaminosIguales() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> area5 = List.of(
+                new Point(-58.3700, -34.6200),
+                new Point(-58.3680, -34.6220),
+                new Point(-58.3660, -34.6190),
+                new Point(-58.3700, -34.6200)
+        );
+        GeoJsonPolygon areaJardinDePaz = new GeoJsonPolygon(area5);
+
+        List<Point> area6 = List.of(
+                new Point(-58.3200, -34.6800),
+                new Point(-58.3180, -34.6820),
+                new Point(-58.3160, -34.6790),
+                new Point(-58.3200, -34.6800)
+        );
+        GeoJsonPolygon areaSanIgnacio = new GeoJsonPolygon(area6);
 
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz, area);
+        ubicacionService.crear(jardinDePaz, areaJardinDePaz);
         Ubicacion sanIgnacio = new Santuario("San Ignacio", 50);
-        ubicacionService.crear(sanIgnacio, area);
+        ubicacionService.crear(sanIgnacio, areaSanIgnacio);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -776,13 +903,18 @@ public class UbicacionServiceTest {
 
     @Test
     void closeness1UbicacionSinDestinoNiOrigen() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-
         ubicacionService.eliminar(catedral);
+
+        List<Point> area5 = List.of(
+                new Point(-58.3700, -34.6200),
+                new Point(-58.3680, -34.6220),
+                new Point(-58.3660, -34.6190),
+                new Point(-58.3700, -34.6200)
+        );
+        GeoJsonPolygon areaJardinDePaz = new GeoJsonPolygon(area5);
+
         Ubicacion jardinDePaz = new Cementerio("Jardin de Paz", 50);
-        ubicacionService.crear(jardinDePaz, area);
+        ubicacionService.crear(jardinDePaz, areaJardinDePaz);
 
         ubicacionService.conectar(fellwood.getId(), santaMaria.getId());
         ubicacionService.conectar(santaMaria.getId(), ashenvale.getId());
@@ -965,7 +1097,6 @@ public class UbicacionServiceTest {
 
         DegreeResult result = ubicacionService.degreeOf(ids, DegreeType.ALL);
 
-
         List<String> posiblesGanadores = List.of(catedral.getNombre(),fellwood.getNombre());
         assertTrue(posiblesGanadores.contains(result.node().getNombre()));
         assertEquals((double) 3 / 5 , result.centrality());
@@ -990,31 +1121,9 @@ public class UbicacionServiceTest {
         });
     }
 
-    //@Test
-    void testGenerarCienDatos() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
-        Random random = new Random();
-        for (int i = 1; i <= 100; i++) {
-            Ubicacion ubi = new Santuario("UBI-" + i,  20);
-            ubicacionService.crear(ubi, area);
-        }
-
-        List<Ubicacion> ubis = (List<Ubicacion>) ubicacionService.recuperarTodos();
-
-        for (Ubicacion ubi : ubis) {
-            for (int i = 0; i < 10; i++) {
-                Ubicacion candidato = ubis.get(random.nextInt(ubis.size()));
-                if (!candidato.equals(ubi)) {
-                    ubicacionService.conectar(candidato.getId(), ubi.getId());
-                }
-            }
-        }
-    }
-
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
+        ubicacionRepository.eliminarTodos();
     }
 }

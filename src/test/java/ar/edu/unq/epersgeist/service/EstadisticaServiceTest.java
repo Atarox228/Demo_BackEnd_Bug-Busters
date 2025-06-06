@@ -9,12 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -31,7 +30,6 @@ public class EstadisticaServiceTest {
     @Autowired
     private UbicacionService ubicacionService;
 
-
     private Ubicacion fellwood;
     private Ubicacion cementerio;
     private Espiritu demonio1;
@@ -43,19 +41,42 @@ public class EstadisticaServiceTest {
     private Ubicacion santuario;
     private Espiritu angel1;
     private Espiritu angel2;
+    private GeoJsonPolygon areaSantuario;
+    private GeoJsonPolygon areaCemeterio;
+    private GeoJsonPolygon areaFellwood;
 
     @BeforeEach
     public void prepare() {
-        List<Coordenada> area = new ArrayList<>();
-        area.add(new Coordenada(-34.6000, -58.4000));
-        area.add(new Coordenada(-34.6010, -58.4010));
+        List<Point> area1 = List.of(
+            new Point(-58.2730, -34.7210),
+            new Point(-58.2700, -34.7230),
+            new Point(-58.2680, -34.7200),
+            new Point(-58.2730, -34.7210)
+    );
+        areaSantuario = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaFellwood = new GeoJsonPolygon(area2);
+
+        List<Point> area3 = List.of(
+                new Point(-58.3610, -34.6600),
+                new Point(-58.3590, -34.6620),
+                new Point(-58.3570, -34.6590),
+                new Point(-58.3610, -34.6600)
+        );
+        areaCemeterio = new GeoJsonPolygon(area3);
 
         santuario = new Santuario("Catolistres", 50);
         fellwood = new Santuario("Fellwood", 100);
         cementerio = new Cementerio("Ashenvale", 80);
-        ubicacionService.crear(santuario, area);
-        ubicacionService.crear(fellwood, area);
-        ubicacionService.crear(cementerio, area);
+        ubicacionService.crear(santuario, areaSantuario);
+        ubicacionService.crear(fellwood, areaFellwood);
+        ubicacionService.crear(cementerio, areaCemeterio);
 
         demonio1 = new Demonio( "Casper");
         demonio2 = new Demonio("Marids");
@@ -130,11 +151,11 @@ public class EstadisticaServiceTest {
         ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio2.getId(), medium1.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -145,12 +166,12 @@ public class EstadisticaServiceTest {
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio4.getId(), medium2.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
         // ACA SE DEMUESTRA QUE ELIJE POR ORDEN ALFABETICO YA QUE UNO ES C Y EL OTRO F
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -162,11 +183,11 @@ public class EstadisticaServiceTest {
         ubicacionesDeEspiritusYMediums();
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(2, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(1, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -184,11 +205,11 @@ public class EstadisticaServiceTest {
         espirituService.actualizar(angel2);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -202,11 +223,11 @@ public class EstadisticaServiceTest {
         medium1.setUbicacion(santuario);
         mediumService.actualizar(medium1);
         espirituService.conectar(demonio1.getId(), medium1.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium1.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium1.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }
@@ -225,11 +246,11 @@ public class EstadisticaServiceTest {
         mediumService.actualizar(medium2);
         espirituService.conectar(demonio1.getId(), medium1.getId());
         espirituService.conectar(demonio3.getId(), medium2.getId());
-        Optional<Medium> mediumEsperado = mediumService.recuperar(medium2.getId());
+        Medium mediumEsperado = mediumService.recuperar(medium2.getId());
         ReporteSantuarioMasCorrupto reporteCorrupto = estadisticaService.santuarioCorrupto();
         assertEquals("Catolistres", reporteCorrupto.getSantuario());
-        assertEquals(mediumEsperado.get().getId(), reporteCorrupto.getMedium().getId());
-        assertEquals(mediumEsperado.get().getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
+        assertEquals(mediumEsperado.getId(), reporteCorrupto.getMedium().getId());
+        assertEquals(mediumEsperado.getEspiritus().size(), reporteCorrupto.getMedium().getEspiritus().size());
         assertEquals(1, reporteCorrupto.getCantDemoniosTotal());
         assertEquals(0, reporteCorrupto.getCantDemoniosLibres());
     }

@@ -4,11 +4,7 @@ import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 @ToString
 @Setter
@@ -24,14 +20,12 @@ public class UbicacionMongo {
     private String nombre;
     private TipoUbicacion tipo;
     private Integer flujoEnergia;
-    private List<Coordenada> area = new ArrayList<>();
+    private GeoJsonPolygon area;
 
-    public UbicacionMongo(String nombre, TipoUbicacion tipo ,Integer flujoEnergia, List<Coordenada> area) {
+    public UbicacionMongo(String nombre, TipoUbicacion tipo ,Integer flujoEnergia, GeoJsonPolygon area) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.flujoEnergia = flujoEnergia;
         this.area = area;
     }
-
-
 }
