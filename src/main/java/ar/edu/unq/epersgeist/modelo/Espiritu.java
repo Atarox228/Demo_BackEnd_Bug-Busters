@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.modelo;
 import java.io.Serializable;
 
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.NoSePuedeDominarException;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -29,6 +31,8 @@ public abstract class Espiritu implements Serializable {
     private Medium medium;
     @ManyToOne
     private Ubicacion ubicacion;
+    @ManyToOne
+    private Espiritu dominante;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -36,6 +40,7 @@ public abstract class Espiritu implements Serializable {
     private Date updatedAt;
     @Column(nullable = false)
     private Boolean deleted = false;
+
 
     @PrePersist
     protected void onCreate() {
@@ -62,7 +67,7 @@ public abstract class Espiritu implements Serializable {
     }
 
     public boolean estaLibre(){
-        return this.medium == null;
+        return this.medium == null || this.dominante == null;
     }
 
     public int getProbDefensa() {
@@ -102,4 +107,15 @@ public abstract class Espiritu implements Serializable {
     public abstract void aumentarConexionDeSantuario(Integer flujoEnergia);
 
     public abstract void aumentarConexionDeCementerio(Integer flujoEnergia);
+
+    public void dominar(Espiritu dominado) {
+        if (!dominado.estaLibre() || dominado.getNivelConexion() >= 50) {
+            throw new EspirituNoLibreException(dominado);
+        }
+        if (this.dominante != dominado && dominado.getDominante() == null)  {
+            dominado.setDominante(this);
+        } else {
+            throw new NoSePuedeDominarException(dominado);
+        }
+    }
 }

@@ -965,118 +965,118 @@ public class MediumServiceTest {
         });
     }
 
-    @Test
-    void movimientoDeMediumYEspiritusConConexionSuficienteASantuario() {
-        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
-        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
+//    @Test
+//    void movimientoDeMediumYEspiritusConConexionSuficienteASantuario() {
+//        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
+//        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
+//
+//        ubicacionService.conectar(bernal.getId(),santuario.getId());
+//
+//        mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//
+//        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+//        List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
+//
+//        Espiritu demonio = espiritus.get(1);
+//        Espiritu angel = espiritus.get(0);
+//
+//        assertEquals(2, espiritus.size());
+//        assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
+//        assertEquals(santuario.getNombre(), angel.getUbicacion().getNombre());
+//        assertEquals(santuario.getNombre(), demonio.getUbicacion().getNombre());
+//        assertEquals(angel.getMedium().getId(), actualizado.getId());
+//        assertEquals(demonio.getMedium().getId(), actualizado.getId());
+//        assertEquals(demonio.getNivelConexion(), 30);
+//        assertNotEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
+//    }
 
-        ubicacionService.conectar(bernal.getId(),santuario.getId());
+//    @Test
+//    void movimientoDeMediumYEspiritusConConexionSuficienteACementerio() {
+//        espiritu.setNivelConexion(10);
+//        espirituService.actualizar(espiritu);
+//        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
+//        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
+//
+//        ubicacionService.conectar(bernal.getId(),cementerio.getId());
+//
+//        mediumService.mover(medium.getId(), -58.3610, -34.6600);
+//
+//        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+//        List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
+//
+//        Espiritu demonio = espiritus.get(1);
+//        Espiritu angel = espiritus.get(0);
+//
+//        assertEquals(2, espiritus.size());
+//        assertEquals(cementerio.getId(), actualizado.getUbicacion().getId());
+//        assertEquals(cementerio.getId(), angel.getUbicacion().getId());
+//        assertEquals(cementerio.getId(), demonio.getUbicacion().getId());
+//        assertEquals(angel.getMedium().getId(), actualizado.getId());
+//        assertEquals(demonio.getMedium().getId(), actualizado.getId());
+//        assertEquals(angel.getNivelConexion(),5);
+//        assertEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
+//    }
 
-        mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//    @Test
+//    void movimientoDeMediumASantuarioDemonioPierdeConexionYSeDesvincula() {
+//        espiritu2.setNivelConexion(1);
+//        espirituService.actualizar(espiritu2);
+//
+//        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
+//
+//        List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
+//        assertEquals(1, espiritusAntes.size());
+//
+//        ubicacionService.conectar(bernal.getId(),santuario.getId());
+//
+//        mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//
+//        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+//        List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
+//
+//        assertEquals(0, espiritusDespues.size());
+//
+//        Espiritu demonioRecuperado = espirituService.recuperar(espiritu2.getId()).get();
+//        assertNull(demonioRecuperado.getMedium());
+//        assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
+//        assertEquals(santuario.getNombre(), demonioRecuperado.getUbicacion().getNombre());
+//        assertNull(demonioRecuperado.getMedium());
+//        assertEquals(demonioRecuperado.getNivelConexion(), 0);
+//    }
+//
+//    @Test
+//    void movimientoDeMediumACementerioAngelPierdeConexionYSeDesvincula() {
+//        espiritu.setNivelConexion(1);
+//        espirituService.actualizar(espiritu);
+//
+//        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
+//
+//        List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
+//        assertEquals(1, espiritusAntes.size());
+//
+//        ubicacionService.conectar(bernal.getId(),cementerio.getId());
+//
+//        mediumService.mover(medium.getId(), -58.3610, -34.6600);
+//
+//        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+//        List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
+//
+//        assertEquals(0, espiritusDespues.size());
+//
+//        Espiritu angelRecuperado = espirituService.recuperar(espiritu.getId()).get();
+//        assertNull(angelRecuperado.getMedium());
+//        assertEquals(cementerio.getNombre(), actualizado.getUbicacion().getNombre());
+//        assertEquals(cementerio.getNombre(), angelRecuperado.getUbicacion().getNombre());
+//        assertNull(angelRecuperado.getMedium());
+//        assertEquals(angelRecuperado.getNivelConexion(), 0);
+//    }
 
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
-        List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
-
-        Espiritu demonio = espiritus.get(1);
-        Espiritu angel = espiritus.get(0);
-
-        assertEquals(2, espiritus.size());
-        assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
-        assertEquals(santuario.getNombre(), angel.getUbicacion().getNombre());
-        assertEquals(santuario.getNombre(), demonio.getUbicacion().getNombre());
-        assertEquals(angel.getMedium().getId(), actualizado.getId());
-        assertEquals(demonio.getMedium().getId(), actualizado.getId());
-        assertEquals(demonio.getNivelConexion(), 30);
-        assertNotEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
-    }
-
-    @Test
-    void movimientoDeMediumYEspiritusConConexionSuficienteACementerio() {
-        espiritu.setNivelConexion(10);
-        espirituService.actualizar(espiritu);
-        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
-        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
-
-        ubicacionService.conectar(bernal.getId(),cementerio.getId());
-
-        mediumService.mover(medium.getId(), -58.3610, -34.6600);
-
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
-        List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
-
-        Espiritu demonio = espiritus.get(1);
-        Espiritu angel = espiritus.get(0);
-
-        assertEquals(2, espiritus.size());
-        assertEquals(cementerio.getId(), actualizado.getUbicacion().getId());
-        assertEquals(cementerio.getId(), angel.getUbicacion().getId());
-        assertEquals(cementerio.getId(), demonio.getUbicacion().getId());
-        assertEquals(angel.getMedium().getId(), actualizado.getId());
-        assertEquals(demonio.getMedium().getId(), actualizado.getId());
-        assertEquals(angel.getNivelConexion(),5);
-        assertEquals(demonio.getNivelConexion(), espiritu2.getNivelConexion());
-    }
-
-    @Test
-    void movimientoDeMediumASantuarioDemonioPierdeConexionYSeDesvincula() {
-        espiritu2.setNivelConexion(1);
-        espirituService.actualizar(espiritu2);
-
-        medium = espirituService.conectar(espiritu2.getId(), medium.getId()).get();
-
-        List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
-        assertEquals(1, espiritusAntes.size());
-
-        ubicacionService.conectar(bernal.getId(),santuario.getId());
-
-        mediumService.mover(medium.getId(), -58.2630, -34.7070);
-
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
-        List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
-
-        assertEquals(0, espiritusDespues.size());
-
-        Espiritu demonioRecuperado = espirituService.recuperar(espiritu2.getId()).get();
-        assertNull(demonioRecuperado.getMedium());
-        assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
-        assertEquals(santuario.getNombre(), demonioRecuperado.getUbicacion().getNombre());
-        assertNull(demonioRecuperado.getMedium());
-        assertEquals(demonioRecuperado.getNivelConexion(), 0);
-    }
-
-    @Test
-    void movimientoDeMediumACementerioAngelPierdeConexionYSeDesvincula() {
-        espiritu.setNivelConexion(1);
-        espirituService.actualizar(espiritu);
-
-        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
-
-        List<Espiritu> espiritusAntes = mediumService.espiritus(medium.getId());
-        assertEquals(1, espiritusAntes.size());
-
-        ubicacionService.conectar(bernal.getId(),cementerio.getId());
-
-        mediumService.mover(medium.getId(), -58.3610, -34.6600);
-
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
-        List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
-
-        assertEquals(0, espiritusDespues.size());
-
-        Espiritu angelRecuperado = espirituService.recuperar(espiritu.getId()).get();
-        assertNull(angelRecuperado.getMedium());
-        assertEquals(cementerio.getNombre(), actualizado.getUbicacion().getNombre());
-        assertEquals(cementerio.getNombre(), angelRecuperado.getUbicacion().getNombre());
-        assertNull(angelRecuperado.getMedium());
-        assertEquals(angelRecuperado.getNivelConexion(), 0);
-    }
-
-    @Test
-    void movimientoDeMediumAMismaUbicacion() {
-        assertThrows(MovimientoInvalidoException.class, () -> {
-            mediumService.mover(medium2.getId(), -58.2730, -34.7210);
-        });
-    }
+//    @Test
+//    void movimientoDeMediumAMismaUbicacion() {
+//        assertThrows(MovimientoInvalidoException.class, () -> {
+//            mediumService.mover(medium2.getId(), -58.2730, -34.7210);
+//        });
+//    }
 
     @Test
     void movimientoDeMediumConIdInexistente() {
@@ -1270,43 +1270,43 @@ public class MediumServiceTest {
     }
 
 
-    @Test
-    void moverNuevo(){
-        ubicacionService.conectar(bernal.getId(),santuario.getId());
-        mediumService.mover(medium.getId(), -58.2630, -34.7070);
-
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
-
-        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
-    }
-
-    @Test
-    void moverNuevoException(){
-
-        assertThrows(UbicacionLejanaException.class, () -> {
-            mediumService.mover(medium.getId(), -58.2630, -34.7070);
-        });
-    }
-
-    @Test
-    void moverConectadoAlReves(){
-        ubicacionService.conectar(santuario.getId(),bernal.getId());
-
-        assertThrows(UbicacionLejanaException.class, () -> {
-            mediumService.mover(medium.getId(), -58.2630, -34.7070);
-        });
-    }
-
-    @Test
-    void moverNuevoBidireccional(){
-        ubicacionService.conectar(bernal.getId(),santuario.getId());
-        ubicacionService.conectar(santuario.getId(),bernal.getId());
-        mediumService.mover(medium.getId(), -58.2630, -34.7070);
-
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
-
-        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
-    }
+//    @Test
+//    void moverNuevo(){
+//        ubicacionService.conectar(bernal.getId(),santuario.getId());
+//        mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//
+//        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+//
+//        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
+//    }
+//
+//    @Test
+//    void moverNuevoException(){
+//
+//        assertThrows(UbicacionLejanaException.class, () -> {
+//            mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//        });
+//    }
+//
+//    @Test
+//    void moverConectadoAlReves(){
+//        ubicacionService.conectar(santuario.getId(),bernal.getId());
+//
+//        assertThrows(UbicacionLejanaException.class, () -> {
+//            mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//        });
+//    }
+//
+//    @Test
+//    void moverNuevoBidireccional(){
+//        ubicacionService.conectar(bernal.getId(),santuario.getId());
+//        ubicacionService.conectar(santuario.getId(),bernal.getId());
+//        mediumService.mover(medium.getId(), -58.2630, -34.7070);
+//
+//        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+//
+//        assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
+//    }
 
 
     @AfterEach

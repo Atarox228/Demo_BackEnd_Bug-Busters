@@ -11,15 +11,14 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
+@Document("Espiritu")
 public class EspirituMongo {
 
     @Id
     private String id;
-    private Long espirituIdSQL;
     private GeoJsonPoint coordenada;
 
-    public EspirituMongo(String id, GeoJsonPoint coordenada) {
-        this.id = id;
-        this.coordenada = coordenada;
+    public EspirituMongo(Long id) {
+        this.id = id.toString();
     }
 }

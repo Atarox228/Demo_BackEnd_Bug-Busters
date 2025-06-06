@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -49,20 +50,22 @@ public class EspirituServiceTest {
     @BeforeEach
     void setUp(){
         List<Point> area1 = List.of(
-                new Point(-58.2730, -34.7210),
-                new Point(-58.2700, -34.7230),
-                new Point(-58.2680, -34.7200),
-                new Point(-58.2730, -34.7210)
+                new Point(-58, -34),
+                new Point(-56, -34),
+                new Point(-56, -30),
+                new Point(-58, -30),
+                new Point(-58, -34)
         );
-        GeoJsonPolygon areaBernal = new GeoJsonPolygon(area1);
+        areaBernal = new GeoJsonPolygon(area1);
 
         List<Point> area2 = List.of(
-                new Point(-58.2630, -34.7070),
-                new Point(-58.2600, -34.7090),
-                new Point(-58.2580, -34.7060),
-                new Point(-58.2630, -34.7070)
+                new Point(-48, -24),
+                new Point(-46, -24),
+                new Point(-46, -20),
+                new Point(-48, -20),
+                new Point(-48, -24)
         );
-        GeoJsonPolygon areaQuilmes = new GeoJsonPolygon(area2);
+        areaQuilmes = new GeoJsonPolygon(area2);
 
 
         Bernal = new Cementerio("Bernal", 100);
@@ -475,7 +478,7 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.recuperarTodos();
 
-        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId(git)).get();
         Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
@@ -522,6 +525,43 @@ public class EspirituServiceTest {
         return Optional.of(espiritu);
     }
 
+
+    @Test
+    void unEspirituSiendoDominadoPorOtro() {
+        Demonio domin = new Demonio("Dominador");
+        Demonio domini = new Demonio("Dominado");
+        domin.setUbicacion(Bernal);
+        domini.setUbicacion(Bernal);
+        espirituService.crear(domin);
+        espirituService.crear(domini);
+        espirituService.dominar(domin.getId(), domini.getId());
+        Espiritu dominador = espirituService.recuperar(domin.getId()).get();
+        Espiritu dominado = espirituService.recuperar(domini.getId()).get();
+        assertEquals(dominado.getDominante().getNombre(), dominador.getNombre());
+    }
+    // REALIZAR LOS DE EXCEPTION
+
+    @Test
+    void unEspirituQueriendoDominarPeroEstaLejos() {
+        Demonio domin = new Demonio("Dominador");
+        Demonio domini = new Demonio("Dominado");
+        domin.setUbicacion(Bernal);
+        domini.setUbicacion(Quilmes);
+        espirituService.crear(domin);
+        espirituService.crear(domini);
+        EspirituMongo dominador = espirituService.recuperarMongo(domin.getId()).get();
+        EspirituMongo dominado = espirituService.recuperarMongo(domini.getId()).get();
+        dominador.setCoordenada(new Point(-58,-34));
+        espirituService.dominar(domin.getId(), domini.getId());
+        Espiritu dominator = espirituService.recuperar(domin.getId()).get();
+        Espiritu dominated = espirituService.recuperar(domini.getId()).get();
+        assertEquals(dominated.getDominante().getNombre(), dominator.getNombre());
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroEstaMuyCerca() {
+
+    }
 
     @AfterEach
     void cleanUp() {

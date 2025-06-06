@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.*;
@@ -18,60 +19,60 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    private final EspirituDAO espirituDAO;
+    private final EspirituRepository espirituRepository;
     private final MediumDAO mediumDAO;
+    private final EspirituDAOMongo espirituDAOMongo;
 
-    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao) {
-        this.espirituDAO = espirituDAO;
+    public EspirituServiceImpl(EspirituRepository espirituRepository, MediumDAO mediumDao, EspirituDAOMongo espirituDAOMongo) {
+        this.espirituRepository = espirituRepository;
         this.mediumDAO = mediumDao;
+        this.espirituDAOMongo = espirituDAOMongo;
     }
 
 
     @Override
     public void crear(Espiritu espiritu) {
-        this.espirituDAO.save(espiritu);
+        espirituRepository.crear(espiritu);
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
         validacionesGenerales.revisarId(espirituId);
-        Espiritu espiritu = espirituDAO.findById(espirituId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
+        Espiritu espiritu = espirituRepository.recuperar(espirituId);
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         return Optional.of(espiritu);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return  espirituDAO.recuperarTodosNoEliminados();
+        return  espirituRepository.recuperarTodosNoEliminados();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
         validacionesGenerales.revisarId(espiritu.getId());
-        if (!espirituDAO.existsById(espiritu.getId())) {
+        if (!espirituRepository.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-        espirituDAO.save(espiritu);
+        espirituRepository.actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Espiritu espiritu) {
-        if (!espirituDAO.existsById(espiritu.getId())) {
+        if (!espirituRepository.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espiritu.setDeleted(true);
-        espirituDAO.save(espiritu);
+        espirituRepository.crear(espiritu);
     }
 
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
         validacionesGenerales.revisarId(espirituId);
         validacionesGenerales.revisarId(mediumId);
 
-        Espiritu espiritu = espirituDAO.findById(espirituId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
+        Espiritu espiritu = espirituRepository.recuperar(espirituId);
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         
@@ -93,7 +94,34 @@ public class EspirituServiceImpl implements EspirituService {
         }
         Sort.Direction direccionOrden = (direccion == Direccion.DESCENDENTE) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
-        return espirituDAO.findDemonios(pageable).getContent();
+        return espirituRepository.findDemonios(pageable).getContent();
     }
+
+    @Override
+    public void dominar(Long idDominante, Long idDominado) {
+        validacionesGenerales.revisarId(idDominante);
+        validacionesGenerales.revisarId(idDominado);
+        Espiritu dominante = espirituRepository.recuperar(idDominante);
+        Espiritu dominado = espirituRepository.recuperar(idDominado);
+
+        validacionesGenerales.revisarEntidadEliminado(dominante.getDeleted(),dominante);
+        validacionesGenerales.revisarEntidadEliminado(dominado.getDeleted(),dominado);
+
+        validacionesGenerales.revisarUbicacionNoNula(dominante.getUbicacion(),dominante,idDominante);
+        validacionesGenerales.revisarUbicacionNoNula(dominado.getUbicacion(),dominado,idDominado);
+
+        //Falta el requisito de la distancia
+
+        dominante.dominar(dominado);
+        espirituRepository.actualizar(dominado);
+    }
+
+    @Override
+    public Optional<EspirituMongo> recuperarMongo(Long id) {
+        return espirituRepository.recuperarMongo(id.toString());
+    }
+
+
+
 
 }

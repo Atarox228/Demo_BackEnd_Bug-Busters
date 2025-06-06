@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.service.dataService.impl;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
@@ -15,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataServiceImpl implements DataService {
 
     private final MediumDAO mediumDAO;
-    private final EspirituDAO espirituDAO;
+    private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
 
-    public DataServiceImpl (EspirituDAO espirituDAO, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
-        this.espirituDAO = espirituDAO;
+    public DataServiceImpl (EspirituRepository espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
+        this.espirituRepository = espirituRepository;
         this.mediumDAO = mediumDAO;
         this.ubicacionRepository = ubicacionRepository;
     }
 
     public void eliminarTodo(){
-            espirituDAO.deleteAll();
             mediumDAO.deleteAll();
             ubicacionRepository.eliminarTodos();
+            espirituRepository.eliminarTodos();
     }
 
     public void revisarId(Long id) {
