@@ -27,8 +27,8 @@ public class MediumMongo {
 
     public void moverseA(Point coordenada) {
         setCoordenada(coordenada);
-        for (EspirituMongo espiritu : espiritus) {
-            espiritu.setCoordenada(coordenada);
-        }
+//        for (EspirituMongo espiritu : espiritus) {
+//            espiritu.setCoordenada(coordenada);
+//        }
     }
 }
