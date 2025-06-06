@@ -478,7 +478,7 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.recuperarTodos();
 
-        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId(git)).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
         Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
