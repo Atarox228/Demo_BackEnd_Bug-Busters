@@ -143,6 +143,7 @@ public class MediumServiceImpl implements MediumService {
         validacionesGenerales.revisarId(mediumId);
         Medium medium = mediumRepository.recuperar(mediumId);
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
+
         MediumMongo mediumMongo = mediumRepository.recuperarPorIdSQL(mediumId);
 
         Point origen = mediumMongo.getCoordenada();

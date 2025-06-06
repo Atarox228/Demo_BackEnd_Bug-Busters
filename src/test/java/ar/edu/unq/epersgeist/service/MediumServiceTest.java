@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -38,7 +39,7 @@ public class MediumServiceTest {
     @Autowired
     private EspirituService espirituService;
     @Autowired
-    private MediumDAO mediumDAO;
+    private MediumRepository repository;
     private Medium medium;
     private Medium medium2;
     private GeneradorNumeros dado;
@@ -999,6 +1000,10 @@ public class MediumServiceTest {
         Espiritu demonio = espiritus.get(1);
         Espiritu angel = espiritus.get(0);
 
+        MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(santuario.getNombre(), ubicacionMongo.getNombre());
+
         assertEquals(2, espiritus.size());
         assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
         assertEquals(santuario.getNombre(), angel.getUbicacion().getNombre());
@@ -1025,6 +1030,10 @@ public class MediumServiceTest {
 
         Espiritu demonio = espiritus.get(1);
         Espiritu angel = espiritus.get(0);
+
+        MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(cementerio.getNombre(), ubicacionMongo.getNombre());
 
         assertEquals(2, espiritus.size());
         assertEquals(cementerio.getId(), actualizado.getUbicacion().getId());
@@ -1053,6 +1062,10 @@ public class MediumServiceTest {
         Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
 
+        MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(santuario.getNombre(), ubicacionMongo.getNombre());
+
         assertEquals(0, espiritusDespues.size());
 
         Espiritu demonioRecuperado = espirituService.recuperar(espiritu2.getId()).get();
@@ -1079,6 +1092,10 @@ public class MediumServiceTest {
 
         Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
+
+        MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(cementerio.getNombre(), ubicacionMongo.getNombre());
 
         assertEquals(0, espiritusDespues.size());
 
@@ -1124,6 +1141,25 @@ public class MediumServiceTest {
             mediumService.mover(medium2.getId(), 152.5, 55.5);
         });
     }
+
+    @Test
+    void movimientoDeMediumAUbicacionLejana() {
+        List<Point> area2 = List.of(
+                new Point(-59.1042, -34.5700),
+                new Point(-59.1012, -34.5720),
+                new Point(-59.0992, -34.5690),
+                new Point(-59.1042, -34.5700)
+        );
+        GeoJsonPolygon areaLujan = new GeoJsonPolygon(area2);
+        Ubicacion lujan = new Cementerio("Lujan", 50);
+        ubicacionService.crear(lujan, areaLujan);
+
+        assertThrows(UbicacionLejanaException.class,() -> {
+            mediumService.mover(medium2.getId(), -59.1042, -34.5700);
+        });
+    }
+
+
 
     @Test
     void exorcismoEnDiferentesUbicaciones(){
@@ -1283,11 +1319,9 @@ public class MediumServiceTest {
 
     public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
         dataService.revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
+        Medium medium = repository.recuperar(mediumId);
         return Optional.of(medium);
     }
-
 
     @Test
     void moverNuevo(){
