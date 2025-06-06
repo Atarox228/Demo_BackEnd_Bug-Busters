@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EspirituDAOMongo extends MongoRepository<EspirituMongo, String> {
 
@@ -20,8 +21,9 @@ public interface EspirituDAOMongo extends MongoRepository<EspirituMongo, String>
           $minDistance: ?2,
           $maxDistance: ?3
         }
-      }
+      },
+      '_id': ?4
     }
     """)
-    List<EspirituMongo> findEspirituEnRango(double x, double y, double i, double i1);
+    Optional<EspirituMongo> findEspirituEnRango(double x, double y, double i, double i1, String idDominador);
 }

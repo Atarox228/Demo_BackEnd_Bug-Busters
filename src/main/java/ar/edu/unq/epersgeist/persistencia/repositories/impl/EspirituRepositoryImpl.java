@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EspirituRepositoryImpl implements EspirituRepository {
@@ -78,9 +79,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         double y = dominated.getCoordenada().getY();
         double min = 2_000;
         double max = 5_000;
-        List<EspirituMongo> espiritusCercanos = espirituDAOMongo.findEspirituEnRango(x, y, min, max);
-        return espiritusCercanos.stream()
-                .anyMatch(e -> e.getId().equals(dominator.getId()));
+        Optional<EspirituMongo> espirituDominator = espirituDAOMongo.findEspirituEnRango(x, y, min, max, dominator.getId());
+        return !espirituDominator.isEmpty();
     }
 
 
