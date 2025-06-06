@@ -16,8 +16,7 @@ public interface EspirituService {
     void actualizar(Espiritu espiritu);
     Optional<Medium> conectar(Long espirituId, Long mediumId);
     List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina);
-
     void dominar(Long id, Long id1);
-
-    Optional<EspirituMongo> recuperarMongo(Long id);
+    EspirituMongo recuperarMongo(Long id);
+    void actualizarMongo(EspirituMongo dominado);
 }

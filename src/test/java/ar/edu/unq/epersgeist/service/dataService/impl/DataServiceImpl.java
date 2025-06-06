@@ -26,9 +26,10 @@ public class DataServiceImpl implements DataService {
     }
 
     public void eliminarTodo(){
+            espirituRepository.eliminarTodos();
             mediumDAO.deleteAll();
             ubicacionRepository.eliminarTodos();
-            espirituRepository.eliminarTodos();
+
     }
 
     public void revisarId(Long id) {

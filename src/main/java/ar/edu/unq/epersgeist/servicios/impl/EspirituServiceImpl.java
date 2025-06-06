@@ -44,6 +44,11 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
+    public EspirituMongo recuperarMongo(Long id) {
+        return espirituRepository.recuperarMongo(id.toString());
+    }
+
+    @Override
     public List<Espiritu> recuperarTodos() {
         return  espirituRepository.recuperarTodosNoEliminados();
     }
@@ -56,6 +61,11 @@ public class EspirituServiceImpl implements EspirituService {
         }
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espirituRepository.actualizar(espiritu);
+    }
+
+    @Override
+    public void actualizarMongo(EspirituMongo espiritu) {
+        espirituRepository.actualizarMongo(espiritu);
     }
 
     @Override
@@ -103,6 +113,8 @@ public class EspirituServiceImpl implements EspirituService {
         validacionesGenerales.revisarId(idDominado);
         Espiritu dominante = espirituRepository.recuperar(idDominante);
         Espiritu dominado = espirituRepository.recuperar(idDominado);
+        EspirituMongo dominator = espirituRepository.recuperarMongo(idDominante.toString());
+        EspirituMongo dominated = espirituRepository.recuperarMongo(idDominado.toString());
 
         validacionesGenerales.revisarEntidadEliminado(dominante.getDeleted(),dominante);
         validacionesGenerales.revisarEntidadEliminado(dominado.getDeleted(),dominado);
@@ -110,16 +122,14 @@ public class EspirituServiceImpl implements EspirituService {
         validacionesGenerales.revisarUbicacionNoNula(dominante.getUbicacion(),dominante,idDominante);
         validacionesGenerales.revisarUbicacionNoNula(dominado.getUbicacion(),dominado,idDominado);
 
-        //Falta el requisito de la distancia
-
+        if (!espirituRepository.estaEnRango(dominator, dominated)) {
+            throw new FueraDeRangoDistanciaException();
+        }
         dominante.dominar(dominado);
         espirituRepository.actualizar(dominado);
     }
 
-    @Override
-    public Optional<EspirituMongo> recuperarMongo(Long id) {
-        return espirituRepository.recuperarMongo(id.toString());
-    }
+
 
 
 

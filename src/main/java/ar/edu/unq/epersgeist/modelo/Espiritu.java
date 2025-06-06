@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.modelo;
 import java.io.Serializable;
 
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituMuyPoderosoException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituNoLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.NoSePuedeDominarException;
 import lombok.*;
@@ -67,7 +68,7 @@ public abstract class Espiritu implements Serializable {
     }
 
     public boolean estaLibre(){
-        return this.medium == null || this.dominante == null;
+        return this.medium == null && this.dominante == null;
     }
 
     public int getProbDefensa() {
@@ -109,8 +110,11 @@ public abstract class Espiritu implements Serializable {
     public abstract void aumentarConexionDeCementerio(Integer flujoEnergia);
 
     public void dominar(Espiritu dominado) {
-        if (!dominado.estaLibre() || dominado.getNivelConexion() >= 50) {
+        if (!dominado.estaLibre() ) {
             throw new EspirituNoLibreException(dominado);
+        }
+        if (dominado.getNivelConexion() >= 50) {
+            throw new EspirituMuyPoderosoException();
         }
         if (this.dominante != dominado && dominado.getDominante() == null)  {
             dominado.setDominante(this);

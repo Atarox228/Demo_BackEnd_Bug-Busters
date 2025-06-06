@@ -37,6 +37,11 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
+    public EspirituMongo recuperarMongo(String id) {
+        return espirituDAOMongo.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
+    }
+
+    @Override
     public List<Espiritu> recuperarTodosNoEliminados() {
         return espirituDAO.recuperarTodosNoEliminados();
     }
@@ -56,6 +61,10 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         espirituDAO.save(espiritu);
     }
 
+    @Override
+    public void actualizarMongo(EspirituMongo espiritu) {
+        espirituDAOMongo.save(espiritu);
+    }
 
     @Override
     public void eliminarTodos() {
@@ -64,7 +73,15 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public EspirituMongo recuperarMongo(String id) {
-        return espirituDAOMongo.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
+    public boolean estaEnRango(EspirituMongo dominator, EspirituMongo dominated) {
+        double x = dominated.getCoordenada().getX();
+        double y = dominated.getCoordenada().getY();
+        double min = 2_000;
+        double max = 5_000;
+        List<EspirituMongo> espiritusCercanos = espirituDAOMongo.findEspirituEnRango(x, y, min, max);
+        return espiritusCercanos.stream()
+                .anyMatch(e -> e.getId().equals(dominator.getId()));
     }
+
+
 }
