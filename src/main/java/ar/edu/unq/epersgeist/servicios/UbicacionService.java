@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.util.Collection;
@@ -12,6 +13,7 @@ public interface UbicacionService {
     void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Optional<Ubicacion> recuperar(Long ubicacionId);
     UbicacionNeo4J recuperarPorNombre(String nombre);
+    UbicacionMongo recuperarMongo(String nombre);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion,String nombreViejo);
     Collection<Ubicacion> recuperarTodos();
@@ -24,4 +26,5 @@ public interface UbicacionService {
     List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino);
     List<ClosenessResult> closenessOf(List<Long> ids);
     DegreeResult degreeOf(List<Long> ids, DegreeType type);
+    UbicacionMongo recuperarPorCoordenada(Point coordenada);
 }

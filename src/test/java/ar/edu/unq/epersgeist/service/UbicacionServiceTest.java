@@ -182,7 +182,27 @@ public class UbicacionServiceTest {
             ubicacionService.recuperarPorNombre("Juan Manuel");
         });
     }
-    
+
+    @Test
+    void recuperarUbicacionMongo() {
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarMongo(fellwood.getNombre());
+        assertEquals(fellwood.getNombre(), ubicacionMongo.getNombre());
+    }
+
+    @Test
+    void recuperarUbicacionMongoNoPersistida() {
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            ubicacionService.recuperarMongo("Juan Manuel");
+        });
+    }
+
+    @Test
+    void recuperarUbicacionMongoPorCoordenada() {
+        Point coordendada = new Point(-58.2730, -34.7210);
+        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(coordendada);
+        assertEquals(ashenvale.getNombre(), ubicacionMongo.getNombre());
+    }
+
     @Test
     void eliminarUbicacion(){
         Long idEliminado = fellwood.getId();

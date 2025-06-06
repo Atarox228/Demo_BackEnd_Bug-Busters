@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -21,16 +20,18 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public void crear(Medium medium){
-        MediumMongo mediumMongo = new MediumMongo(medium.getId());
-        mediumDAO.save(medium);
+        Medium mediumGuardado = mediumDAO.save(medium);
+        MediumMongo mediumMongo = new MediumMongo(mediumGuardado.getId());
         mediumDAOMongo.save(mediumMongo);
     }
 
     @Override
     public void actualizar(Medium medium) {
-        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(medium.getId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL " + medium.getId() + " no encontrada"));
         mediumDAO.save(medium);
+    }
+
+    @Override
+    public void actualizarMongo(MediumMongo mediumMongo) {
         mediumDAOMongo.save(mediumMongo);
     }
 
@@ -52,7 +53,6 @@ public class MediumRepositoryImpl implements MediumRepository {
         return mediumDAO.existsById(id);
     }
 
-
     @Override
     public Medium recuperar(long idMedium) {
         return mediumDAO.findById(idMedium)
@@ -73,5 +73,11 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public Collection<Medium> recuperarTodosNoEliminados() {
         return mediumDAO.recuperarTodosNoEliminados();
+    }
+
+    @Override
+    public MediumMongo recuperarCoordenada(Long idSQL) {
+        return mediumDAOMongo.recuperarSoloCoordenada(idSQL)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL" + idSQL + " no encontrada"));
     }
 }

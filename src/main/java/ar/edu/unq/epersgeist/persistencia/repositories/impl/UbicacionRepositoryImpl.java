@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
@@ -44,12 +45,19 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Ubicacion recupoerarPorNombre(String nombre) {
-        return ubicacionDAO.recuperarPorNombre(nombre);
+        return ubicacionDAO.recuperarPorNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
     @Override
     public UbicacionNeo4J findByNombre(String nombre) {
         return ubicacionDAONeo4J.findByNombre(nombre)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
+    }
+
+    @Override
+    public UbicacionMongo findByNombreMongo(String nombre) {
+        return ubicacionDAOMongo.findByNombreMongo(nombre)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
     }
 
@@ -146,19 +154,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public UbicacionMongo recuperarPorCoordenada(GeoJsonPoint coordenada) {
-        return ubicacionDAOMongo.recuperarPorCoordenada(coordenada)
+    public UbicacionMongo recuperarPorCoordenada(Point coordenada) {
+        GeoJsonPoint geoJsonPoint = new GeoJsonPoint(coordenada.getX(), coordenada.getY());
+        return ubicacionDAOMongo.recuperarPorCoordenada(geoJsonPoint)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación no encontrada"));
-    }
-
-    @Override
-    public Boolean estaDentroDelArea(String nombreUbicacion, GeoJsonPoint coordenadaDestino) {
-        return ubicacionDAOMongo.estaDentroDelArea(nombreUbicacion, coordenadaDestino).isPresent();
-    }
-
-    @Override
-    public Double distanciaEntre(GeoJsonPoint punto1, GeoJsonPoint punto2) {
-        return ubicacionDAOMongo.distanciaEntre(punto1, punto2)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Coordendada no encontrada"));
     }
 }

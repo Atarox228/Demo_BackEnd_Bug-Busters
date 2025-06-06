@@ -9,7 +9,6 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepos
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import jakarta.transaction.Transactional;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
@@ -19,74 +18,79 @@ import org.springframework.data.geo.Point;
 @Service
 @Transactional
 public class MediumServiceImpl implements MediumService {
-    public final MediumDAO mediumDAO;
-    public final MediumDAOMongo mediumDAOMongo;
     public final EspirituDAO espirituDAO;
     private final UbicacionRepository ubicacionRepository;
+    private final MediumRepository mediumRepository;
 
-    public MediumServiceImpl(MediumDAO mediumDAO, MediumDAOMongo mediumDAOMongo, EspirituDAO espirituDAO, UbicacionRepository ubicacionRepository) {
-        this.mediumDAO = mediumDAO;
-        this.mediumDAOMongo = mediumDAOMongo;
+    public MediumServiceImpl(MediumRepository mediumRepository, EspirituDAO espirituDAO, UbicacionRepository ubicacionRepository) {
         this.espirituDAO = espirituDAO;
         this.ubicacionRepository = ubicacionRepository;
+        this.mediumRepository = mediumRepository;
     }
 
     @Override
     public void crear(Medium medium) {
-        MediumMongo mediumMongo = new MediumMongo(medium.getId());
-        mediumDAO.save(medium);
-        //mediumDAOMongo.save(mediumMongo);
+        mediumRepository.crear(medium);
     }
 
     @Override
-    public Optional <Medium> recuperar(Long id) {
+    public Medium recuperar(Long id) {
         validacionesGenerales.revisarId(id);
-        Medium medium = mediumDAO.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + id + " no encontrado"));
+        Medium medium = mediumRepository.recuperar(id);
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
 
-        return Optional.of(medium);
+        return medium;
+    }
+
+    @Override
+    public MediumMongo recuperarMongo(Long id) {
+        return mediumRepository.recuperarPorIdSQL(id);
     }
 
     @Override
     public Collection<Medium> recuperarTodos() {
-        return mediumDAO.recuperarTodosNoEliminados();
+        return mediumRepository.recuperarTodosNoEliminados();
     }
 
     @Override
     public void eliminar(Medium medium) {
-        if (!mediumDAO.existsById(medium.getId())) {
+        if (!mediumRepository.existsById(medium.getId())) {
             throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         validacionesGenerales.revisarUbicacionConEntidades(medium,!espiritus(medium.getId()).isEmpty());
         medium.setDeleted(true);
-        mediumDAO.save(medium);
+        mediumRepository.actualizar(medium);
     }
 
     @Override
     public void eliminarTodo() {
-        mediumDAO.deleteAll();
+        mediumRepository.eliminarTodos();
     }
 
     @Override
     public void actualizar(Medium medium) {
         validacionesGenerales.revisarId(medium.getId());
-        if (!mediumDAO.existsById(medium.getId())) {
+        if (!mediumRepository.existsById(medium.getId())) {
             throw new RecursoNoEncontradoException("Medium con ID " + medium.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
-        mediumDAO.save(medium);
+        mediumRepository.actualizar(medium);
     }
+
+    @Override
+    public void actualizarMongo(MediumMongo medium) {
+        mediumRepository.actualizarMongo(medium);
+    }
+
+
 
     @Override
     public void exorcizar(long idMedium, long idMedium2) {
         validacionesGenerales.revisarId(idMedium);
         validacionesGenerales.revisarId(idMedium2);
-        Medium medium = mediumDAO.findById(idMedium)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + idMedium + " no encontrado"));
-        Medium medium2 = mediumDAO.findById(idMedium2)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + idMedium2 + " no encontrado"));
+        Medium medium = mediumRepository.recuperar(idMedium);
+        Medium medium2 = mediumRepository.recuperar(idMedium2);
 
         validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,idMedium);
         validacionesGenerales.revisarUbicacionNoNula(medium2.getUbicacion(),medium2,idMedium2);
@@ -94,8 +98,8 @@ public class MediumServiceImpl implements MediumService {
         List<Espiritu> angeles = espirituDAO.recuperarEspiritusDeTipo(medium.getId(), Angel.class);
         List<Espiritu> demonios = espirituDAO.recuperarEspiritusDeTipo(medium2.getId(), Demonio.class);
         medium.exorcizar(medium2, angeles, demonios);
-        mediumDAO.save(medium);
-        mediumDAO.save(medium2);
+        mediumRepository.actualizar(medium);
+        mediumRepository.actualizar(medium2);
     }
 
     @Override
@@ -103,62 +107,64 @@ public class MediumServiceImpl implements MediumService {
         validacionesGenerales.revisarId(mediumId);
         validacionesGenerales.revisarId(espirituId);
         
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
+        Medium medium = mediumRepository.recuperar(mediumId);
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrada"));
 
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-
         validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         
         medium.invocar(espiritu);
-        mediumDAO.save(medium);
+        mediumRepository.actualizar(medium);
         return espirituDAO.findById(espirituId);
     }
 
     @Override
     public List<Espiritu> espiritus(Long idMedium) {
         validacionesGenerales.revisarId(idMedium);
-        Medium medium = mediumDAO.findById(idMedium)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + idMedium + " no encontrada"));
+        Medium medium = mediumRepository.recuperar(idMedium);
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
-        return mediumDAO.obtenerEspiritus(idMedium);
+        return mediumRepository.obtenerEspiritus(idMedium);
     }
 
     @Override
     public void descansar(Long mediumId){
         validacionesGenerales.revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
+        Medium medium = mediumRepository.recuperar(mediumId);
         validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         medium.descansar();
-        mediumDAO.save(medium);
+        mediumRepository.actualizar(medium);
     }
 
     @Override
     public void mover(Long mediumId, Double latitud, Double longitud) {
+
         validacionesGenerales.revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrada"));
+        Medium medium = mediumRepository.recuperar(mediumId);
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
 
-        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID SQL " + mediumId + " no encontrada"));
+        MediumMongo mediumMongo = mediumRepository.recuperarPorIdSQL(mediumId);
 
-        GeoJsonPoint coordenadaDestino = new GeoJsonPoint(latitud, longitud);
-        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(coordenadaDestino);
+        Point origen = mediumMongo.getCoordenada();
+        Point destino = new Point(latitud, longitud);
+        double distancia = DistanciaGeografica.calcularDistancia(
+                origen.getY(), origen.getX(),
+                destino.getY(), destino.getX()
+        );
 
+        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(destino);
         Ubicacion ubicacion = ubicacionRepository.recupoerarPorNombre(ubicacionMongo.getNombre());
 
-        if (! ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre())
-                || ubicacionRepository.distanciaEntre(mediumMongo.getCoordenada(), coordenadaDestino) > 30) {
+        if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
+        if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre()) || distancia > 30000) {
             throw new UbicacionLejanaException();
         }
 
         medium.moverseA(ubicacion);
-        mediumMongo.moverseA(coordenadaDestino);
-        mediumDAO.save(medium);
+        mediumMongo.moverseA(destino);
+
+        mediumRepository.actualizar(medium);
+        mediumRepository.actualizarMongo(mediumMongo);
     }
 }

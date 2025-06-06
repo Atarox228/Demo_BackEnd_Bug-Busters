@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -49,6 +50,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public UbicacionMongo recuperarMongo(String nombre) {
+        return ubicacionRepository.findByNombreMongo(nombre);
+    }
+
+    @Override
     public UbicacionNeo4J recuperarPorNombre(String nombre) {
         return ubicacionRepository.findByNombre(nombre);
     }
@@ -74,7 +80,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
         ubicacionRepository.actualizar(ubicacion);
-
     }
 
     @Override
@@ -161,5 +166,10 @@ public class UbicacionServiceImpl implements UbicacionService {
         if (query == null) throw new sinResultadosException();
         DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
         return result;
+    }
+
+    @Override
+    public UbicacionMongo recuperarPorCoordenada(Point coordenada) {
+        return ubicacionRepository.recuperarPorCoordenada(coordenada);
     }
 }
