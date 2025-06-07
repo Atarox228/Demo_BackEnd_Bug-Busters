@@ -19,23 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    //private final EspirituRepository espirituRepository;
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
     private final CoordenadaDAOMongo coordenadaDAOMongo;
 
     public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDao, CoordenadaDAOMongo coordenadaDAOMongo) {
-        //this.espirituRepository = espirituRepository;
         this.espirituDAO = espirituDao;
         this.mediumDAO = mediumDao;
         this.coordenadaDAOMongo = coordenadaDAOMongo;
-        //this.espirituDAOMongo = espirituDAOMongo;
     }
 
 
     @Override
     public void crear(Espiritu espiritu) {
-        //espirituRepository.crear(espiritu);
         espirituDAO.save(espiritu);
     }
 
@@ -46,11 +42,6 @@ public class EspirituServiceImpl implements EspirituService {
         validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(),espiritu);
         return espiritu;
     }
-
-//    @Override
-//    public EspirituMongo recuperarMongo(Long id) {
-//        return espirituDAO.recuperarMongo(id.toString());
-//    }
 
     @Override
     public List<Espiritu> recuperarTodos() {
@@ -66,11 +57,6 @@ public class EspirituServiceImpl implements EspirituService {
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espirituDAO.save(espiritu);
     }
-
-//    @Override
-//    public void actualizarMongo(EspirituMongo espiritu) {
-//        espirituDAO.actualizarMongo(espiritu);
-//    }
 
     @Override
     public void eliminar(Espiritu espiritu) {
@@ -127,13 +113,11 @@ public class EspirituServiceImpl implements EspirituService {
             throw new RecursoNoEncontradoException();
         }
 
-        dominante.get().dominar(dominado.get());
-
         if (! this.estaEnRango(coordenadaDominante.get(), coordenadaDominado.get(), dominante.get())) {
             throw new FueraDeRangoDistanciaException();
         }
-        coordenadaDominado.get().setPunto(coordenadaDominante.get().getPunto());
-        coordenadaDAOMongo.save(coordenadaDominado.get());
+
+        dominante.get().dominar(dominado.get());
         espirituDAO.save(dominado.get());
     }
 

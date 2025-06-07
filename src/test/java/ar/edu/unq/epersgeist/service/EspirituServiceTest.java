@@ -630,24 +630,12 @@ public class EspirituServiceTest {
         espirituService.crear(Anabelle);
         espirituService.crear(Oni);
 
-//        Jinn.setMedium(medium);
-//        Anabelle.setMedium(medium2);
-//        espirituService.actualizar(Jinn);
-//        espirituService.actualizar(Anabelle);
-//
-//        mediumService.mover(medium.getId(), -33.7210,-57.2730);
-//        mediumService.mover(medium2.getId(), -33.7210,-57.2420);
-
-//        Anabelle.setMedium(null);
-//        espirituService.actualizar(Anabelle);
-
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
-        CoordenadaMongo coordenadaOni = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Oni.getTipo().toString(), Oni.getId());
+        CoordenadaMongo coordenadaOni = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Oni.getTipo().toString(), Oni.getId());
         coordenadaDAOMongo.save(coordenadaJinn);
         coordenadaDAOMongo.save(coordenadaAnabelle);
         coordenadaDAOMongo.save(coordenadaOni);
-
 
         espirituService.dominar(Jinn.getId(), Anabelle.getId());
 
@@ -704,7 +692,6 @@ public class EspirituServiceTest {
 
         coordenadaDAOMongo.save(coordenadaJinn);
         coordenadaDAOMongo.save(coordenadaAnabelle);
-
 
         espirituService.dominar(Jinn.getId(), Anabelle.getId());
 
