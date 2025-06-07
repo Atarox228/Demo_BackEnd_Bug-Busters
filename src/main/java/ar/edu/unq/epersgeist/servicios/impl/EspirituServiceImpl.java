@@ -19,80 +19,84 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    private final EspirituRepository espirituRepository;
+    //private final EspirituRepository espirituRepository;
     private final MediumDAO mediumDAO;
-    private final EspirituDAOMongo espirituDAOMongo;
+    private final EspirituDAO espirituDAO;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
 
-    public EspirituServiceImpl(EspirituRepository espirituRepository, MediumDAO mediumDao, EspirituDAOMongo espirituDAOMongo) {
-        this.espirituRepository = espirituRepository;
+    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDao, CoordenadaDAOMongo coordenadaDAOMongo) {
+        //this.espirituRepository = espirituRepository;
+        this.espirituDAO = espirituDao;
         this.mediumDAO = mediumDao;
-        this.espirituDAOMongo = espirituDAOMongo;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
+        //this.espirituDAOMongo = espirituDAOMongo;
     }
 
 
     @Override
     public void crear(Espiritu espiritu) {
-        espirituRepository.crear(espiritu);
+        //espirituRepository.crear(espiritu);
+        espirituDAO.save(espiritu);
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
         validacionesGenerales.revisarId(espirituId);
-        Espiritu espiritu = espirituRepository.recuperar(espirituId);
-        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-        return Optional.of(espiritu);
+        Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(),espiritu);
+        return espiritu;
     }
 
-    @Override
-    public EspirituMongo recuperarMongo(Long id) {
-        return espirituRepository.recuperarMongo(id.toString());
-    }
+//    @Override
+//    public EspirituMongo recuperarMongo(Long id) {
+//        return espirituDAO.recuperarMongo(id.toString());
+//    }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return  espirituRepository.recuperarTodosNoEliminados();
+        return  espirituDAO.recuperarTodosNoEliminados();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
         validacionesGenerales.revisarId(espiritu.getId());
-        if (!espirituRepository.existsById(espiritu.getId())) {
+        if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-        espirituRepository.actualizar(espiritu);
+        espirituDAO.save(espiritu);
     }
 
-    @Override
-    public void actualizarMongo(EspirituMongo espiritu) {
-        espirituRepository.actualizarMongo(espiritu);
-    }
+//    @Override
+//    public void actualizarMongo(EspirituMongo espiritu) {
+//        espirituDAO.actualizarMongo(espiritu);
+//    }
 
     @Override
     public void eliminar(Espiritu espiritu) {
-        if (!espirituRepository.existsById(espiritu.getId())) {
+        if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espiritu.setDeleted(true);
-        espirituRepository.crear(espiritu);
+        espirituDAO.save(espiritu);
     }
 
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
         validacionesGenerales.revisarId(espirituId);
         validacionesGenerales.revisarId(mediumId);
 
-        Espiritu espiritu = espirituRepository.recuperar(espirituId);
+        Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         
-        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(),espiritu);
         validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         
-        validacionesGenerales.revisarUbicacionNoNula(espiritu.getUbicacion(),espiritu,espirituId);
+        validacionesGenerales.revisarUbicacionNoNula(espiritu.get().getUbicacion(),espiritu,espirituId);
         validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         
-        medium.conectarseAEspiritu(espiritu);
+        medium.conectarseAEspiritu(espiritu.get());
         mediumDAO.save(medium);
         return mediumDAO.findById(mediumId);
     }
@@ -104,29 +108,53 @@ public class EspirituServiceImpl implements EspirituService {
         }
         Sort.Direction direccionOrden = (direccion == Direccion.DESCENDENTE) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
-        return espirituRepository.findDemonios(pageable).getContent();
+        return espirituDAO.findDemonios(pageable).getContent();
     }
 
     @Override
     public void dominar(Long idDominante, Long idDominado) {
         validacionesGenerales.revisarId(idDominante);
         validacionesGenerales.revisarId(idDominado);
-        Espiritu dominante = espirituRepository.recuperar(idDominante);
-        Espiritu dominado = espirituRepository.recuperar(idDominado);
+        Optional<Espiritu> dominante = espirituDAO.findById(idDominante);
+        Optional<Espiritu> dominado = espirituDAO.findById(idDominado);
 
-        validacionesGenerales.revisarEntidadEliminado(dominante.getDeleted(),dominante);
-        validacionesGenerales.revisarEntidadEliminado(dominado.getDeleted(),dominado);
+        Optional<CoordenadaMongo> coordenadaDominante = coordenadaDAOMongo.findByEntityIdAndEntityType(dominante.get().getId(), dominante.get().getTipo().toString());
+        Optional<CoordenadaMongo> coordenadaDominado = coordenadaDAOMongo.findByEntityIdAndEntityType(dominado.get().getId(), dominado.get().getTipo().toString());
+        validacionesGenerales.revisarEntidadEliminado(dominante.get().getDeleted(),dominante);
+        validacionesGenerales.revisarEntidadEliminado(dominado.get().getDeleted(),dominado);
 
-        if (!espirituRepository.estaEnRango(dominante, dominado)) {
+        if (coordenadaDominante.isEmpty() || coordenadaDominado.isEmpty()) {
+            throw new RecursoNoEncontradoException();
+        }
+
+        if (! this.estaEnRango(coordenadaDominante.get(), coordenadaDominado.get(), dominante.get())) {
             throw new FueraDeRangoDistanciaException();
         }
-        dominante.dominar(dominado);
-        espirituRepository.actualizar(dominado);
+        dominante.get().dominar(dominado.get());
+        coordenadaDominado.get().setPunto(coordenadaDominante.get().getPunto());
+        coordenadaDAOMongo.save(coordenadaDominado.get());
+        espirituDAO.save(dominado.get());
     }
 
+    private boolean estaEnRango(Espiritu dominator, Espiritu dominated) {
+        Optional<CoordenadaMongo> coordenadasDeEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(dominated.getId(), dominated.getClass().toString());
+        if (!coordenadasDeEspiritu.isPresent()) {
+            return true;   // Medio que es un miedo al booleano reeVER EN REFACTOR
+        }
+        Double latitud = coordenadasDeEspiritu.get().getLatitud();
+        Double longitud = coordenadasDeEspiritu.get().getLongitud();
+        Optional<EspirituMongo> espirituDominator = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
+        return !espirituDominator.isEmpty();
+    }
 
+    private boolean estaEnRango(CoordenadaMongo coordDominante, CoordenadaMongo coordDominado, Espiritu dominante) {
+        Double latitud = coordDominado.getLatitud();
+        Double longitud = coordDominado.getLongitud();
 
+        Optional<EspirituMongo> espirituEnRango = coordenadaDAOMongo.findEspirituEnRango(
+                longitud, latitud, dominante.getId(), dominante.getTipo().toString());
 
-
+        return espirituEnRango.isPresent();
+    }
 
 }
