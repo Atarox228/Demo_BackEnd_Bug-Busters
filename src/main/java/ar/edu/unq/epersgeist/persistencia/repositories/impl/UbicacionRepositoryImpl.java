@@ -122,7 +122,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<String> namesOf(List<Long> ids) {
-        return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
+        return ubicacionDAO.findNombresById(ids);
     }
 
     @Override

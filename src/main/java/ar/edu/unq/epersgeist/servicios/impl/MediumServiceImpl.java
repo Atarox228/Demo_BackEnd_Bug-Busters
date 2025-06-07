@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.Collection;

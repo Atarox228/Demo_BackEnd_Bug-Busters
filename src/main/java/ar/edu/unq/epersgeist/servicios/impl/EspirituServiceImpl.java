@@ -8,6 +8,8 @@ import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import java.util.List;
 import java.util.Optional;
+
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

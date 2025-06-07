@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -148,9 +149,8 @@ public class UbicacionServiceImpl implements UbicacionService {
     public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
         List<String> names = ubicacionRepository.namesOf(ids);
         DegreeQuery query = ubicacionRepository.DegreeOf(names, type);
-        double cantRelationships = ubicacionRepository.relationships();
         if (query == null) throw new sinResultadosException();
-        DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
+        DegreeResult result = new DegreeResult(query.node(), query.degree(), type);
         return result;
     }
 
