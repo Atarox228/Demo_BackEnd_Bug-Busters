@@ -13,7 +13,6 @@ public interface UbicacionService {
     void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Optional<Ubicacion> recuperar(Long ubicacionId);
     UbicacionNeo4J recuperarPorNombre(String nombre);
-    UbicacionMongo recuperarMongo(String nombre);
     void eliminar(Ubicacion ubicacion);
     void actualizar(Ubicacion ubicacion,String nombreViejo);
     Collection<Ubicacion> recuperarTodos();
@@ -26,5 +25,5 @@ public interface UbicacionService {
     List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino);
     List<ClosenessResult> closenessOf(List<Long> ids);
     DegreeResult degreeOf(List<Long> ids, DegreeType type);
-    UbicacionMongo recuperarPorCoordenada(Point coordenada);
+    AreaMongo recuperarPorCoordenada(Point coordenada);
 }

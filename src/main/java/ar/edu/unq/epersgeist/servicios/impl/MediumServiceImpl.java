@@ -153,8 +153,8 @@ public class MediumServiceImpl implements MediumService {
                 destino.getY(), destino.getX()
         );
 
-        UbicacionMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(destino);
-        Ubicacion ubicacion = ubicacionRepository.recupoerarPorNombre(ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionRepository.recuperarPorCoordenada(destino);
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionMongo.getIdUbicacion());
 
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacion.getId())) throw new MovimientoInvalidoException();
         if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion().getNombre(), ubicacion.getNombre()) || distancia > 30000) {

@@ -161,8 +161,8 @@ public class MediumServiceTest {
     void recuperarMediumMongo() {
         MediumMongo medium = mediumService.recuperarMongo(medium2.getId());
         assertEquals(medium2.getId(), medium.getMediumIdSQL());
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(medium.getCoordenada());
-        assertEquals(medium2.getUbicacion().getNombre(), ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(medium.getCoordenada());
+        assertEquals(medium2.getUbicacion().getId(), ubicacionMongo.getIdUbicacion());
     }
 
     @Test
@@ -1001,8 +1001,8 @@ public class MediumServiceTest {
         Espiritu angel = espiritus.get(0);
 
         MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
-        assertEquals(santuario.getNombre(), ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(2, espiritus.size());
         assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
@@ -1032,8 +1032,8 @@ public class MediumServiceTest {
         Espiritu angel = espiritus.get(0);
 
         MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
-        assertEquals(cementerio.getNombre(), ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(cementerio.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(2, espiritus.size());
         assertEquals(cementerio.getId(), actualizado.getUbicacion().getId());
@@ -1063,8 +1063,8 @@ public class MediumServiceTest {
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
 
         MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
-        assertEquals(santuario.getNombre(), ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(0, espiritusDespues.size());
 
@@ -1094,8 +1094,8 @@ public class MediumServiceTest {
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
 
         MediumMongo mediumMongo = mediumService.recuperarMongo(actualizado.getId());
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
-        assertEquals(cementerio.getNombre(), ubicacionMongo.getNombre());
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(mediumMongo.getCoordenada());
+        assertEquals(cementerio.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(0, espiritusDespues.size());
 

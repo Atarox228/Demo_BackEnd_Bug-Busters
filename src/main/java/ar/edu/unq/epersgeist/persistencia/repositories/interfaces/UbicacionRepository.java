@@ -13,7 +13,6 @@ public interface UbicacionRepository {
     Ubicacion recuperar(Long ubicacionId);
     Ubicacion recupoerarPorNombre (String nombre);
     UbicacionNeo4J findByNombre(String nombre);
-    UbicacionMongo findByNombreMongo(String nombre);
     void actualizar(Ubicacion ubicacion);
     void actualizarNeo4J(Ubicacion ubicacion,String nombreViejo);
     void eliminar(Ubicacion ubicacion);
@@ -29,6 +28,6 @@ public interface UbicacionRepository {
     double relationships();
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);
-    List<UbicacionMongo> recuperarPorInterseccion(GeoJsonPolygon area);
-    UbicacionMongo recuperarPorCoordenada(Point coordenada);
+    List<AreaMongo> recuperarPorInterseccion(GeoJsonPolygon poligono);
+    AreaMongo recuperarPorCoordenada(Point coordenada);
 }
