@@ -106,8 +106,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Boolean estanConectadasDirecta(String origen, String destino) {
-        return ubicacionDAONeo4J.estanConectadasDirecta(origen, destino);
+    public Boolean estanConectadasDirecta(Ubicacion origen, Ubicacion destino) {
+        return origen == null || ubicacionDAONeo4J.estanConectadasDirecta(origen.getNombre(), destino.getNombre());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public AreaMongo recuperarPorCoordenada(Point coordenada) {
+    public AreaMongo recuperarPorCoordenada(GeoJsonPoint coordenada) {
         GeoJsonPoint geoJsonPoint = new GeoJsonPoint(coordenada.getX(), coordenada.getY());
         return areaDAOMongo.recuperarPorCoordenada(geoJsonPoint)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación no encontrada"));

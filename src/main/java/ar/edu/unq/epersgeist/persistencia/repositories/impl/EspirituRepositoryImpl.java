@@ -1,13 +1,17 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.Angel;
+import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.EspirituMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,10 +22,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAO espirituDAO;
     private final EspirituDAOMongo espirituDAOMongo;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
 
-    public EspirituRepositoryImpl(EspirituDAO espirituDAO, EspirituDAOMongo espirituDAOMongo) {
+    public EspirituRepositoryImpl(EspirituDAO espirituDAO, EspirituDAOMongo espirituDAOMongo, CoordenadaDAOMongo coordenadaDAOMongo) {
         this.espirituDAO = espirituDAO;
         this.espirituDAOMongo = espirituDAOMongo;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
     }
 
     @Override
@@ -74,13 +80,35 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public boolean estaEnRango(EspirituMongo dominator, EspirituMongo dominated) {
-        double x = dominated.getCoordenada().getX();
-        double y = dominated.getCoordenada().getY();
-        double min = 2_000;
-        double max = 5_000;
-        Optional<EspirituMongo> espirituDominator = espirituDAOMongo.findEspirituEnRango(x, y, min, max, dominator.getId());
+    public boolean estaEnRango(Espiritu dominator, Espiritu dominated) {
+        Optional<CoordenadaMongo> coordenadasDeEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(dominated.getId(), dominated.getClass().toString());
+            if (!coordenadasDeEspiritu.isPresent()) {
+                return true;   // Medio que es un miedo al booleano reeVER EN REFACTOR
+            }
+        Double latitud = coordenadasDeEspiritu.get().getLatitud();
+        Double longitud = coordenadasDeEspiritu.get().getLongitud();
+        Optional<EspirituMongo> espirituDominator = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
         return !espirituDominator.isEmpty();
+    }
+
+    @Override
+    public void actualizarCoordenadasDe(List<Espiritu> espiritus, GeoJsonPoint destino) {
+        for (Espiritu espiritu : espiritus) {
+            Optional<CoordenadaMongo> coordenada = coordenadaDAOMongo.findByEntityIdAndEntityType(espiritu.getId(), espiritu.getClass().toString());
+            if (coordenada.isPresent()) {
+                CoordenadaMongo coordenadaMongo = coordenada.get();
+                coordenadaMongo.setPunto(destino);
+                coordenadaDAOMongo.save(coordenadaMongo);
+            } else {
+                CoordenadaMongo coordenadaNueva = new CoordenadaMongo(destino, espiritu.getClass().toString(), espiritu.getId());
+                coordenadaDAOMongo.save(coordenadaNueva);
+            }
+        }
+    }
+
+    @Override
+    public List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipo) {
+        return espirituDAO.recuperarEspiritusDeTipo(id, tipo);
     }
 
 

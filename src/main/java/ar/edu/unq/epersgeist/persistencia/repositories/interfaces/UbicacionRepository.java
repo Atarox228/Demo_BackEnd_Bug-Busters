@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.Collection;
 import java.util.List;
@@ -22,12 +23,12 @@ public interface UbicacionRepository {
     Ubicacion existeUbicacionConNombre(String nombre);
     void conectarUbicaciones(String origen, String destino);
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
-    Boolean estanConectadasDirecta(String origen, String destino);
+    Boolean estanConectadasDirecta(Ubicacion origen, Ubicacion destino);
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
     ClosenessResult definirCentralidad(String nombre);
     double relationships();
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);
     List<AreaMongo> recuperarPorInterseccion(GeoJsonPolygon poligono);
-    AreaMongo recuperarPorCoordenada(Point coordenada);
+    AreaMongo recuperarPorCoordenada(GeoJsonPoint coordenada);
 }

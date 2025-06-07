@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.service.dataService.impl;
 
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAOMongo;
@@ -18,17 +19,20 @@ public class DataServiceImpl implements DataService {
     private final MediumDAO mediumDAO;
     private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
 
-    public DataServiceImpl (EspirituRepository espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
+    public DataServiceImpl (EspirituRepository espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository, CoordenadaDAOMongo coordenadaDAOMongo) {
         this.espirituRepository = espirituRepository;
         this.mediumDAO = mediumDAO;
         this.ubicacionRepository = ubicacionRepository;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
     }
 
     public void eliminarTodo(){
             espirituRepository.eliminarTodos();
             mediumDAO.deleteAll();
             ubicacionRepository.eliminarTodos();
+            coordenadaDAOMongo.deleteAll();
 
     }
 

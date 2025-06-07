@@ -10,6 +10,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepos
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -122,7 +123,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         validacionesGenerales.revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
+        return ubicacionRepository.estanConectadasDirecta(ubi1, ubi2);
     }
 
     @Override
@@ -164,7 +165,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public AreaMongo recuperarPorCoordenada(Point coordenada) {
+    public AreaMongo recuperarPorCoordenada(GeoJsonPoint coordenada) {
         return ubicacionRepository.recuperarPorCoordenada(coordenada);
     }
 }

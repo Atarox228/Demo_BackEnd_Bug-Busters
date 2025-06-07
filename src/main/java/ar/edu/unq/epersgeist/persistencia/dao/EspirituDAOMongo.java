@@ -16,14 +16,14 @@ public interface EspirituDAOMongo extends MongoRepository<EspirituMongo, String>
         $near: {
           $geometry: {
             type: 'Point',
-            coordinates: [?0, ?1]
+            coordinates: [?1, ?0]
           },
-          $minDistance: ?2,
-          $maxDistance: ?3
+          $minDistance: 2000,
+          $maxDistance: 5000
         }
       },
       '_id': ?4
     }
     """)
-    Optional<EspirituMongo> findEspirituEnRango(double x, double y, double i, double i1, String idDominador);
+    Optional<EspirituMongo> findEspirituEnRango(double latitud, double longitud, Long idDominador);
 }

@@ -7,15 +7,22 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@ToString
 @Setter
 @Getter
-@ToString
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+
 @Document("Coordenada")
 public class CoordenadaMongo {
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+
     @Id
     private String id;
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint punto;
+
     private String entityType;
     private Long entityId;
 
@@ -25,11 +32,13 @@ public class CoordenadaMongo {
         this.entityId = entityId;
     }
 
+    public double getLongitud() {
+        return this.punto.getX();
+    }
+
     public double getLatitud() {
         return this.punto.getY();
     }
 
-    public double getLongitud() {
-        return this.punto.getX();
-    }
+
 }
