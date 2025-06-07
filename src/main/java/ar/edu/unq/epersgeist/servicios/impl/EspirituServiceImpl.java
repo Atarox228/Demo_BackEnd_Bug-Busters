@@ -127,24 +127,14 @@ public class EspirituServiceImpl implements EspirituService {
             throw new RecursoNoEncontradoException();
         }
 
+        dominante.get().dominar(dominado.get());
+
         if (! this.estaEnRango(coordenadaDominante.get(), coordenadaDominado.get(), dominante.get())) {
             throw new FueraDeRangoDistanciaException();
         }
-        dominante.get().dominar(dominado.get());
         coordenadaDominado.get().setPunto(coordenadaDominante.get().getPunto());
         coordenadaDAOMongo.save(coordenadaDominado.get());
         espirituDAO.save(dominado.get());
-    }
-
-    private boolean estaEnRango(Espiritu dominator, Espiritu dominated) {
-        Optional<CoordenadaMongo> coordenadasDeEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(dominated.getId(), dominated.getClass().toString());
-        if (!coordenadasDeEspiritu.isPresent()) {
-            return true;   // Medio que es un miedo al booleano reeVER EN REFACTOR
-        }
-        Double latitud = coordenadasDeEspiritu.get().getLatitud();
-        Double longitud = coordenadasDeEspiritu.get().getLongitud();
-        Optional<EspirituMongo> espirituDominator = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
-        return !espirituDominator.isEmpty();
     }
 
     private boolean estaEnRango(CoordenadaMongo coordDominante, CoordenadaMongo coordDominado, Espiritu dominante) {
