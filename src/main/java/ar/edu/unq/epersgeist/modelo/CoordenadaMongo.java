@@ -19,8 +19,10 @@ public class CoordenadaMongo {
     private String entityType;
     private Long entityId;
 
-    public CoordenadaMongo(double latitud, double longitud) {
-        this.punto = new GeoJsonPoint(longitud, latitud);
+    public CoordenadaMongo(GeoJsonPoint punto, String entityType, Long entityId) {
+        this.punto = punto;
+        this.entityType = entityType;
+        this.entityId = entityId;
     }
 
     public double getLatitud() {
