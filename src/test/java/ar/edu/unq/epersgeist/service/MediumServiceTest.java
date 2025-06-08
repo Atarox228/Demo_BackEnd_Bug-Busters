@@ -1016,6 +1016,19 @@ public class MediumServiceTest {
         });
     }
 
+
+    @Test
+    void invocarExitosaPorMenosDe50Km() {
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), medium.getClass().toString(), medium.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-58.2680, -34.7200), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaDAOMongo.save(coordenadaMedium);
+        coordenadaDAOMongo.save(coordenadaEspiritu);
+        Espiritu espirituInvocado =  mediumService.invocar(medium.getId(),espiritu.getId());
+        assertEquals(medium.getUbicacion().getId(), espirituInvocado.getUbicacion().getId());
+        Optional<CoordenadaMongo> coordenadaNuevaEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(espiritu.getId(), espiritu.getTipo().toString());
+        assertEquals(coordenadaMedium.getPunto(), coordenadaNuevaEspiritu.get().getPunto());
+    }
+
     @Test
     void invocarFallidaPorMasDe50Km() {
         CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210, -57.2730), medium.getClass().toString(), medium.getId());
@@ -1027,6 +1040,8 @@ public class MediumServiceTest {
             mediumService.invocar(medium.getId(), espiritu.getId());
         });
     }
+
+
 
     @Test
     void espiritusDeMedium(){

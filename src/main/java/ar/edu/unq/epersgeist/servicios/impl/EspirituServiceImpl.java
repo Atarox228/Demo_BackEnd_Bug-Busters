@@ -68,6 +68,7 @@ public class EspirituServiceImpl implements EspirituService {
         espirituDAO.save(espiritu);
     }
 
+    @Override
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
         validacionesGenerales.revisarId(espirituId);
         validacionesGenerales.revisarId(mediumId);
