@@ -2,17 +2,17 @@ package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
 import ar.edu.unq.epersgeist.modelo.EspirituMongo;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.MediumMongo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, String> {
 
-
     Optional<CoordenadaMongo> findByEntityIdAndEntityType(Long entityId, String entityType);
+    Optional<CoordenadaMongo> findByEntityTypeAndEntityId(String entityType, Long entityId);
+    List<CoordenadaMongo> findByEntityTypeAndEntityIdIn(String entityType, List<Long> entityIds);
 
     @Query("""
     {

@@ -92,24 +92,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public void actualizarCoordenadasDe(List<Espiritu> espiritus, GeoJsonPoint destino) {
-        for (Espiritu espiritu : espiritus) {
-            Optional<CoordenadaMongo> coordenada = coordenadaDAOMongo.findByEntityIdAndEntityType(espiritu.getId(), espiritu.getClass().toString());
-            if (coordenada.isPresent()) {
-                CoordenadaMongo coordenadaMongo = coordenada.get();
-                coordenadaMongo.setPunto(destino);
-                coordenadaDAOMongo.save(coordenadaMongo);
-            } else {
-                CoordenadaMongo coordenadaNueva = new CoordenadaMongo(destino, espiritu.getClass().toString(), espiritu.getId());
-                coordenadaDAOMongo.save(coordenadaNueva);
-            }
-        }
-    }
-
-    @Override
     public List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipo) {
         return espirituDAO.recuperarEspiritusDeTipo(id, tipo);
     }
-
-
 }

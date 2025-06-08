@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.servicios.exception.*;
@@ -41,6 +42,8 @@ public class MediumServiceTest {
     private EspirituService espirituService;
     @Autowired
     private MediumRepository repository;
+    @Autowired
+    private CoordenadaDAOMongo coordenadaDAO;
     private Medium medium;
     private Medium medium2;
     private GeneradorNumeros dado;
@@ -1282,7 +1285,6 @@ public class MediumServiceTest {
         });
         assertTrue(mediumBorrado.getDeleted());
         assertEquals(todos.size(),1);
-
     }
 
     @Test
@@ -1348,10 +1350,28 @@ public class MediumServiceTest {
         assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
     }
 
+    @Test
+    void moverMongo() {
+        CoordenadaMongo coordenadaMongo = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "MEDIUM", medium.getId());
+        coordenadaDAO.save(coordenadaMongo);
+
+        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
+        ubicacionService.conectar(bernal.getId(), santuario.getId());
+
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.2630, -34.7070));
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
+
+        CoordenadaMongo coordenadaActualizadaMedium = coordenadaDAO.findByEntityIdAndEntityType(medium.getId(), "MEDIUM").get();
+        assertEquals(-58.2630, coordenadaActualizadaMedium.getLongitud());
+        assertEquals(-34.7070, coordenadaActualizadaMedium.getLatitud());
+    }
 
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
+        coordenadaDAO.deleteAll();
         dado.setModo(new ModoRandom());
     }
 }

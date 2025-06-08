@@ -22,6 +22,5 @@ public interface EspirituRepository {
     void actualizarMongo(EspirituMongo espiritu);
     void eliminarTodos();
     boolean estaEnRango(Espiritu dominator, Espiritu dominated);
-    void actualizarCoordenadasDe(List<Espiritu> espiritus, GeoJsonPoint destino);
     List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipo);
 }
