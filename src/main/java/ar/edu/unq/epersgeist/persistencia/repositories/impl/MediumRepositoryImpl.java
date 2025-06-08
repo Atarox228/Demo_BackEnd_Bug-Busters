@@ -6,23 +6,24 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumReposito
 import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MediumRepositoryImpl implements MediumRepository {
 
     private final MediumDAO mediumDAO;
-    private final MediumDAOMongo mediumDAOMongo;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
+    private final EspirituRepositoryImpl espirituRepositoryImpl;
 
-    public MediumRepositoryImpl(MediumDAO mediumDAO, MediumDAOMongo mediumDAOMongo) {
+    public MediumRepositoryImpl(MediumDAO mediumDAO, CoordenadaDAOMongo coordenadaDAOMongo, EspirituRepositoryImpl espirituRepositoryImpl) {
         this.mediumDAO = mediumDAO;
-        this.mediumDAOMongo = mediumDAOMongo;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
+        this.espirituRepositoryImpl = espirituRepositoryImpl;
     }
 
     @Override
     public void crear(Medium medium){
-        Medium mediumGuardado = mediumDAO.save(medium);
-        MediumMongo mediumMongo = new MediumMongo(mediumGuardado.getId());
-        mediumDAOMongo.save(mediumMongo);
+        mediumDAO.save(medium);
     }
 
     @Override
@@ -30,22 +31,16 @@ public class MediumRepositoryImpl implements MediumRepository {
         mediumDAO.save(medium);
     }
 
-    @Override
-    public void actualizarMongo(MediumMongo mediumMongo) {
-        mediumDAOMongo.save(mediumMongo);
-    }
-
-    @Override
-    public void eliminar(Medium medium) {
-        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(medium.getId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL " + medium.getId() + " no encontrada"));
-        mediumDAOMongo.delete(mediumMongo);
-    }
+//    @Override
+//    public void eliminar(Medium medium) {
+//        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(medium.getId())
+//                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL " + medium.getId() + " no encontrada"));
+//        mediumDAOMongo.delete(mediumMongo);
+//    }
 
     @Override
     public void eliminarTodos() {
         mediumDAO.deleteAll();
-        mediumDAOMongo.deleteAll();
     }
 
     @Override
@@ -60,12 +55,6 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     @Override
-    public MediumMongo recuperarPorIdSQL(Long idMedium) {
-        return mediumDAOMongo.findByMediumIdSQL(idMedium)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL" + idMedium + " no encontrada"));
-    }
-
-    @Override
     public List<Espiritu> obtenerEspiritus(Long mediumId) {
         return mediumDAO.obtenerEspiritus(mediumId);
     }
@@ -75,9 +64,10 @@ public class MediumRepositoryImpl implements MediumRepository {
         return mediumDAO.recuperarTodosNoEliminados();
     }
 
+
     @Override
-    public MediumMongo recuperarCoordenada(Long idSQL) {
-        return mediumDAOMongo.recuperarSoloCoordenada(idSQL)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL" + idSQL + " no encontrada"));
+    public boolean estaEnRango30KM(Long id, Double longitud, Double latitud) {
+        Optional<CoordenadaMongo> coordenadasDeMedium = coordenadaDAOMongo.findCercana("MEDIUM", id, longitud,  latitud, 30000D);
+        return !coordenadasDeMedium.isEmpty();
     }
 }

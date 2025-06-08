@@ -56,8 +56,4 @@ public record UbicacionDTO(
             case CEMENTERIO -> new Cementerio(nombre, flujoDeEnergia);
         };
     }
-
-    public UbicacionMongo aMongo(){
-        return new UbicacionMongo(nombre, tipoDeUbicacion ,flujoDeEnergia, area);
-    }
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -184,23 +185,10 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void recuperarUbicacionMongo() {
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarMongo(fellwood.getNombre());
-        assertEquals(fellwood.getNombre(), ubicacionMongo.getNombre());
-    }
-
-    @Test
-    void recuperarUbicacionMongoNoPersistida() {
-        assertThrows(RecursoNoEncontradoException.class, () -> {
-            ubicacionService.recuperarMongo("Juan Manuel");
-        });
-    }
-
-    @Test
     void recuperarUbicacionMongoPorCoordenada() {
-        Point coordendada = new Point(-58.2730, -34.7210);
-        UbicacionMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(coordendada);
-        assertEquals(ashenvale.getNombre(), ubicacionMongo.getNombre());
+        GeoJsonPoint coordendada = new GeoJsonPoint(-58.2730, -34.7210);
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(coordendada);
+        assertEquals(ashenvale.getId(), ubicacionMongo.getIdUbicacion());
     }
 
     @Test

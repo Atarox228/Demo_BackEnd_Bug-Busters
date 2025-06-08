@@ -37,11 +37,6 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     """)
     boolean estanConectadasDirecta(@Param("origen") String origen, @Param("destino") String destino);
 
-    //    @Query("""
-    //         MATCH (u:Ubicacion)
-    //         WHERE u.flujoEnergia > $umbralDeEnergia
-    //         RETURN u
-    //    """)
     @Query("""
          MATCH (u:Ubicacion)
          WHERE u.flujoEnergia > $umbralDeEnergia

@@ -1,10 +1,11 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.EspirituMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,29 +18,22 @@ import java.util.Optional;
 public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAO espirituDAO;
-    private final EspirituDAOMongo espirituDAOMongo;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
 
-    public EspirituRepositoryImpl(EspirituDAO espirituDAO, EspirituDAOMongo espirituDAOMongo) {
+    public EspirituRepositoryImpl(EspirituDAO espirituDAO, CoordenadaDAOMongo coordenadaDAOMongo) {
         this.espirituDAO = espirituDAO;
-        this.espirituDAOMongo = espirituDAOMongo;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
     }
 
     @Override
     public void crear(Espiritu espiritu) {
         espirituDAO.save(espiritu);
-        EspirituMongo mongo = new EspirituMongo(espiritu.getId());
-        espirituDAOMongo.save(mongo);
     }
 
     @Override
     public Espiritu recuperar(Long espirituId) {
         return espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrada"));
-    }
-
-    @Override
-    public EspirituMongo recuperarMongo(String id) {
-        return espirituDAOMongo.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + id + " no encontrada"));
     }
 
     @Override
@@ -63,25 +57,24 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public void actualizarMongo(EspirituMongo espiritu) {
-        espirituDAOMongo.save(espiritu);
-    }
-
-    @Override
     public void eliminarTodos() {
         espirituDAO.deleteAll();
-        espirituDAOMongo.deleteAll();
     }
 
     @Override
-    public boolean estaEnRango(EspirituMongo dominator, EspirituMongo dominated) {
-        double x = dominated.getCoordenada().getX();
-        double y = dominated.getCoordenada().getY();
-        double min = 2_000;
-        double max = 5_000;
-        Optional<EspirituMongo> espirituDominator = espirituDAOMongo.findEspirituEnRango(x, y, min, max, dominator.getId());
+    public boolean estaEnRango(Espiritu dominator, Espiritu dominated) {
+        Optional<CoordenadaMongo> coordenadasDeEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(dominated.getId(), dominated.getClass().toString());
+            if (!coordenadasDeEspiritu.isPresent()) {
+                return true;   // Medio que es un miedo al booleano reeVER EN REFACTOR
+            }
+        Double latitud = coordenadasDeEspiritu.get().getLatitud();
+        Double longitud = coordenadasDeEspiritu.get().getLongitud();
+        Optional<EspirituMongo> espirituDominator = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
         return !espirituDominator.isEmpty();
     }
 
-
+    @Override
+    public List<Espiritu> recuperarEspiritusDeTipo(Long id, Class<? extends Espiritu> tipo) {
+        return espirituDAO.recuperarEspiritusDeTipo(id, tipo);
+    }
 }
