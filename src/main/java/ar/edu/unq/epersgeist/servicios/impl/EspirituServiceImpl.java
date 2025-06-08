@@ -113,7 +113,7 @@ public class EspirituServiceImpl implements EspirituService {
             throw new RecursoNoEncontradoException();
         }
 
-        if (! this.estaEnRango(coordenadaDominante.get(), coordenadaDominado.get(), dominante.get())) {
+        if (! this.estaEnRango(coordenadaDominado.get(), dominante.get())) {
             throw new FueraDeRangoDistanciaException();
         }
 
@@ -121,14 +121,14 @@ public class EspirituServiceImpl implements EspirituService {
         espirituDAO.save(dominado.get());
     }
 
-    private boolean estaEnRango(CoordenadaMongo coordDominante, CoordenadaMongo coordDominado, Espiritu dominante) {
+    private boolean estaEnRango(CoordenadaMongo coordDominado, Espiritu dominante) {
         Double latitud = coordDominado.getLatitud();
         Double longitud = coordDominado.getLongitud();
 
-        Optional<EspirituMongo> espirituEnRango = coordenadaDAOMongo.findEspirituEnRango(
+        Optional<CoordenadaMongo> coordenadaEspiritu = coordenadaDAOMongo.findEspirituEnRango(
                 longitud, latitud, dominante.getId(), dominante.getTipo().toString());
 
-        return espirituEnRango.isPresent();
+        return coordenadaEspiritu.isPresent();
     }
 
 }

@@ -125,7 +125,7 @@ public class MediumServiceImpl implements MediumService {
             throw new RecursoNoEncontradoException();
         }
 
-        if (! this.estaEnRango(coordenadaMedium.get(), coordenadaEspiritu.get(), medium)) {
+        if (! this.estaEnRango(coordenadaEspiritu.get(), medium)) {
             throw new FueraDeRangoDistanciaException();
         }
 
@@ -137,14 +137,14 @@ public class MediumServiceImpl implements MediumService {
         return espirituDAO.findById(espirituId).get();
     }
 
-    private boolean estaEnRango(CoordenadaMongo coordenadaMedium, CoordenadaMongo coordenadaEspiritu, Medium medium) {
+    private boolean estaEnRango(CoordenadaMongo coordenadaEspiritu, Medium medium) {
         Double latitud = coordenadaEspiritu.getLatitud();
         Double longitud = coordenadaEspiritu.getLongitud();
 
-        Optional<EspirituMongo> espirituEnRango = coordenadaDAOMongo.findEspirituEnRangoInvocar(
+        Optional<CoordenadaMongo> coordenadaEnRango = coordenadaDAOMongo.findCoordenadaEnRangoInvocar(
                 longitud, latitud, medium.getId(), medium.getClass().toString());
 
-        return espirituEnRango.isPresent();
+        return coordenadaEnRango.isPresent();
     }
 
     @Override

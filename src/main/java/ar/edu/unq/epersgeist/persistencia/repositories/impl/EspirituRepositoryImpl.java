@@ -87,8 +87,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
             }
         Double latitud = coordenadasDeEspiritu.get().getLatitud();
         Double longitud = coordenadasDeEspiritu.get().getLongitud();
-        Optional<EspirituMongo> espirituDominator = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
-        return !espirituDominator.isEmpty();
+        Optional<CoordenadaMongo> coordenadEspiritu = coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, dominator.getId(), dominated.getClass().toString());
+        return !coordenadEspiritu.isEmpty();
     }
 
     @Override

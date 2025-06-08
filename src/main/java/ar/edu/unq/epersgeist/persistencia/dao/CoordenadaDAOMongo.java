@@ -47,7 +47,7 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
       'entityType': ?3
     }
     """)
-    Optional<EspirituMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
+    Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
 
     @Query("""
     {
@@ -64,5 +64,5 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
       'entityType': ?3
     }
     """)
-    Optional<EspirituMongo> findEspirituEnRangoInvocar(Double longitud, Double latitud, Long id, String entityType);
+    Optional<CoordenadaMongo> findCoordenadaEnRangoInvocar(Double longitud, Double latitud, Long id, String entityType);
 }
