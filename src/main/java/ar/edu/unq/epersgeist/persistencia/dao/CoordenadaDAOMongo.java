@@ -48,4 +48,21 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
     }
     """)
     Optional<EspirituMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
+
+    @Query("""
+    {
+      'punto': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [?0, ?1]
+          },
+          $maxDistance: 50000
+        }
+      },
+      'entityId': ?2,
+      'entityType': ?3
+    }
+    """)
+    Optional<EspirituMongo> findEspirituEnRangoInvocar(Double longitud, Double latitud, Long id, String entityType);
 }
