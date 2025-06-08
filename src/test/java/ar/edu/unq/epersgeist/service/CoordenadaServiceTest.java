@@ -7,11 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.test.annotation.DirtiesContext;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -31,34 +28,61 @@ public class CoordenadaServiceTest {
     @BeforeEach
     void setup() {
         coordenadaDAO.deleteAll();
-        coord1 = new CoordenadaMongo(new GeoJsonPoint(-58.0, -34.5), "MEDIUM", 1L);
-        coord2 = new CoordenadaMongo(new GeoJsonPoint(-58.5, -34.6), "MEDIUM", 2L);
+        coord1 = new CoordenadaMongo(new GeoJsonPoint(-58.0, -34.5), "ESPIRITU", 1L);
+        coord2 = new CoordenadaMongo(new GeoJsonPoint(-58.5, -34.6), "ESPIRITU", 2L);
         coordenadaDAO.saveAll(List.of(coord1, coord2));
     }
 
     @Test
-    void testActualizarCoordenadas() {
+    void testActualizarCoordenadasExistentes() {
         GeoJsonPoint nuevoPunto = new GeoJsonPoint(-59.0, -35.0);
         List<Long> ids = Arrays.asList(1L, 2L);
 
-        List<CoordenadaMongo> antes = coordenadaDAO.findByEntityTypeAndEntityIdIn("MEDIUM", ids);
+        List<CoordenadaMongo> antes = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
         assertThat(antes).hasSize(2);
         assertThat(antes).extracting("punto").doesNotContain(nuevoPunto);
 
-        coordenadaService.actualizarCoordenadas("MEDIUM", ids, nuevoPunto);
+        coordenadaService.actualizarCoordenadas("ESPIRITU", ids, nuevoPunto);
 
-        List<CoordenadaMongo> despues = coordenadaDAO.findByEntityTypeAndEntityIdIn("MEDIUM", ids);
+        List<CoordenadaMongo> despues = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
         assertThat(despues).hasSize(2);
         assertThat(despues).extracting("punto").allMatch(p -> p.equals(nuevoPunto));
     }
 
     @Test
-    void testActualizarCoordenada() {
+    void testActualizarCoordenadasCreaUnaNueva() {
+        GeoJsonPoint nuevoPunto = new GeoJsonPoint(-59.0, -35.0);
+        List<Long> ids = Arrays.asList(3L, 5L);
+
+        List<CoordenadaMongo> antes = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
+        assertThat(antes).hasSize(0);
+        assertThat(antes).extracting("punto").doesNotContain(nuevoPunto);
+
+        coordenadaService.actualizarCoordenadas("ESPIRITU", ids, nuevoPunto);
+
+        List<CoordenadaMongo> despues = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
+        assertThat(despues).hasSize(2);
+        assertThat(despues).extracting("punto").allMatch(p -> p.equals(nuevoPunto));
+    }
+
+    @Test
+    void testActualizarCoordenadaExistente() {
         GeoJsonPoint nuevoPunto = new GeoJsonPoint(-60.0, -35.0);
 
         coordenadaService.actualizarCoordenada("MEDIUM", 1L, nuevoPunto);
 
         Optional<CoordenadaMongo> actualizada = coordenadaDAO.findByEntityTypeAndEntityId("MEDIUM", 1L);
+        assertThat(actualizada).isPresent();
+        assertThat(actualizada.get().getPunto()).isEqualTo(nuevoPunto);
+    }
+
+    @Test
+    void testActualizarCoordenadaCreaUnaNueva() {
+        GeoJsonPoint nuevoPunto = new GeoJsonPoint(-60.0, -35.0);
+
+        coordenadaService.actualizarCoordenada("MEDIUM", 55L, nuevoPunto);
+
+        Optional<CoordenadaMongo> actualizada = coordenadaDAO.findByEntityTypeAndEntityId("MEDIUM", 55L);
         assertThat(actualizada).isPresent();
         assertThat(actualizada.get().getPunto()).isEqualTo(nuevoPunto);
     }

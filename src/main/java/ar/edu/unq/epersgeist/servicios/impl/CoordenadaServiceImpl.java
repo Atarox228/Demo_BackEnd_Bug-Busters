@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.servicios.CoordenadaService;
@@ -8,7 +7,9 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,14 +32,22 @@ public class CoordenadaServiceImpl implements CoordenadaService {
 
     @Override
     public void actualizarCoordenadas(String entityType, List<Long> entityIds, GeoJsonPoint punto) {
-        List<CoordenadaMongo> coordenadas = coordenadaDAOMongo.findByEntityTypeAndEntityIdIn(entityType, entityIds);
-        if (coordenadas.isEmpty()) {
-            coordenadas = entityIds.stream()
-                    .map(id -> new CoordenadaMongo(punto, entityType, id))
-                    .collect(Collectors.toList());
-        } else {
-            coordenadas.forEach(c -> c.setPunto(punto));
+        List<CoordenadaMongo> coordenadasExistentes = coordenadaDAOMongo.findByEntityTypeAndEntityIdIn(entityType, entityIds);
+
+        Map<Long, CoordenadaMongo> mapaCoordenadas = coordenadasExistentes.stream()
+                .collect(Collectors.toMap(CoordenadaMongo::getEntityId, c -> c));
+        List<CoordenadaMongo> coordenadasActualizadas = new ArrayList<>();
+
+        for (Long id : entityIds) {
+            CoordenadaMongo coordenada = mapaCoordenadas.get(id);
+            if (coordenada != null) {
+                coordenada.setPunto(punto);
+            } else {
+                coordenada = new CoordenadaMongo(punto, entityType, id);
+            }
+            coordenadasActualizadas.add(coordenada);
         }
-        coordenadaDAOMongo.saveAll(coordenadas);
+        coordenadaDAOMongo.saveAll(coordenadasActualizadas);
     }
+
 }
