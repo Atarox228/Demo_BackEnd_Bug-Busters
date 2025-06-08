@@ -11,14 +11,10 @@ import java.util.List;
 public interface MediumRepository {
     void crear(Medium medium);
     void actualizar(Medium medium);
-    void actualizarCoordenadas(Medium medium, GeoJsonPoint punto);
-    void eliminar(Medium medium);
     void eliminarTodos();
     boolean existsById(Long id);
     Medium recuperar(long idMedium);
-    MediumMongo recuperarPorIdSQL(Long idMedium);
     List<Espiritu> obtenerEspiritus(Long mediumId);
     Collection<Medium> recuperarTodosNoEliminados();
     boolean estaEnRango30KM(Long id, Double longitud, Double latitud);
-    boolean yaTieneCoordenadas(Medium medium);
 }

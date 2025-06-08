@@ -10,7 +10,6 @@ public interface MediumService {
 
     void crear(Medium medium);
     Medium recuperar(Long id);
-    MediumMongo recuperarMongo(Long id);
     Collection<Medium> recuperarTodos();
     void eliminar(Medium medium);
     void actualizar(Medium medium);
