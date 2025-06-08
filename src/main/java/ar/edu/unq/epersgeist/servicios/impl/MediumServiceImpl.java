@@ -43,14 +43,9 @@ public class MediumServiceImpl implements MediumService {
     public Medium recuperar(Long id) {
         validacionesGenerales.revisarId(id);
         Medium medium = mediumRepository.recuperar(id);
-        validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
+        validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(), medium);
 
         return medium;
-    }
-
-    @Override
-    public MediumMongo recuperarMongo(Long id) {
-        return mediumRepository.recuperarPorIdSQL(id);
     }
 
     @Override
@@ -148,11 +143,8 @@ public class MediumServiceImpl implements MediumService {
         Ubicacion ubicacionDestino = ubicacionRepository.recuperar(areaDestino.getIdUbicacion());
 
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacionDestino.getId())) throw new MovimientoInvalidoException();
-        if (!ubicacionRepository.estanConectadasDirecta(medium.getUbicacion(), ubicacionDestino)){
-            throw new UbicacionLejanaException();
-        }
-        if (medium.getUbicacion() != null &&
-                        !mediumRepository.estaEnRango30KM(medium.getId(), longitud, latitud)) {
+        if ((medium.getUbicacion() != null &&
+                !mediumRepository.estaEnRango30KM(medium.getId(), longitud, latitud)) || !ubicacionRepository.estanConectadasDirecta(medium.getUbicacion(), ubicacionDestino)){
             throw new UbicacionLejanaException();
         }
 
@@ -161,7 +153,7 @@ public class MediumServiceImpl implements MediumService {
         medium.moverseA(ubicacionDestino);
         mediumRepository.actualizar(medium);
 
+        coordenadaService.actualizarOCrearCoordenada("MEDIUM", mediumId, puntoDestino);
         coordenadaService.actualizarCoordenadas("ESPIRITU", espiritusIds, puntoDestino);
-        coordenadaService.actualizarCoordenada("MEDIUM", mediumId, puntoDestino);
     }
 }

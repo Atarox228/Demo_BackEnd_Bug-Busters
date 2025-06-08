@@ -50,26 +50,10 @@ public class CoordenadaServiceTest {
     }
 
     @Test
-    void testActualizarCoordenadasCreaUnaNueva() {
-        GeoJsonPoint nuevoPunto = new GeoJsonPoint(-59.0, -35.0);
-        List<Long> ids = Arrays.asList(3L, 5L);
-
-        List<CoordenadaMongo> antes = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
-        assertThat(antes).hasSize(0);
-        assertThat(antes).extracting("punto").doesNotContain(nuevoPunto);
-
-        coordenadaService.actualizarCoordenadas("ESPIRITU", ids, nuevoPunto);
-
-        List<CoordenadaMongo> despues = coordenadaDAO.findByEntityTypeAndEntityIdIn("ESPIRITU", ids);
-        assertThat(despues).hasSize(2);
-        assertThat(despues).extracting("punto").allMatch(p -> p.equals(nuevoPunto));
-    }
-
-    @Test
     void testActualizarCoordenadaExistente() {
         GeoJsonPoint nuevoPunto = new GeoJsonPoint(-60.0, -35.0);
 
-        coordenadaService.actualizarCoordenada("MEDIUM", 1L, nuevoPunto);
+        coordenadaService.actualizarOCrearCoordenada("MEDIUM", 1L, nuevoPunto);
 
         Optional<CoordenadaMongo> actualizada = coordenadaDAO.findByEntityTypeAndEntityId("MEDIUM", 1L);
         assertThat(actualizada).isPresent();
@@ -80,7 +64,7 @@ public class CoordenadaServiceTest {
     void testActualizarCoordenadaCreaUnaNueva() {
         GeoJsonPoint nuevoPunto = new GeoJsonPoint(-60.0, -35.0);
 
-        coordenadaService.actualizarCoordenada("MEDIUM", 55L, nuevoPunto);
+        coordenadaService.actualizarOCrearCoordenada("MEDIUM", 55L, nuevoPunto);
 
         Optional<CoordenadaMongo> actualizada = coordenadaDAO.findByEntityTypeAndEntityId("MEDIUM", 55L);
         assertThat(actualizada).isPresent();

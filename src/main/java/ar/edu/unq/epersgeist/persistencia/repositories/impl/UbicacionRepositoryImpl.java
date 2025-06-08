@@ -7,7 +7,6 @@ import ar.edu.unq.epersgeist.persistencia.dao.AreaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
@@ -20,7 +19,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAO ubicacionDAO;
     private final UbicacionDAONeo4j ubicacionDAONeo4J;
-    //private final UbicacionDAOMongo ubicacionDAOMongo;
     private final AreaDAOMongo areaDAOMongo;
 
     public UbicacionRepositoryImpl(UbicacionDAO ubicacionDAO, UbicacionDAONeo4j ubicacionDAONeo4J, AreaDAOMongo areaDAOMongo) {

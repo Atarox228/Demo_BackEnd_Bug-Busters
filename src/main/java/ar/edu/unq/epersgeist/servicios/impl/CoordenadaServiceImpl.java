@@ -23,7 +23,7 @@ public class CoordenadaServiceImpl implements CoordenadaService {
     }
 
     @Override
-    public void actualizarCoordenada(String entityType, Long entityId, GeoJsonPoint punto) {
+    public void actualizarOCrearCoordenada(String entityType, Long entityId, GeoJsonPoint punto) {
         CoordenadaMongo coordenada = coordenadaDAOMongo.findByEntityTypeAndEntityId(entityType, entityId)
                 .orElseGet(() -> new CoordenadaMongo(punto, entityType, entityId));
         coordenada.setPunto(punto);
@@ -32,22 +32,9 @@ public class CoordenadaServiceImpl implements CoordenadaService {
 
     @Override
     public void actualizarCoordenadas(String entityType, List<Long> entityIds, GeoJsonPoint punto) {
-        List<CoordenadaMongo> coordenadasExistentes = coordenadaDAOMongo.findByEntityTypeAndEntityIdIn(entityType, entityIds);
-
-        Map<Long, CoordenadaMongo> mapaCoordenadas = coordenadasExistentes.stream()
-                .collect(Collectors.toMap(CoordenadaMongo::getEntityId, c -> c));
-        List<CoordenadaMongo> coordenadasActualizadas = new ArrayList<>();
-
-        for (Long id : entityIds) {
-            CoordenadaMongo coordenada = mapaCoordenadas.get(id);
-            if (coordenada != null) {
-                coordenada.setPunto(punto);
-            } else {
-                coordenada = new CoordenadaMongo(punto, entityType, id);
-            }
-            coordenadasActualizadas.add(coordenada);
-        }
-        coordenadaDAOMongo.saveAll(coordenadasActualizadas);
+        List<CoordenadaMongo> coordenadas = coordenadaDAOMongo.findByEntityTypeAndEntityIdIn(entityType, entityIds);
+        coordenadas.forEach(c -> c.setPunto(punto));
+        coordenadaDAOMongo.saveAll(coordenadas);
     }
 
 }
