@@ -3,13 +3,10 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionLejanaException;
-import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
-import ar.edu.unq.epersgeist.servicios.CoordenadaService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import jakarta.transaction.Transactional;
@@ -17,7 +14,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,17 +21,13 @@ public class MediumServiceImpl implements MediumService {
     public final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
     private final MediumRepository mediumRepository;
-    private final CoordenadaService coordenadaService;
-    private final MediumDAO mediumDAO;
-    private final CoordenadaDAOMongo coordenadaDAOMongo;
+    private final CoordenadaRepository coordenadaRepository;
 
-    public MediumServiceImpl(MediumDAO mediumDAO, MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository, CoordenadaService coordenadaService, CoordenadaDAOMongo coordenadaDAOMongo) {
+    public MediumServiceImpl(MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository, CoordenadaRepository coordenadaRepository) {
         this.espirituRepository = espirituRepository;
         this.ubicacionRepository = ubicacionRepository;
         this.mediumRepository = mediumRepository;
-        this.coordenadaService = coordenadaService;
-        this.mediumDAO = mediumDAO;
-        this.coordenadaDAOMongo = coordenadaDAOMongo;
+        this.coordenadaRepository = coordenadaRepository;
     }
 
     @Override
@@ -112,33 +104,19 @@ public class MediumServiceImpl implements MediumService {
         validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
 
-        Optional <CoordenadaMongo> coordenadaMedium = coordenadaDAOMongo.findByEntityIdAndEntityType(mediumId, medium.getClass().toString());
-        Optional <CoordenadaMongo> coordenadaEspiritu = coordenadaDAOMongo.findByEntityIdAndEntityType(espirituId, espiritu.getTipo().toString());
+        CoordenadaMongo coordenadaMedium = coordenadaRepository.findByEntityIdAndEntityType(medium.getClass().toString(), mediumId);
+        CoordenadaMongo coordenadaEspiritu = coordenadaRepository.findByEntityIdAndEntityType(espiritu.getTipo().toString(), espirituId);
 
-        if (coordenadaMedium.isEmpty() || coordenadaEspiritu.isEmpty()) {
-            throw new RecursoNoEncontradoException();
-        }
-
-        if (! this.estaEnRango(coordenadaEspiritu.get(), medium)) {
+        if (! coordenadaRepository.estaEnRangoDeInvocar(coordenadaEspiritu, medium)) {
             throw new FueraDeRangoDistanciaException();
         }
 
         medium.invocar(espiritu);
-        coordenadaEspiritu.get().setPunto(coordenadaMedium.get().getPunto());
+        coordenadaEspiritu.setPunto(coordenadaMedium.getPunto());
 
-        mediumDAO.save(medium);
-        coordenadaDAOMongo.save(coordenadaEspiritu.get());
+        mediumRepository.actualizar(medium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
         return espirituRepository.recuperar(espirituId);
-    }
-
-    private boolean estaEnRango(CoordenadaMongo coordenadaEspiritu, Medium medium) {
-        Double latitud = coordenadaEspiritu.getLatitud();
-        Double longitud = coordenadaEspiritu.getLongitud();
-
-        Optional<CoordenadaMongo> coordenadaEnRango = coordenadaDAOMongo.findCoordenadaEnRangoInvocar(
-                longitud, latitud, medium.getId(), medium.getClass().toString());
-
-        return coordenadaEnRango.isPresent();
     }
 
     @Override
@@ -172,16 +150,16 @@ public class MediumServiceImpl implements MediumService {
 
         if (medium.getUbicacion() != null && medium.getUbicacion().getId().equals(ubicacionDestino.getId())) throw new MovimientoInvalidoException();
         if ((medium.getUbicacion() != null &&
-                !mediumRepository.estaEnRango30KM(medium.getId(), longitud, latitud)) || !ubicacionRepository.estanConectadasDirecta(medium.getUbicacion(), ubicacionDestino)){
+                !coordenadaRepository.estaEnRangoDeMover(medium.getId(), longitud, latitud)) || !ubicacionRepository.estanConectadasDirecta(medium.getUbicacion(), ubicacionDestino)){
             throw new UbicacionLejanaException();
         }
 
-        List<Long> espiritusIds = mediumDAO.obtenerIdsDeEspiritus(mediumId);
+        List<Long> espiritusIds = mediumRepository.obtenerIdsDeEspiritus(mediumId);
 
         medium.moverseA(ubicacionDestino);
         mediumRepository.actualizar(medium);
 
-        coordenadaService.actualizarOCrearCoordenada("MEDIUM", mediumId, puntoDestino);
-        coordenadaService.actualizarCoordenadas("ESPIRITU", espiritusIds, puntoDestino);
+        coordenadaRepository.actualizarOCrearCoordenada("MEDIUM", mediumId, puntoDestino);
+        coordenadaRepository.actualizarCoordenadas("ESPIRITU", espiritusIds, puntoDestino);
     }
 }

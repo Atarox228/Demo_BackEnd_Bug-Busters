@@ -1,40 +1,37 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
-import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.servicios.CoordenadaService;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class CoordenadaServiceImpl implements CoordenadaService {
 
-    private final CoordenadaDAOMongo coordenadaDAOMongo;
+    private final CoordenadaRepository  coordenadaRepository;
 
-    public CoordenadaServiceImpl(CoordenadaDAOMongo coordenadaDAOMongo) {
-        this.coordenadaDAOMongo = coordenadaDAOMongo;
+    public CoordenadaServiceImpl(CoordenadaRepository coordenadaRepository) {
+        this.coordenadaRepository = coordenadaRepository;
     }
 
     @Override
     public void actualizarOCrearCoordenada(String entityType, Long entityId, GeoJsonPoint punto) {
-        CoordenadaMongo coordenada = coordenadaDAOMongo.findByEntityTypeAndEntityId(entityType, entityId)
-                .orElseGet(() -> new CoordenadaMongo(punto, entityType, entityId));
-        coordenada.setPunto(punto);
-        coordenadaDAOMongo.save(coordenada);
+        coordenadaRepository.actualizarOCrearCoordenada(entityType, entityId, punto);
     }
 
     @Override
     public void actualizarCoordenadas(String entityType, List<Long> entityIds, GeoJsonPoint punto) {
-        List<CoordenadaMongo> coordenadas = coordenadaDAOMongo.findByEntityTypeAndEntityIdIn(entityType, entityIds);
-        coordenadas.forEach(c -> c.setPunto(punto));
-        coordenadaDAOMongo.saveAll(coordenadas);
+        coordenadaRepository.actualizarCoordenadas(entityType, entityIds, punto);
+    }
+
+    @Override
+    public CoordenadaMongo findByEntityIdAndEntityType(String entityType, Long entityId){
+        return coordenadaRepository.findByEntityIdAndEntityType(entityType, entityId);
     }
 
 }

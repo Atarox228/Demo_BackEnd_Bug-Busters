@@ -60,6 +60,11 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     @Override
+    public List<Long> obtenerIdsDeEspiritus(Long mediumId){
+        return mediumDAO.obtenerIdsDeEspiritus(mediumId);
+    }
+
+    @Override
     public Collection<Medium> recuperarTodosNoEliminados() {
         return mediumDAO.recuperarTodosNoEliminados();
     }

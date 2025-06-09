@@ -16,5 +16,6 @@ public interface MediumRepository {
     Medium recuperar(long idMedium);
     List<Espiritu> obtenerEspiritus(Long mediumId);
     Collection<Medium> recuperarTodosNoEliminados();
+    List<Long> obtenerIdsDeEspiritus(Long mediumId);
     boolean estaEnRango30KM(Long id, Double longitud, Double latitud);
 }
