@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
+import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
@@ -66,5 +67,20 @@ public class CoordenadaRepositoryImpl implements CoordenadaRepository {
     public boolean estaEnRangoDeMover(Long id, Double longitud, Double latitud){
         Optional<CoordenadaMongo> coordenadasDeMedium = coordenadaDAOMongo.findCercana("MEDIUM", id, longitud,  latitud, 30000D);
         return !coordenadasDeMedium.isEmpty();
+    }
+
+    public boolean estaEnRangoDeDominar(CoordenadaMongo coordenadaDominado, Espiritu dominante){
+        Double latitud = coordenadaDominado.getLatitud();
+        Double longitud = coordenadaDominado.getLongitud();
+
+        Optional<CoordenadaMongo> coordenadaEspiritu = this.findEspirituEnRango(
+                longitud, latitud, dominante.getId(), dominante.getTipo().toString());
+
+        return coordenadaEspiritu.isPresent();
+    }
+
+    @Override
+    public Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType){
+        return coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, id, entityType);
     }
 }

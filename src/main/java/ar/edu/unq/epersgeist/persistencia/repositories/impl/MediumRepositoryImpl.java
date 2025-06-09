@@ -69,10 +69,4 @@ public class MediumRepositoryImpl implements MediumRepository {
         return mediumDAO.recuperarTodosNoEliminados();
     }
 
-
-    @Override
-    public boolean estaEnRango30KM(Long id, Double longitud, Double latitud) {
-        Optional<CoordenadaMongo> coordenadasDeMedium = coordenadaDAOMongo.findCercana("MEDIUM", id, longitud,  latitud, 30000D);
-        return !coordenadasDeMedium.isEmpty();
-    }
 }

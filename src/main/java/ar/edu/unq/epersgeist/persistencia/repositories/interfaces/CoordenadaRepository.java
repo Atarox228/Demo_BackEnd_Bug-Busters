@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.CoordenadaMongo;
+import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
@@ -15,4 +16,6 @@ public interface CoordenadaRepository {
     Optional<CoordenadaMongo> findCoordenadaEnRangoInvocar(Double longitud, Double latitud, Long id, String entityType);
     boolean estaEnRangoDeInvocar(CoordenadaMongo coordenadaEspiritu, Medium medium);
     boolean estaEnRangoDeMover(Long id, Double longitud, Double latitud);
+    Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
+    boolean estaEnRangoDeDominar(CoordenadaMongo coordenadaDominado, Espiritu dominante);
 }
