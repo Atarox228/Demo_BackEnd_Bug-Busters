@@ -106,11 +106,9 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> dominante = espirituDAO.findById(idDominante);
         Optional<Espiritu> dominado = espirituDAO.findById(idDominado);
 
-        CoordenadaMongo coordenadaDominante = coordenadaRepository.findByEntityIdAndEntityType(dominante.get().getTipo().toString(), dominante.get().getId());
         CoordenadaMongo coordenadaDominado = coordenadaRepository.findByEntityIdAndEntityType(dominado.get().getTipo().toString(), dominado.get().getId());
         validacionesGenerales.revisarEntidadEliminado(dominante.get().getDeleted(), dominante);
         validacionesGenerales.revisarEntidadEliminado(dominado.get().getDeleted(), dominado);
-
 
         if (!coordenadaRepository.estaEnRangoDeDominar(coordenadaDominado, dominante.get())) {
             throw new FueraDeRangoDistanciaException();

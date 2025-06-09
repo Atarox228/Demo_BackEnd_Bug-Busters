@@ -83,4 +83,15 @@ public class CoordenadaRepositoryImpl implements CoordenadaRepository {
     public Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType){
         return coordenadaDAOMongo.findEspirituEnRango(longitud, latitud, id, entityType);
     }
+
+    @Override
+    public void eliminar(CoordenadaMongo coordenadaMongo){
+        coordenadaDAOMongo.delete(coordenadaMongo);
+    }
+
+    @Override
+    public void eliminarTodos(){
+        coordenadaDAOMongo.deleteAll();
+    }
+
 }

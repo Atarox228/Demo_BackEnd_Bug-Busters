@@ -29,9 +29,4 @@ public class CoordenadaServiceImpl implements CoordenadaService {
         coordenadaRepository.actualizarCoordenadas(entityType, entityIds, punto);
     }
 
-    @Override
-    public CoordenadaMongo findByEntityIdAndEntityType(String entityType, Long entityId){
-        return coordenadaRepository.findByEntityIdAndEntityType(entityType, entityId);
-    }
-
 }

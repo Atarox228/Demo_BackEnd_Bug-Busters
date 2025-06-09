@@ -18,4 +18,6 @@ public interface CoordenadaRepository {
     boolean estaEnRangoDeMover(Long id, Double longitud, Double latitud);
     Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
     boolean estaEnRangoDeDominar(CoordenadaMongo coordenadaDominado, Espiritu dominante);
+    void eliminar(CoordenadaMongo coordenadaMongo);
+    void eliminarTodos();
 }
