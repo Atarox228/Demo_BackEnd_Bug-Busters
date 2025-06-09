@@ -84,11 +84,11 @@ public class MediumControllerREST {
                 .map(EspirituDTO::desdeModelo)
                 .collect(Collectors.toSet());
     }
-/*
-    @PutMapping("/{id}/mover/{ubicacionId}")
-    public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Long ubicacionId) {
-        mediumService.mover(id,ubicacionId);
+
+    @PutMapping("/{id}/mover/{latitud}/{longitud}")
+    public ResponseEntity<Void> mover(@PathVariable Long id, @PathVariable Double latitud, @PathVariable Double longitud) {
+        mediumService.mover(id,latitud, longitud);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-*/
+
 }
