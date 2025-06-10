@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -19,4 +20,7 @@ public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
 
     @Query("SELECT u FROM Ubicacion u WHERE u.deleted = false AND u.nombre = :nombreUbicacion")
     Ubicacion existeUbicacionConNombre(@Param("nombreUbicacion")String nombre);
+
+    @Query("SELECT u.nombre FROM Ubicacion u WHERE u.id IN :ids")
+    List<String> findNombresById(List<Long> ids);
 }

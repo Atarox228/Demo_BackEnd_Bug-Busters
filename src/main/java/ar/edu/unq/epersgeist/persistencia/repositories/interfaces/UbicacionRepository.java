@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.repositorys.interfaces;
+package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ClosenessResult;
 import ar.edu.unq.epersgeist.modelo.DegreeQuery;
@@ -8,7 +8,6 @@ import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface UbicacionRepository {
 
@@ -26,10 +25,10 @@ public interface UbicacionRepository {
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadasDirecta(String origen, String destino);
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
-
-    ClosenessResult definirCentralidad(String nombre);
-
+    List<ClosenessResult> closenessOf(List<String> names);
     double relationships();
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);
+
+
 }

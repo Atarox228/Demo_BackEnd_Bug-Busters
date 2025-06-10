@@ -1,11 +1,11 @@
-package ar.edu.unq.epersgeist.persistencia.repositorys.impl;
+package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
-import ar.edu.unq.epersgeist.persistencia.repositorys.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.stereotype.Repository;
 
 
@@ -103,11 +103,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public ClosenessResult definirCentralidad(String nombre) {
-        return ubicacionDAONeo4J.closenessResult(nombre);
-    }
-
-    @Override
     public double relationships() {
         return ubicacionDAONeo4J.relationships();
     }
@@ -127,7 +122,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<String> namesOf(List<Long> ids) {
-        return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
+        return ubicacionDAO.findNombresById(ids);
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<String> names) {
+        return ubicacionDAONeo4J.closenessResult(names);
     }
 
 }

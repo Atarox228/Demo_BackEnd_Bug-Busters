@@ -58,12 +58,14 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     List<UbicacionNeo4J> encontrarCaminoMasCorto(@Param("origen") String origen, @Param("destino") String destino);
 
     @Query ("""
-        MATCH (a:Ubicacion {nombre: $nombre}), (b:Ubicacion)
+        UNWIND $nombres AS name
+        MATCH (a:Ubicacion {nombre: name}), (b:Ubicacion)
         WHERE a <> b
         OPTIONAL MATCH p = shortestPath((a)-[:CONECTADA*1..]->(b))
         RETURN a AS ubicacion, (1.0 / (sum(CASE WHEN p IS NULL THEN 0 ELSE length(p) END) + (count(b) - count(p)) * 10)) AS closeness
+        ORDER BY a.nombre ASC
     """)
-    ClosenessResult closenessResult(@Param("nombre") String nombre);
+    List<ClosenessResult> closenessResult(@Param("nombres") List<String> nombres);
 
     @Query("""
             MATCH (n:Ubicacion) -[r:CONECTADA]-> ()
@@ -74,8 +76,11 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query("""
             MATCH (n:Ubicacion) -[r:CONECTADA]-> ()
             WHERE n.nombre IN $names
-            RETURN n AS node, count(r) AS degree
-            ORDER BY count(r) DESC
+            WITH n, count(r) AS relationsN
+            MATCH (:Ubicacion)-[allR:CONECTADA]->(:Ubicacion)
+            WITH n, relationsN, count(allR) AS allRelations
+            RETURN n AS node, (1.0 * relationsN/allRelations) AS degree
+            ORDER BY degree DESC
             LIMIT 1
             """)
     DegreeQuery degreeOutcommingOf(@Param("names") List<String> names);
@@ -83,8 +88,11 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query("""
             MATCH (n:Ubicacion) <-[r:CONECTADA]- ()
             WHERE n.nombre IN $names
-            RETURN n AS node, count(r) AS degree
-            ORDER BY count(r) DESC
+            WITH n, count(r) AS relationsN
+            MATCH (:Ubicacion)-[allR:CONECTADA]->(:Ubicacion)
+            WITH n, relationsN, count(allR) AS allRelations
+            RETURN n AS node, (1.0 * relationsN/allRelations) AS degree
+            ORDER BY degree DESC
             LIMIT 1
             """)
     DegreeQuery degreeIncommingOf(@Param("names") List<String> names);
@@ -92,8 +100,11 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
     @Query("""
             MATCH (n:Ubicacion) -[r:CONECTADA]- ()
             WHERE n.nombre IN $names
-            RETURN n AS node, count(r) AS degree
-            ORDER BY count(r) DESC
+            WITH n, count(r) AS relationsN
+            MATCH (:Ubicacion)-[allR:CONECTADA]->(:Ubicacion)
+            WITH n, relationsN, count(allR) AS allRelations
+            RETURN n AS node, (1.0 * relationsN/allRelations) AS degree
+            ORDER BY degree DESC
             LIMIT 1
             """)
     DegreeQuery degreeAllOf(@Param("names") List<String> names);
