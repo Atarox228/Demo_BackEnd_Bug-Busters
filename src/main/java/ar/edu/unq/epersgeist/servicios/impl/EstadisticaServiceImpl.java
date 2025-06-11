@@ -19,14 +19,12 @@ import java.util.NoSuchElementException;
 @Transactional
 public class EstadisticaServiceImpl implements EstadisticaService {
 
-    private final UbicacionDAO ubicacionDAO;
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
 
-    public EstadisticaServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDAO, UbicacionDAO ubicacionDAO) {
+    public EstadisticaServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDAO) {
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDAO;
-        this.ubicacionDAO = ubicacionDAO;
     }
 
     @Override

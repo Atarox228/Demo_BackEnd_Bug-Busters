@@ -2,118 +2,156 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.modelo.DegreeQuery;
+import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
+import java.util.*;
 
 @Service
-@Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
-    private final UbicacionDAO ubicacionDAO;
+    private final UbicacionRepository ubicacionRepository;
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
-        this.ubicacionDAO = ubicacionDAO;
+    public UbicacionServiceImpl(UbicacionRepository ubicacionRepository, MediumDAO mediumDAO, EspirituDAO espirituDAO) {
+        this.ubicacionRepository = ubicacionRepository;
         this.mediumDAO = mediumDAO;
         this.espirituDAO = espirituDAO;
     }
 
     @Override
     public void crear(Ubicacion ubicacion) {
-        if(ubicacionDAO.existeUbicacionConNombre(ubicacion.getNombre()) != null){
-
+        if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
-        ubicacionDAO.save(ubicacion);
+        ubicacionRepository.crear(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long ubicacionId) {
-        revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        validacionesGenerales.revisarId(ubicacionId);
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         return Optional.of(ubicacion);
+    }
+
+    @Override
+    public UbicacionNeo4J recuperarPorNombre(String nombre) {
+        return ubicacionRepository.findByNombre(nombre);
     }
 
     @Override
     public void eliminar(Ubicacion ubicacion) {
-        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+        if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicación con ID " + ubicacion.getId() + " no encontrada");
         }
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
-        revisarUbicacionConEntidades(ubicacion.getId(),ubicacion);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        validacionesGenerales.revisarUbicacionConEntidades(ubicacion,!espiritusEn(ubicacion.getId()).isEmpty() || !mediumsEn(ubicacion.getId()).isEmpty());
         ubicacion.setDeleted(true);
-        ubicacionDAO.save(ubicacion);
+        ubicacionRepository.actualizar(ubicacion);
+        ubicacionRepository.eliminar(ubicacion);
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacion) {
-        revisarId(ubicacion.getId());
-        if (!ubicacionDAO.existsById(ubicacion.getId())) {
+    public void actualizar(Ubicacion ubicacion, String nombreViejo) {
+        validacionesGenerales.revisarId(ubicacion.getId());
+        if (!ubicacionRepository.existsById(ubicacion.getId())) {
             throw new RecursoNoEncontradoException("Ubicacion con ID " + ubicacion.getId() + " no encontrado");
         }
-        revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
-        ubicacionDAO.save(ubicacion);
+        validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
+        ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
+        ubicacionRepository.actualizar(ubicacion);
+
     }
 
     @Override
     public Collection<Ubicacion> recuperarTodos() {
-        return ubicacionDAO.recuperarTodosNoEliminados();
+        return ubicacionRepository.recuperarTodos();
     }
 
     @Override
     public void clearAll() {
-        ubicacionDAO.deleteAll();
-    }
-
-    @Override
-    public Optional<Ubicacion> recuperarAunConSoftDelete(Long ubicacionId) {
-        revisarId(ubicacionId);
-        Ubicacion ubicacion = ubicacionDAO.findById(ubicacionId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
-        return Optional.of(ubicacion);
+        ubicacionRepository.eliminarTodos();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         return espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        revisarId(ubicacionId);
+        validacionesGenerales.revisarId(ubicacionId);
         return mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 
-    private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
-        if(condicion){
-            throw new EntidadEliminadaException(entidad);
+    @Override
+    public void conectar(Long idOrigen, Long idDestino){
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+        if(idOrigen.equals(idDestino)){
+            throw new MismaUbicacionException();
         }
-    }
-    private void revisarId(Long id){
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
+        ubicacionRepository.conectarUbicaciones(ubi1.getNombre(), ubi2.getNombre());
     }
 
-    private <T> void revisarUbicacionConEntidades(Long id, T entidad){
-        if (!espiritusEn(id).isEmpty() || !mediumsEn(id).isEmpty()){
-            throw new EntidadConEntidadesConectadasException(entidad);
+    @Override
+    public List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia){
+        return ubicacionRepository.ubicacionesSobrecargadas(umbralDeEnergia);
+    }
+
+    @Override
+    public Boolean estanConectadas(Long idOrigen, Long idDestino) {
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+        return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
+    }
+
+    @Override
+    public List<UbicacionNeo4J> caminoMasCorto(Long idOrigen, Long idDestino) {
+        validacionesGenerales.revisarId(idOrigen);
+        validacionesGenerales.revisarId(idDestino);
+        Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
+        Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
+
+        List<UbicacionNeo4J> camino = ubicacionRepository.encontrarCaminoMasCorto(ubi1.getNombre(), ubi2.getNombre());
+        if (camino.isEmpty()) {
+            throw new UbicacionesNoConectadasException();
         }
+        return camino;
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        List<String> names = ubicacionRepository.namesOf(ids);
+        List<ClosenessResult> closeness = ubicacionRepository.closenessOf(names);
+        return closeness;
     }
 
     private List<Medium> mediumsEn(Long id){
         return mediumDAO.mediumsEn(id);
+    }
+
+    @Override
+    public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
+        List<String> names = ubicacionRepository.namesOf(ids);
+        DegreeQuery query = ubicacionRepository.DegreeOf(names, type);
+        if (query == null) throw new sinResultadosException();
+        DegreeResult result = new DegreeResult(query.node(), query.degree(), type);
+        return result;
     }
 
 }

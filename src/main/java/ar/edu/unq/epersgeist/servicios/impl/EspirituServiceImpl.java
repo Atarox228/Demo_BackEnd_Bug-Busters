@@ -8,6 +8,8 @@ import ar.edu.unq.epersgeist.servicios.enums.Direccion;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import java.util.List;
 import java.util.Optional;
+
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,12 +22,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
-    private final UbicacionDAO ubicacionDAO;
 
-    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionDAO ubicacionDAO) {
+    public EspirituServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDao) {
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDao;
-        this.ubicacionDAO = ubicacionDAO;
     }
 
 
@@ -36,10 +36,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        revisarId(espirituId);
+        validacionesGenerales.revisarId(espirituId);
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
-        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         return Optional.of(espiritu);
     }
 
@@ -50,11 +50,11 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        revisarId(espiritu.getId());
+        validacionesGenerales.revisarId(espiritu.getId());
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espirituDAO.save(espiritu);
     }
 
@@ -63,29 +63,25 @@ public class EspirituServiceImpl implements EspirituService {
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
         espiritu.setDeleted(true);
         espirituDAO.save(espiritu);
     }
 
-    public void eliminarTodo(){
-        espirituDAO.deleteAll();
-    }
-
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
-        revisarId(espirituId);
-        revisarId(mediumId);
+        validacionesGenerales.revisarId(espirituId);
+        validacionesGenerales.revisarId(mediumId);
 
         Espiritu espiritu = espirituDAO.findById(espirituId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
         
-        revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
-        revisarEntidadEliminado(medium.getDeleted(),medium);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
         
-        revisarUbicacionNoNula(espiritu.getUbicacion(),espiritu,espirituId);
-        revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
+        validacionesGenerales.revisarUbicacionNoNula(espiritu.getUbicacion(),espiritu,espirituId);
+        validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
         
         medium.conectarseAEspiritu(espiritu);
         mediumDAO.save(medium);
@@ -100,30 +96,6 @@ public class EspirituServiceImpl implements EspirituService {
         Sort.Direction direccionOrden = (direccion == Direccion.DESCENDENTE) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pagina - 1, cantidadPorPagina, Sort.by(direccionOrden, "nivelConexion"));
         return espirituDAO.findDemonios(pageable).getContent();
-    }
-
-    @Override
-    public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
-        revisarId(espirituId);
-        Espiritu espiritu = espirituDAO.findById(espirituId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
-        return Optional.of(espiritu);
-    }
-
-    private <T> void revisarEntidadEliminado(Boolean condicion, T entidad) {
-        if(condicion){
-            throw new EntidadEliminadaException(entidad);
-        }
-    }
-    private <T> void revisarUbicacionNoNula(Ubicacion ubicacion, T entidad, Long id) {
-        if(ubicacion == null){
-            throw new EntidadSinUbicacionException(entidad,id);
-        }
-    }
-    private void revisarId(Long id){
-        if (id == null || id <= 0) {
-            throw new IdNoValidoException();
-        }
     }
 
 }

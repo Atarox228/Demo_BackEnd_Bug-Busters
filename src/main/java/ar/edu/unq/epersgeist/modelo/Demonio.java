@@ -34,16 +34,6 @@ public final class Demonio extends Espiritu {
     }
 
     @Override
-    public boolean puedeRecuperarseEnCementerio() {
-        return true;
-    }
-
-    @Override
-    public boolean puedeRecuperarseEnSantuario() {
-        return false;
-    }
-
-    @Override
     public void aumentarConexionDeSantuario(Integer flujoEnergia) {}
 
     @Override

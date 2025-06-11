@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -142,8 +141,4 @@ public class Medium implements Serializable {
         getEspiritus().remove(espiritu);
     }
 
-    public boolean tieneAngeles() {
-        return espiritus.stream()
-                .anyMatch(espiritu -> espiritu.getTipo() == TipoEspiritu.ANGELICAL);
-    }
 }

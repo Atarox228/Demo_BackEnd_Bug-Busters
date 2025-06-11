@@ -1,7 +1,9 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -12,11 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-
 import java.util.Date;
 import java.util.List;
-
+import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -30,6 +30,8 @@ public class EspirituServiceTest {
     private UbicacionService ubicacionService;
     @Autowired
     private DataService dataService;
+    @Autowired
+    private EspirituDAO espirituDAO;
     private Angel Casper;
     private Demonio Jinn;
     private Demonio Oni;
@@ -283,6 +285,9 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Quilmes.getId());
+//
+
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
@@ -301,6 +306,8 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium2);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
+//        mediumService.mover(medium.getId(),Bernal.getId());
+//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
@@ -415,8 +422,8 @@ public class EspirituServiceTest {
         espirituService.eliminar(angelAct);
         espirituService.eliminar(demonioAct);
 
-        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
         assertTrue(demonioBorrado.getDeleted());
@@ -450,8 +457,8 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.recuperarTodos();
 
-        Espiritu angelBorrado = espirituService.recuperarAunConSoftDelete(angelAct.getId()).get();
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu angelBorrado = this.recuperarAunConSoftDelete(angelAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(angelBorrado.getDeleted());
         assertTrue(demonioBorrado.getDeleted());
@@ -480,7 +487,7 @@ public class EspirituServiceTest {
 
         List<Espiritu> todos = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 1,2);
 
-        Espiritu demonioBorrado = espirituService.recuperarAunConSoftDelete(demonioAct.getId()).get();
+        Espiritu demonioBorrado = this.recuperarAunConSoftDelete(demonioAct.getId()).get();
 
         assertTrue(demonioBorrado.getDeleted());
         assertThrows(EntidadEliminadaException.class, () -> {
@@ -488,6 +495,15 @@ public class EspirituServiceTest {
         });
         assertEquals(todos.size(),1);
     }
+
+
+    public Optional<Espiritu> recuperarAunConSoftDelete(Long espirituId) {
+        dataService.revisarId(espirituId);
+        Espiritu espiritu = espirituDAO.findById(espirituId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espiritu con ID " + espirituId + " no encontrado"));
+        return Optional.of(espiritu);
+    }
+
 
     @AfterEach
     void cleanUp() {

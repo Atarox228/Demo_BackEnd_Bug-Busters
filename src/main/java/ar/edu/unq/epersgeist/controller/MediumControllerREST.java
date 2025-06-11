@@ -4,9 +4,7 @@ import ar.edu.unq.epersgeist.controller.dto.ActualizarMediumRequestDTO;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +18,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/medium")
 public class MediumControllerREST {
     private final MediumService mediumService;
-    private final EspirituService espirituService;
-    private final UbicacionService ubicacionService;
 
-    public MediumControllerREST(MediumService mediumService, EspirituService espirituService, UbicacionService ubicacionService) {
+    public MediumControllerREST(MediumService mediumService) {
         this.mediumService = mediumService;
-        this.espirituService = espirituService;
-        this.ubicacionService = ubicacionService;
     }
 
     @PostMapping
