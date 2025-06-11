@@ -29,7 +29,24 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
       'entityType': ?3
     }
     """)
-    Optional<EspirituMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
+    Optional<CoordenadaMongo> findEspirituEnRango(Double longitud, Double latitud, Long id, String entityType);
+
+    @Query("""
+    {
+      'punto': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [?0, ?1]
+          },
+          $maxDistance: 50000
+        }
+      },
+      'entityId': ?2,
+      'entityType': ?3
+    }
+    """)
+    Optional<CoordenadaMongo> findCoordenadaEnRangoInvocar(Double longitud, Double latitud, Long id, String entityType);
 
     @Query("""
     {
@@ -47,4 +64,5 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
     }
     """)
     Optional<CoordenadaMongo> findCercana(String entityType, Long entityId, Double longitud, Double latitud, Double maxDistance);
+
 }

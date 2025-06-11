@@ -6,18 +6,15 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumReposito
 import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class MediumRepositoryImpl implements MediumRepository {
 
     private final MediumDAO mediumDAO;
-    private final CoordenadaDAOMongo coordenadaDAOMongo;
     private final EspirituRepositoryImpl espirituRepositoryImpl;
 
-    public MediumRepositoryImpl(MediumDAO mediumDAO, CoordenadaDAOMongo coordenadaDAOMongo, EspirituRepositoryImpl espirituRepositoryImpl) {
+    public MediumRepositoryImpl(MediumDAO mediumDAO, EspirituRepositoryImpl espirituRepositoryImpl) {
         this.mediumDAO = mediumDAO;
-        this.coordenadaDAOMongo = coordenadaDAOMongo;
         this.espirituRepositoryImpl = espirituRepositoryImpl;
     }
 
@@ -30,13 +27,6 @@ public class MediumRepositoryImpl implements MediumRepository {
     public void actualizar(Medium medium) {
         mediumDAO.save(medium);
     }
-
-//    @Override
-//    public void eliminar(Medium medium) {
-//        MediumMongo mediumMongo = mediumDAOMongo.findByMediumIdSQL(medium.getId())
-//                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con id SQL " + medium.getId() + " no encontrada"));
-//        mediumDAOMongo.delete(mediumMongo);
-//    }
 
     @Override
     public void eliminarTodos() {
@@ -60,14 +50,13 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     @Override
+    public List<Long> obtenerIdsDeEspiritus(Long mediumId){
+        return mediumDAO.obtenerIdsDeEspiritus(mediumId);
+    }
+
+    @Override
     public Collection<Medium> recuperarTodosNoEliminados() {
         return mediumDAO.recuperarTodosNoEliminados();
     }
 
-
-    @Override
-    public boolean estaEnRango30KM(Long id, Double longitud, Double latitud) {
-        Optional<CoordenadaMongo> coordenadasDeMedium = coordenadaDAOMongo.findCercana("MEDIUM", id, longitud,  latitud, 30000D);
-        return !coordenadasDeMedium.isEmpty();
-    }
 }
