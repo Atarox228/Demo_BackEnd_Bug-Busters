@@ -19,7 +19,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
 
 @Entity
-public abstract class Espiritu implements Serializable {
+public abstract class Espiritu implements Serializable, SQLObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

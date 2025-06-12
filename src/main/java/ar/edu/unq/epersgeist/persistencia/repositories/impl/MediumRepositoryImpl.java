@@ -13,12 +13,10 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     private final MediumDAO mediumDAO;
     private final CoordenadaDAOMongo coordenadaDAOMongo;
-    private final EspirituRepositoryImpl espirituRepositoryImpl;
 
-    public MediumRepositoryImpl(MediumDAO mediumDAO, CoordenadaDAOMongo coordenadaDAOMongo, EspirituRepositoryImpl espirituRepositoryImpl) {
+    public MediumRepositoryImpl(MediumDAO mediumDAO, CoordenadaDAOMongo coordenadaDAOMongo) {
         this.mediumDAO = mediumDAO;
         this.coordenadaDAOMongo = coordenadaDAOMongo;
-        this.espirituRepositoryImpl = espirituRepositoryImpl;
     }
 
     @Override

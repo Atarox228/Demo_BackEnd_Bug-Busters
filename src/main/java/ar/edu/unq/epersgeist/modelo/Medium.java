@@ -12,7 +12,7 @@ import java.util.*;
 
 @Entity
 @Check(constraints = "mana <= manaMax")
-public class Medium implements Serializable {
+public class Medium implements Serializable, SQLObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

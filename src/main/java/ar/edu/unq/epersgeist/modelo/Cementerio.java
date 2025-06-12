@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
+import ar.edu.unq.epersgeist.modelo.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 

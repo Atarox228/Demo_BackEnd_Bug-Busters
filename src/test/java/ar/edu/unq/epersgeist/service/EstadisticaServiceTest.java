@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,6 +33,8 @@ public class EstadisticaServiceTest {
     private MediumService mediumService;
     @Autowired
     private UbicacionService ubicacionService;
+    @Autowired
+    private MediumRepository mediumRepository;
 
     private Ubicacion fellwood;
     private Ubicacion cementerio;
@@ -44,6 +50,7 @@ public class EstadisticaServiceTest {
     private GeoJsonPolygon areaSantuario;
     private GeoJsonPolygon areaCemeterio;
     private GeoJsonPolygon areaFellwood;
+
 
     @BeforeEach
     public void prepare() {
@@ -266,6 +273,31 @@ public class EstadisticaServiceTest {
             estadisticaService.santuarioCorrupto();
         });
     }
+
+    @Test
+    void snapshotFecha(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        assertEquals(snapshot.getDate(), date);
+    }
+
+//    @Test
+//    void snapshotMediumSql(){
+//        dataService.eliminarTodo();
+//        Medium medium = new Medium("jose",100,80);
+//        mediumRepository.crear(medium);
+//
+//        estadisticaService.snapshot();
+//
+//        SnapShot snapshot = estadisticaService.obtenerSnapshot();
+//        LocalDate date = new LocalDate();
+//        assertEquals(snapshot.fecha, date);
+//        assertEquals(snapshot)
+//    }
 
     @AfterEach
     void cleanUp() {

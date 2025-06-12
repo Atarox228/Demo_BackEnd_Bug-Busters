@@ -3,10 +3,8 @@ package ar.edu.unq.epersgeist.controller.excepciones;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.exception.MovimientoInvalidoException;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 

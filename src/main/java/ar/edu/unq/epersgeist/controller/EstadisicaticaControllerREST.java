@@ -2,9 +2,7 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.ReporteSanturarioMasCorruptoDTO;
 import ar.edu.unq.epersgeist.servicios.EstadisticaService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/estadistica")

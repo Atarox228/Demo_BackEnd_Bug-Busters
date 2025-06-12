@@ -18,7 +18,7 @@ import java.util.Date;
 //@DiscriminatorColumn(name = "tipo_ubicacion", discriminatorType = DiscriminatorType.STRING)
 
 @Entity
-public abstract class Ubicacion implements Serializable{
+public abstract class Ubicacion implements Serializable, SQLObject{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,16 +1,12 @@
 package ar.edu.unq.epersgeist.controller;
 
-import ar.edu.unq.epersgeist.controller.dto.ActualizarMediumRequestDTO;
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
-import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.*;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
