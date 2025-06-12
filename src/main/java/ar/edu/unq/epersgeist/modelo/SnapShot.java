@@ -25,6 +25,8 @@ public class SnapShot {
 //    private Map<String, Object> mongo;
 //    private Map<String, Object> neo4j;
 
+    public SnapShot() {}
+
     public SnapShot(LocalDate date) {
         this.date = date;
     }

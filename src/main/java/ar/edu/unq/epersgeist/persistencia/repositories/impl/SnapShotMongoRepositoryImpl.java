@@ -57,6 +57,11 @@ public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
         return snap;
     }
 
+    @Override
+    public void eliminarTodo() {
+        this.snapshotMongoDAO.deleteAll();
+    }
+
     private Map<String, Object> obtenerDatosDePostgres() {
 
         Map<String, Object> datos = new HashMap<>();

@@ -7,4 +7,6 @@ import java.time.LocalDate;
 public interface SnapShotMongoRepository {
     void crearSnapShot();
     SnapShot getSnapshot(LocalDate date);
+
+    void eliminarTodo();
 }
