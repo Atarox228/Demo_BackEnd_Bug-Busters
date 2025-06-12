@@ -1,37 +1,80 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.SnapShot;
-import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.SnapShotDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.SnapShotMongoRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Repository
 public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
 
     private SnapShotDAOMongo snapshotMongoDAO;
+    private CoordenadaDAOMongo coordenadaDAOMongo;
+    private MediumDAO mediumDAO;
+    private EspirituDAO espirituDAO;
+    private UbicacionDAO ubicacionDAO;
 
-    public SnapShotMongoRepositoryImpl(SnapShotDAOMongo snapshotMongoDAO) {
+    public SnapShotMongoRepositoryImpl(
+            SnapShotDAOMongo snapshotMongoDAO,
+            MediumDAO mediumDAO,
+            CoordenadaDAOMongo coordenadaDAO,
+            EspirituDAO espirituDAO,
+            UbicacionDAO ubicacionDAO
+    ) {
         this.snapshotMongoDAO = snapshotMongoDAO;
+        this.mediumDAO = mediumDAO;
+        this.coordenadaDAOMongo = coordenadaDAO;
+        this.espirituDAO = espirituDAO;
+        this.ubicacionDAO = ubicacionDAO;
     }
 
 
     @Override
     public void crearSnapShot() {
         LocalDate date = LocalDate.now();
-        SnapShot snapshot = new SnapShot(date);
+
+        Map<String, Object> datosSQL = obtenerDatosDePostgres();
+//        Map<String, Object> datosMongo = obtenerDatosDeMongo();
+//        Map<String, Object> datosNeo4j = obtenerDatosDeNeo4j();
+
+//        SnapShot snapshot = new SnapShot(date,datosSQL,datosMongo,datosNeo4j);
+        SnapShot snapshot = new SnapShot(date,datosSQL);
         this.snapshotMongoDAO.save(snapshot);
     }
+
+
 
     @Override
     public SnapShot getSnapshot(LocalDate date) {
         SnapShot snap = this.snapshotMongoDAO.findTop1ByDate(date);
         return snap;
+    }
+
+    private Map<String, Object> obtenerDatosDePostgres() {
+
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("Espiritus", espirituDAO.recuperarTodosNoEliminados());
+        datos.put("Mediums", mediumDAO.recuperarTodosNoEliminados());
+        datos.put("Ubicaciones", ubicacionDAO.recuperarTodosNoEliminados());
+        return datos;
+    }
+
+    private Map<String, Object> obtenerDatosDeNeo4j() {
+        Map<String, Object> datos = new HashMap<>();
+//        datos.put("Ubicaciones", ubicacionDAO)
+        return null;
+    }
+
+    private Map<String, Object> obtenerDatosDeMongo() {
+        Map<String, Object> datos = new HashMap<>();
+//        datos.put("Areas",);
+        return null;
     }
 }

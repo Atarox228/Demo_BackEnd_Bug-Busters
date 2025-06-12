@@ -285,6 +285,21 @@ public class EstadisticaServiceTest {
         assertEquals(snapshot.getDate(), date);
     }
 
+
+    @Test
+    void snapshotSQL(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        Medium medium = new Medium("jose",100,80);
+        mediumRepository.crear(medium);
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        assertEquals(1, snapshot.getSql().size());
+//        assertEquals(snapshot.getSql().get(0));
+    }
 //    @Test
 //    void snapshotMediumSql(){
 //        dataService.eliminarTodo();

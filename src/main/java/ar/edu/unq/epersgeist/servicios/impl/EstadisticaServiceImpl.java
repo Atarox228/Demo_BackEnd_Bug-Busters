@@ -1,6 +1,4 @@
 package ar.edu.unq.epersgeist.servicios.impl;
-
-
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.SnapShotMongoRepository;

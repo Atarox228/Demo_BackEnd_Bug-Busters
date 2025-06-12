@@ -96,4 +96,9 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
             LIMIT 1
             """)
     DegreeQuery degreeAllOf(@Param("names") List<String> names);
+
+//    @Override
+//    @Query("""
+//            """)
+//    List<UbicacionNeo4J> findAll();
 }
