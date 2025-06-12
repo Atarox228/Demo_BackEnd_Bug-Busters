@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
@@ -35,6 +36,8 @@ public class EstadisticaServiceTest {
     private UbicacionService ubicacionService;
     @Autowired
     private MediumRepository mediumRepository;
+    @Autowired
+    private MediumDAO mediumDAO;
 
     private Ubicacion fellwood;
     private Ubicacion cementerio;
@@ -289,11 +292,13 @@ public class EstadisticaServiceTest {
     @Test
     void snapshotSQL(){
         dataService.eliminarTodo();
-        estadisticaService.snapshot();
-        LocalDate date = LocalDate.now();
 
         Medium medium = new Medium("jose",100,80);
         mediumRepository.crear(medium);
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
 
         SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
 
