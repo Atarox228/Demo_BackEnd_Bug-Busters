@@ -15,4 +15,6 @@ public interface AreaDAOMongo extends MongoRepository<AreaMongo, String>{
 
     @Query("{ 'poligono': { $geoIntersects: { $geometry: ?0 } } }")
     Optional<AreaMongo> recuperarPorCoordenada(GeoJsonPoint coordenada);
+
+    List<AreaMongo> findAll();
 }

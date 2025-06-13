@@ -15,7 +15,9 @@ import java.util.Map;
 @Repository
 public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
 
+    private final UbicacionDAONeo4j ubicacionDAONeo4j;
     private SnapShotDAOMongo snapshotMongoDAO;
+    private AreaDAOMongo areaDAOMongo;
     private CoordenadaDAOMongo coordenadaDAOMongo;
     private MediumDAO mediumDAO;
     private EspirituDAO espirituDAO;
@@ -26,13 +28,16 @@ public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
             MediumDAO mediumDAO,
             CoordenadaDAOMongo coordenadaDAO,
             EspirituDAO espirituDAO,
-            UbicacionDAO ubicacionDAO
-    ) {
+            UbicacionDAO ubicacionDAO,
+            AreaDAOMongo areaDAOMongo,
+            UbicacionDAONeo4j ubicacionDAONeo4j) {
         this.snapshotMongoDAO = snapshotMongoDAO;
         this.mediumDAO = mediumDAO;
         this.coordenadaDAOMongo = coordenadaDAO;
         this.espirituDAO = espirituDAO;
         this.ubicacionDAO = ubicacionDAO;
+        this.areaDAOMongo = areaDAOMongo;
+        this.ubicacionDAONeo4j = ubicacionDAONeo4j;
     }
 
 
@@ -41,11 +46,10 @@ public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
         LocalDate date = LocalDate.now();
 
         Map<String, Object> datosSQL = obtenerDatosDePostgres();
-//        Map<String, Object> datosMongo = obtenerDatosDeMongo();
-//        Map<String, Object> datosNeo4j = obtenerDatosDeNeo4j();
+        Map<String, Object> datosMongo = obtenerDatosDeMongo();
+        Map<String, Object> datosNeo4j = obtenerDatosDeNeo4j();
 
-//        SnapShot snapshot = new SnapShot(date,datosSQL,datosMongo,datosNeo4j);
-        SnapShot snapshot = new SnapShot(date,datosSQL);
+        SnapShot snapshot = new SnapShot(date,datosSQL,datosMongo,datosNeo4j);
         this.snapshotMongoDAO.save(snapshot);
     }
 
@@ -73,13 +77,14 @@ public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
 
     private Map<String, Object> obtenerDatosDeNeo4j() {
         Map<String, Object> datos = new HashMap<>();
-//        datos.put("Ubicaciones", ubicacionDAO)
-        return null;
+        datos.put("Ubicaciones", ubicacionDAONeo4j.findAll());
+        return datos;
     }
 
     private Map<String, Object> obtenerDatosDeMongo() {
         Map<String, Object> datos = new HashMap<>();
-//        datos.put("Areas",);
-        return null;
+        datos.put("Areas",areaDAOMongo.findAll());
+        datos.put("Coordenadas",coordenadaDAOMongo.findAll());
+        return datos;
     }
 }

@@ -97,8 +97,12 @@ public interface UbicacionDAONeo4j extends Neo4jRepository<UbicacionNeo4J, Long>
             """)
     DegreeQuery degreeAllOf(@Param("names") List<String> names);
 
-//    @Override
-//    @Query("""
-//            """)
-//    List<UbicacionNeo4J> findAll();
+
+    @Query("""
+            MATCH (u:Ubicacion)
+            OPTIONAL MATCH (u)-[r:CONECTADA]->(v:Ubicacion)
+            WITH u, collect(DISTINCT r) AS relaciones, collect(DISTINCT v) AS vecinos
+            RETURN DISTINCT u, relaciones, vecinos
+            """)
+    List<UbicacionNeo4J> findAll();
 }

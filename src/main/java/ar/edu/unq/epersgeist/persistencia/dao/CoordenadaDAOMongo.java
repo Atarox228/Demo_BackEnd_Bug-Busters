@@ -47,4 +47,6 @@ public interface CoordenadaDAOMongo extends MongoRepository<CoordenadaMongo, Str
     }
     """)
     Optional<CoordenadaMongo> findCercana(String entityType, Long entityId, Double longitud, Double latitud, Double maxDistance);
+
+    List<CoordenadaMongo> findAll();
 }

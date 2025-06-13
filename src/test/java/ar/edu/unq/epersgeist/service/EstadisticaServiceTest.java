@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
 import java.time.LocalDate;
@@ -38,6 +40,8 @@ public class EstadisticaServiceTest {
     private MediumRepository mediumRepository;
     @Autowired
     private MediumDAO mediumDAO;
+
+    private CoordenadaDAOMongo coordenadaDAO;
 
     private Ubicacion fellwood;
     private Ubicacion cementerio;
@@ -301,23 +305,114 @@ public class EstadisticaServiceTest {
 
 
         SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
-
-        assertEquals(1, snapshot.getSql().size());
-//        assertEquals(snapshot.getSql().get(0));
+        List<Medium> mediums = (List<Medium>) snapshot.getSql().get("Mediums");
+        assertEquals(1, mediums.size());
+        assertEquals(medium.getId(), mediums.get(0).getId());
     }
-//    @Test
-//    void snapshotMediumSql(){
-//        dataService.eliminarTodo();
+
+    @Test
+    void snapshotMongo(){
+        dataService.eliminarTodo();
+
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaSantuario = new GeoJsonPolygon(area1);
+        santuario = new Santuario("Catolistres", 50);
+        ubicacionService.crear(santuario, areaSantuario);
+
 //        Medium medium = new Medium("jose",100,80);
 //        mediumRepository.crear(medium);
-//
-//        estadisticaService.snapshot();
-//
-//        SnapShot snapshot = estadisticaService.obtenerSnapshot();
-//        LocalDate date = new LocalDate();
-//        assertEquals(snapshot.fecha, date);
-//        assertEquals(snapshot)
-//    }
+
+//        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "MEDIUM", medium.getId());
+//        coordenadaDAO.save(coordenadaMedium);
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<Ubicacion> ubis = (List<Ubicacion>) snapshot.getSql().get("Ubicaciones");
+        List<AreaMongo> areas = (List<AreaMongo>) snapshot.getMongo().get("Areas");
+        List<CoordenadaMongo> coords = (List<CoordenadaMongo>) snapshot.getMongo().get("Coordenadas");
+
+        assertEquals(1, ubis.size());
+        assertEquals(santuario.getId(), ubis.get(0).getId());
+        assertEquals(1, areas.size());
+        assertEquals(0, coords.size());
+    }
+
+    @Test
+    void snapshotNEO4J(){
+        dataService.eliminarTodo();
+
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaSantuario = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaFellwood = new GeoJsonPolygon(area2);
+        santuario = new Santuario("Catolistres", 50);
+        fellwood = new Santuario("Fellwood", 100);
+        ubicacionService.crear(santuario, areaSantuario);
+        ubicacionService.crear(fellwood, areaFellwood);
+        ubicacionService.conectar(santuario.getId(), fellwood.getId());
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<UbicacionNeo4J> ubis = (List<UbicacionNeo4J>) snapshot.getSql().get("Ubicaciones");
+        List<UbicacionNeo4J> ubisNEO = (List<UbicacionNeo4J>) snapshot.getNeo4j().get("Ubicaciones");
+
+
+        assertEquals(2, ubis.size());
+        assertEquals(2,ubisNEO.size());
+        assertEquals("Catolistres",ubisNEO.getFirst().getNombre());
+        assertEquals(1,ubisNEO.getFirst().getUbicaciones().size());
+        assertEquals("Fellwood",ubisNEO.get(1).getNombre());
+        assertEquals(0,ubisNEO.get(1).getUbicaciones().size());
+    }
+
+    @Test
+    void snapshotCompleto(){
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<Espiritu> espiritus = (List<Espiritu>) snapshot.getSql().get("Espiritus");
+        List<Medium> mediums = (List<Medium>) snapshot.getSql().get("Mediums");
+        List<Ubicacion> ubis = (List<Ubicacion>) snapshot.getSql().get("Ubicaciones");
+
+        List<AreaMongo> areas = (List<AreaMongo>) snapshot.getMongo().get("Areas");
+        List<CoordenadaMongo> coords = (List<CoordenadaMongo>) snapshot.getMongo().get("Coordenadas");
+
+        List<UbicacionNeo4J> ubisNEO = (List<UbicacionNeo4J>) snapshot.getNeo4j().get("Ubicaciones");
+
+        assertEquals(6, espiritus.size());
+        assertEquals(2, mediums.size());
+        assertEquals(3, ubis.size());
+
+        assertEquals(3, areas.size());
+        assertEquals(0, coords.size());
+
+        assertEquals(3, ubisNEO.size());
+
+    }
 
     @AfterEach
     void cleanUp() {

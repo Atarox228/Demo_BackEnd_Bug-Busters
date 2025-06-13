@@ -21,9 +21,10 @@ public class SnapShot {
 
     @NotNull
     private Map<String, Object> sql;
-
-//    private Map<String, Object> mongo;
-//    private Map<String, Object> neo4j;
+    @NotNull
+    private Map<String, Object> mongo;
+    @NotNull
+    private Map<String, Object> neo4j;
 
     public SnapShot() {}
 
@@ -31,15 +32,10 @@ public class SnapShot {
         this.date = date;
     }
 
-    public SnapShot(LocalDate date, Map<String, Object> sql) {
+    public SnapShot(LocalDate date, Map<String, Object> sql, Map<String, Object> mongo, Map<String, Object> neo4j) {
         this.date = date;
         this.sql = sql;
+        this.mongo = mongo;
+        this.neo4j = neo4j;
     }
-
-//    public SnapShot(LocalDate date, Map<String, Object> sql, Map<String, Object> mongo, Map<String, Object> neo4j) {
-//        this.date = date;
-//        this.sql = sql;
-//        this.mongo = mongo;
-//        this.neo4j = neo4j;
-//    }
 }

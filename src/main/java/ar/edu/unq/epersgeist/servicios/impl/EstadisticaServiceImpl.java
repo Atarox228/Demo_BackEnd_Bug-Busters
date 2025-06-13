@@ -48,8 +48,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     @Override
     public SnapShot obtenerSnapshot(LocalDate date) {
-        SnapShot snapshot = this.snapshotMongoRepository.getSnapshot(date);
-        return snapshot;
+            return this.snapshotMongoRepository.getSnapshot(date);
     }
 
 
