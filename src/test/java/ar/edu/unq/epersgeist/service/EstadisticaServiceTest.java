@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.service;
 
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -35,7 +36,7 @@ public class EstadisticaServiceTest {
     @Autowired
     private MediumRepository mediumRepository;
     @Autowired
-    private CoordenadaService coordenadaService;
+    private CoordenadaRepository coordenadaRepository;
 
     private Ubicacion fellwood;
     private Ubicacion cementerio;
@@ -322,7 +323,7 @@ public class EstadisticaServiceTest {
         medium.setUbicacion(santuario);
         mediumRepository.crear(medium);
 
-        coordenadaService.actualizarOCrearCoordenada("MEDIUM",medium.getId(),(new GeoJsonPoint(-58.2730, -34.7210)));
+        coordenadaRepository.actualizarOCrearCoordenada("MEDIUM",medium.getId(),(new GeoJsonPoint(-58.2730, -34.7210)));
 
         estadisticaService.snapshot();
         LocalDate date = LocalDate.now();

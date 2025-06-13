@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.controller.excepciones.*;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -21,12 +22,12 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
-    private final CoordenadaDAOMongo coordenadaDAOMongo;
+    private final CoordenadaRepository coordenadaRepository;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDao, CoordenadaDAOMongo coordenadaDAOMongo) {
+    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDao, CoordenadaRepository coordenadaRepository) {
         this.espirituDAO = espirituDao;
         this.mediumDAO = mediumDao;
-        this.coordenadaDAOMongo = coordenadaDAOMongo;
+        this.coordenadaRepository = coordenadaRepository;
     }
 
 
@@ -39,13 +40,13 @@ public class EspirituServiceImpl implements EspirituService {
     public Optional<Espiritu> recuperar(Long espirituId) {
         validacionesGenerales.revisarId(espirituId);
         Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
-        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(), espiritu);
         return espiritu;
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return  espirituDAO.recuperarTodosNoEliminados();
+        return espirituDAO.recuperarTodosNoEliminados();
     }
 
     @Override
@@ -54,7 +55,7 @@ public class EspirituServiceImpl implements EspirituService {
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(), espiritu);
         espirituDAO.save(espiritu);
     }
 
@@ -63,11 +64,12 @@ public class EspirituServiceImpl implements EspirituService {
         if (!espirituDAO.existsById(espiritu.getId())) {
             throw new RecursoNoEncontradoException("Espiritu con ID " + espiritu.getId() + " no encontrado");
         }
-        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(),espiritu);
+        validacionesGenerales.revisarEntidadEliminado(espiritu.getDeleted(), espiritu);
         espiritu.setDeleted(true);
         espirituDAO.save(espiritu);
     }
 
+    @Override
     public Optional<Medium> conectar(Long espirituId, Long mediumId) {
         validacionesGenerales.revisarId(espirituId);
         validacionesGenerales.revisarId(mediumId);
@@ -75,13 +77,13 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> espiritu = espirituDAO.findById(espirituId);
         Medium medium = mediumDAO.findById(mediumId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
-        
-        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(),espiritu);
-        validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(),medium);
-        
-        validacionesGenerales.revisarUbicacionNoNula(espiritu.get().getUbicacion(),espiritu,espirituId);
-        validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(),medium,mediumId);
-        
+
+        validacionesGenerales.revisarEntidadEliminado(espiritu.get().getDeleted(), espiritu);
+        validacionesGenerales.revisarEntidadEliminado(medium.getDeleted(), medium);
+
+        validacionesGenerales.revisarUbicacionNoNula(espiritu.get().getUbicacion(), espiritu, espirituId);
+        validacionesGenerales.revisarUbicacionNoNula(medium.getUbicacion(), medium, mediumId);
+
         medium.conectarseAEspiritu(espiritu.get());
         mediumDAO.save(medium);
         return mediumDAO.findById(mediumId);
@@ -89,7 +91,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Espiritu> espiritusDemoniacos(Direccion direccion, Integer pagina, Integer cantidadPorPagina) {
-        if (pagina < 1 || cantidadPorPagina < 0){
+        if (pagina < 1 || cantidadPorPagina < 0) {
             throw new PaginaInvalidaException();
         }
         Sort.Direction direccionOrden = (direccion == Direccion.DESCENDENTE) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -104,31 +106,16 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> dominante = espirituDAO.findById(idDominante);
         Optional<Espiritu> dominado = espirituDAO.findById(idDominado);
 
-        Optional<CoordenadaMongo> coordenadaDominante = coordenadaDAOMongo.findByEntityIdAndEntityType(dominante.get().getId(), dominante.get().getTipo().toString());
-        Optional<CoordenadaMongo> coordenadaDominado = coordenadaDAOMongo.findByEntityIdAndEntityType(dominado.get().getId(), dominado.get().getTipo().toString());
-        validacionesGenerales.revisarEntidadEliminado(dominante.get().getDeleted(),dominante);
-        validacionesGenerales.revisarEntidadEliminado(dominado.get().getDeleted(),dominado);
+        CoordenadaMongo coordenadaDominado = coordenadaRepository.findByEntityIdAndEntityType(dominado.get().getTipo().toString(), dominado.get().getId());
+        validacionesGenerales.revisarEntidadEliminado(dominante.get().getDeleted(), dominante);
+        validacionesGenerales.revisarEntidadEliminado(dominado.get().getDeleted(), dominado);
 
-        if (coordenadaDominante.isEmpty() || coordenadaDominado.isEmpty()) {
-            throw new RecursoNoEncontradoException();
-        }
-
-        if (! this.estaEnRango(coordenadaDominante.get(), coordenadaDominado.get(), dominante.get())) {
+        if (!coordenadaRepository.estaEnRangoDeDominar(coordenadaDominado, dominante.get())) {
             throw new FueraDeRangoDistanciaException();
         }
 
         dominante.get().dominar(dominado.get());
         espirituDAO.save(dominado.get());
-    }
-
-    private boolean estaEnRango(CoordenadaMongo coordDominante, CoordenadaMongo coordDominado, Espiritu dominante) {
-        Double latitud = coordDominado.getLatitud();
-        Double longitud = coordDominado.getLongitud();
-
-        Optional<EspirituMongo> espirituEnRango = coordenadaDAOMongo.findEspirituEnRango(
-                longitud, latitud, dominante.getId(), dominante.getTipo().toString());
-
-        return espirituEnRango.isPresent();
     }
 
 }

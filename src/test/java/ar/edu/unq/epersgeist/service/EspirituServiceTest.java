@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.impl.MediumRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -39,7 +40,7 @@ public class EspirituServiceTest {
     private EspirituDAO espirituDAO;
 
     @Autowired
-    private CoordenadaDAOMongo coordenadaDAOMongo;
+    private CoordenadaRepository coordenadaRepository;
 
     private Angel Casper;
     private Demonio Jinn;
@@ -571,8 +572,8 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-34.7210,-58.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-34.7070, -48.2630), Anabelle.getTipo().toString(), Anabelle.getId());
 
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
 
         assertThrows(FueraDeRangoDistanciaException.class, () -> {
             espirituService.dominar(Jinn.getId(), Anabelle.getId());
@@ -587,8 +588,8 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-34.7210,-58.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-34.7210, -58.2700), Anabelle.getTipo().toString(), Anabelle.getId());
 
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
 
         assertThrows(FueraDeRangoDistanciaException.class, () -> {
             espirituService.dominar(Jinn.getId(), Anabelle.getId());
@@ -614,8 +615,8 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
 
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
 
         assertThrows(EspirituNoLibreException.class, () -> {
             espirituService.dominar(Jinn.getId(), Anabelle.getId());
@@ -633,9 +634,9 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
         CoordenadaMongo coordenadaOni = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Oni.getTipo().toString(), Oni.getId());
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
-        coordenadaDAOMongo.save(coordenadaOni);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaOni);
 
         espirituService.dominar(Jinn.getId(), Anabelle.getId());
 
@@ -659,8 +660,8 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
 
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
 
         assertThrows(EspirituMuyPoderosoException.class, () -> {
             espirituService.dominar(Jinn.getId(), Anabelle.getId());
@@ -690,8 +691,8 @@ public class EspirituServiceTest {
         CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
         CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
 
-        coordenadaDAOMongo.save(coordenadaJinn);
-        coordenadaDAOMongo.save(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
 
         espirituService.dominar(Jinn.getId(), Anabelle.getId());
 
