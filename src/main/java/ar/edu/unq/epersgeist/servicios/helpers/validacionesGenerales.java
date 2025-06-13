@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.helpers;
 
 import ar.edu.unq.epersgeist.controller.excepciones.EntidadSinUbicacionException;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;

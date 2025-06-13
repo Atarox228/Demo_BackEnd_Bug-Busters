@@ -12,7 +12,6 @@ public interface UbicacionRepository {
 
     void crear(Ubicacion ubicacion, GeoJsonPolygon area);
     Ubicacion recuperar(Long ubicacionId);
-    Ubicacion recupoerarPorNombre (String nombre);
     UbicacionNeo4J findByNombre(String nombre);
     void actualizar(Ubicacion ubicacion);
     void actualizarNeo4J(Ubicacion ubicacion,String nombreViejo);
@@ -25,7 +24,7 @@ public interface UbicacionRepository {
     List<UbicacionNeo4J> ubicacionesSobrecargadas(Integer umbralDeEnergia);
     Boolean estanConectadasDirecta(Ubicacion origen, Ubicacion destino);
     List<UbicacionNeo4J> encontrarCaminoMasCorto(String origen, String destino);
-    ClosenessResult definirCentralidad(String nombre);
+    List<ClosenessResult> closenessOf(List<String> names);
     double relationships();
     DegreeQuery DegreeOf(List<String> names, DegreeType type);
     List<String> namesOf(List<Long> ids);

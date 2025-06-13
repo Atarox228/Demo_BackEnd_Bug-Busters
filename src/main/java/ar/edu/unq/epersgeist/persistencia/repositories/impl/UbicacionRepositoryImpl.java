@@ -42,11 +42,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con ID " + ubicacionId + " no encontrada"));
     }
 
-    @Override
-    public Ubicacion recupoerarPorNombre(String nombre) {
-        return ubicacionDAO.recuperarPorNombre(nombre)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación con nombre " + nombre + " no encontrada"));
-    }
 
     @Override
     public UbicacionNeo4J findByNombre(String nombre) {
@@ -114,11 +109,6 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public ClosenessResult definirCentralidad(String nombre) {
-        return ubicacionDAONeo4J.closenessResult(nombre);
-    }
-
-    @Override
     public double relationships() {
         return ubicacionDAONeo4J.relationships();
     }
@@ -138,7 +128,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<String> namesOf(List<Long> ids) {
-        return ubicacionDAO.findAllById(ids).stream().map(Ubicacion::getNombre).collect(Collectors.toList());
+        return ubicacionDAO.findNombresById(ids);
+    }
+
+    @Override
+    public List<ClosenessResult> closenessOf(List<String> names) {
+        return ubicacionDAONeo4J.closenessResult(names);
     }
 
     @Override

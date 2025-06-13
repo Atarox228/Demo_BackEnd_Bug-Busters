@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.servicios.exception.sinResultadosException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
+import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
@@ -142,11 +143,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<ClosenessResult> closenessOf(List<Long> ids) {
-        List<ClosenessResult> closeness = new ArrayList<>();
-        for (Long id : ids) {
-            ClosenessResult recordCloseness = ubicacionRepository.definirCentralidad(ubicacionRepository.recuperar(id).getNombre());
-            closeness.add(recordCloseness);
-        }
+        List<String> names = ubicacionRepository.namesOf(ids);
+        List<ClosenessResult> closeness = ubicacionRepository.closenessOf(names);
         return closeness;
     }
 
@@ -158,9 +156,8 @@ public class UbicacionServiceImpl implements UbicacionService {
     public DegreeResult degreeOf(List<Long> ids, DegreeType type) {
         List<String> names = ubicacionRepository.namesOf(ids);
         DegreeQuery query = ubicacionRepository.DegreeOf(names, type);
-        double cantRelationships = ubicacionRepository.relationships();
         if (query == null) throw new sinResultadosException();
-        DegreeResult result = new DegreeResult(query.node(), query.degree() / cantRelationships, type);
+        DegreeResult result = new DegreeResult(query.node(), query.degree(), type);
         return result;
     }
 
