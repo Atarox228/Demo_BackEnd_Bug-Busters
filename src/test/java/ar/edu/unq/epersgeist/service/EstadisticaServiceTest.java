@@ -1,6 +1,9 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
@@ -10,10 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -29,6 +34,10 @@ public class EstadisticaServiceTest {
     private MediumService mediumService;
     @Autowired
     private UbicacionService ubicacionService;
+    @Autowired
+    private MediumRepository mediumRepository;
+    @Autowired
+    private CoordenadaRepository coordenadaRepository;
 
     private Ubicacion fellwood;
     private Ubicacion cementerio;
@@ -44,6 +53,7 @@ public class EstadisticaServiceTest {
     private GeoJsonPolygon areaSantuario;
     private GeoJsonPolygon areaCemeterio;
     private GeoJsonPolygon areaFellwood;
+
 
     @BeforeEach
     public void prepare() {
@@ -265,6 +275,177 @@ public class EstadisticaServiceTest {
         assertThrows(NoHaySantuariosConDemoniosException.class, () -> {
             estadisticaService.santuarioCorrupto();
         });
+    }
+
+    @Test
+    void snapshotFecha(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        assertEquals(snapshot.getDate(), date);
+    }
+
+    @Test
+    void snapshotFechaInvalida(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.of(2020, 1, 1);
+
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            estadisticaService.obtenerSnapshot(date);
+        });
+    }
+
+
+    @Test
+    void snapshotSQL(){
+        dataService.eliminarTodo();
+
+        Medium medium = new Medium("jose",100,80);
+        mediumRepository.crear(medium);
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+        List<Medium> mediums = (List<Medium>) snapshot.getSql().get("Mediums");
+
+        assertEquals(1, mediums.size());
+        assertEquals(medium.getId(), mediums.getFirst().getId());
+    }
+
+    @Test
+    void snapshotMongo(){
+        dataService.eliminarTodo();
+
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaSantuario = new GeoJsonPolygon(area1);
+        santuario = new Santuario("Catolistres", 50);
+        ubicacionService.crear(santuario, areaSantuario);
+
+        Medium medium = new Medium("jose",100,80);
+        medium.setUbicacion(santuario);
+        mediumRepository.crear(medium);
+
+        coordenadaRepository.actualizarOCrearCoordenada("MEDIUM",medium.getId(),(new GeoJsonPoint(-58.2730, -34.7210)));
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<Ubicacion> ubis = (List<Ubicacion>) snapshot.getSql().get("Ubicaciones");
+        List<AreaMongo> areas = (List<AreaMongo>) snapshot.getMongo().get("Areas");
+        List<CoordenadaMongo> coords = (List<CoordenadaMongo>) snapshot.getMongo().get("Coordenadas");
+
+        assertEquals(1, ubis.size());
+        assertEquals(santuario.getId(), ubis.getFirst().getId());
+        assertEquals(1, areas.size());
+        assertEquals(1, coords.size());
+        assertEquals(medium.getId(), coords.getFirst().getEntityId());
+    }
+
+    @Test
+    void snapshotNEO4J(){
+        dataService.eliminarTodo();
+
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaSantuario = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaFellwood = new GeoJsonPolygon(area2);
+        santuario = new Santuario("Catolistres", 50);
+        fellwood = new Santuario("Fellwood", 100);
+        ubicacionService.crear(santuario, areaSantuario);
+        ubicacionService.crear(fellwood, areaFellwood);
+        ubicacionService.conectar(santuario.getId(), fellwood.getId());
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<UbicacionNeo4J> ubis = (List<UbicacionNeo4J>) snapshot.getSql().get("Ubicaciones");
+        List<UbicacionNeo4J> ubisNEO = (List<UbicacionNeo4J>) snapshot.getNeo4j().get("Ubicaciones");
+
+
+        assertEquals(2, ubis.size());
+        assertEquals(2,ubisNEO.size());
+        assertEquals("Catolistres",ubisNEO.getFirst().getNombre());
+        assertEquals(1,ubisNEO.getFirst().getUbicaciones().size());
+        assertEquals("Fellwood",ubisNEO.get(1).getNombre());
+        assertEquals(0,ubisNEO.get(1).getUbicaciones().size());
+    }
+
+    @Test
+    void snapshotConPrepare(){
+
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<Espiritu> espiritus = (List<Espiritu>) snapshot.getSql().get("Espiritus");
+        List<Medium> mediums = (List<Medium>) snapshot.getSql().get("Mediums");
+        List<Ubicacion> ubis = (List<Ubicacion>) snapshot.getSql().get("Ubicaciones");
+
+        List<AreaMongo> areas = (List<AreaMongo>) snapshot.getMongo().get("Areas");
+        List<CoordenadaMongo> coords = (List<CoordenadaMongo>) snapshot.getMongo().get("Coordenadas");
+
+        List<UbicacionNeo4J> ubisNEO = (List<UbicacionNeo4J>) snapshot.getNeo4j().get("Ubicaciones");
+
+        assertEquals(6, espiritus.size());
+        assertEquals(2, mediums.size());
+        assertEquals(3, ubis.size());
+
+        assertEquals(3, areas.size());
+        assertEquals(0, coords.size());
+
+        assertEquals(3, ubisNEO.size());
+
+    }
+
+    @Test
+    void snapshotVacio(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.now();
+
+        SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
+
+        List<Espiritu> espiritus = (List<Espiritu>) snapshot.getSql().get("Espiritus");
+        List<Medium> mediums = (List<Medium>) snapshot.getSql().get("Mediums");
+        List<Ubicacion> ubis = (List<Ubicacion>) snapshot.getSql().get("Ubicaciones");
+
+        List<AreaMongo> areas = (List<AreaMongo>) snapshot.getMongo().get("Areas");
+        List<CoordenadaMongo> coords = (List<CoordenadaMongo>) snapshot.getMongo().get("Coordenadas");
+
+        List<UbicacionNeo4J> ubisNEO = (List<UbicacionNeo4J>) snapshot.getNeo4j().get("Ubicaciones");
+
+        assertEquals(snapshot.getDate(), date);
+        assertEquals(0, espiritus.size());
+        assertEquals(0, mediums.size());
+        assertEquals(0, ubis.size());
+        assertEquals(0, areas.size());
+        assertEquals(0, coords.size());
+        assertEquals(0, ubisNEO.size());
     }
 
     @AfterEach

@@ -1,16 +1,15 @@
 package ar.edu.unq.epersgeist.servicios.impl;
-
-
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.ReporteSantuarioMasCorrupto;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.SnapShotMongoRepository;
 import ar.edu.unq.epersgeist.servicios.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.exception.NoHaySantuariosConDemoniosException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.scheduler.Schedulers;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,10 +20,12 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     private final MediumDAO mediumDAO;
     private final EspirituDAO espirituDAO;
+    private final SnapShotMongoRepository snapshotMongoRepository;
 
-    public EstadisticaServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDAO) {
+    public EstadisticaServiceImpl(EspirituDAO espirituDAO, MediumDAO mediumDAO, SnapShotMongoRepository snapshotMongoRepository) {
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDAO;
+        this.snapshotMongoRepository = snapshotMongoRepository;
     }
 
     @Override
@@ -38,6 +39,16 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         Integer cantDemoniosTotal   = espirituDAO.demoniosEn(santuarioCorrupto.getId()).size();
         Integer cantDemoniosLibres  = espirituDAO.demoniosLibresEn(santuarioCorrupto.getId()).size();
         return new ReporteSantuarioMasCorrupto(santuarioCorrupto.getNombre(), mediumEndemoniado, cantDemoniosTotal, cantDemoniosLibres);
+    }
+
+    @Override
+    public void snapshot() {
+        this.snapshotMongoRepository.crearSnapShot();
+    }
+
+    @Override
+    public SnapShot obtenerSnapshot(LocalDate date) {
+            return this.snapshotMongoRepository.getSnapshot(date);
     }
 
 

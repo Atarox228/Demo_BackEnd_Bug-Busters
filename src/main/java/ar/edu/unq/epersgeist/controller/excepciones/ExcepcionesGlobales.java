@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -105,7 +103,12 @@ public class ExcepcionesGlobales {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe ser un número válido (Integer)."));
+        } else if (tipoEsperado != null && tipoEsperado.equals(java.time.LocalDate.class)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe tener el formato de fecha yyyy-MM-dd, por ejemplo: 2025-05-01."));
         }
+
         return ResponseEntity
                 .badRequest()
                 .body(new ErrorDetalle(LocalDateTime.now(),"Error de parámetro: " + ex.getMessage()));
