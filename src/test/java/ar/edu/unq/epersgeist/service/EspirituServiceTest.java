@@ -341,6 +341,29 @@ public class EspirituServiceTest {
         });
     }
 
+    @Test
+    void conexionFallidaPorEspirituYaDominado() {
+        mediumService.crear(medium);
+        medium.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+
+        espirituService.crear(Casper);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+        espirituService.crear(Jinn);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaCasper = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Casper.getTipo().toString(), Casper.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaCasper);
+
+        espirituService.dominar(Jinn.getId(), Casper.getId());
+        assertThrows(NoSePuedenConectarException.class, () -> {
+            espirituService.conectar(Casper.getId(), medium.getId());
+        });
+    }
+
     //test de soft delete
     @Test
     void creacionTimeStampUpdateAndNoDelete(){
@@ -702,6 +725,23 @@ public class EspirituServiceTest {
         assertThrows(NoSePuedeDominarException.class, () -> {
             espirituService.dominar(Anabelle.getId(), Jinn.getId());
         });
+    }
+
+    @Test
+    void dominioExitoso() {
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        espirituService.dominar(Jinn.getId(), Anabelle.getId());
+
+        Espiritu espirituDominado = espirituService.recuperar(Anabelle.getId()).get();
+        assertEquals(espirituDominado.getDominante().getId(), Jinn.getId());
     }
 
     @AfterEach
