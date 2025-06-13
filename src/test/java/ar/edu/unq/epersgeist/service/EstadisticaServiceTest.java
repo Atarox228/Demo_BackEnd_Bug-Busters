@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.service;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
@@ -285,6 +286,17 @@ public class EstadisticaServiceTest {
         SnapShot snapshot = estadisticaService.obtenerSnapshot(date);
 
         assertEquals(snapshot.getDate(), date);
+    }
+
+    @Test
+    void snapshotFechaInvalida(){
+        dataService.eliminarTodo();
+        estadisticaService.snapshot();
+        LocalDate date = LocalDate.of(2020, 1, 1);
+
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            estadisticaService.obtenerSnapshot(date);
+        });
     }
 
 

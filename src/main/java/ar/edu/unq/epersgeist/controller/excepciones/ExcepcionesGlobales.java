@@ -103,7 +103,12 @@ public class ExcepcionesGlobales {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe ser un número válido (Integer)."));
+        } else if (tipoEsperado != null && tipoEsperado.equals(java.time.LocalDate.class)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorDetalle(LocalDateTime.now(),"El parámetro '" + nombre + "' debe tener el formato de fecha yyyy-MM-dd, por ejemplo: 2025-05-01."));
         }
+
         return ResponseEntity
                 .badRequest()
                 .body(new ErrorDetalle(LocalDateTime.now(),"Error de parámetro: " + ex.getMessage()));

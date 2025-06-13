@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
+import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.SnapShot;
 import ar.edu.unq.epersgeist.persistencia.dao.*;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.SnapShotMongoRepository;
@@ -57,8 +58,9 @@ public class SnapShotMongoRepositoryImpl implements SnapShotMongoRepository {
 
     @Override
     public SnapShot getSnapshot(LocalDate date) {
-        SnapShot snap = this.snapshotMongoDAO.findTop1ByDate(date);
-        return snap;
+
+        return this.snapshotMongoDAO.findTop1ByDate(date)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Snapshot con fecha:" + date.toString() + " no encontrada"));
     }
 
     @Override

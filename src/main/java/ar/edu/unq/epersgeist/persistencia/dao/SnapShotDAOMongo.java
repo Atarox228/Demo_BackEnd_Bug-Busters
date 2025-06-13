@@ -7,10 +7,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface SnapShotDAOMongo extends MongoRepository<SnapShot, String> {
 
 
-    SnapShot findTop1ByDate(@NotNull LocalDate date);
+
+
+    Optional<SnapShot> findTop1ByDate(@NotNull LocalDate date);
 }

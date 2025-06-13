@@ -53,5 +53,4 @@ public class MediumExcepciones {
         ErrorDetalle error = new ErrorDetalle(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
-
 }
