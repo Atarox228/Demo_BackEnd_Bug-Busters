@@ -3,12 +3,13 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.DegreeType;
+import ar.edu.unq.epersgeist.persistencia.dao.AreaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAONeo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
-
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,17 +19,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAO ubicacionDAO;
     private final UbicacionDAONeo4j ubicacionDAONeo4J;
+    private final AreaDAOMongo areaDAOMongo;
 
-    public UbicacionRepositoryImpl(UbicacionDAO ubicacionDAO, UbicacionDAONeo4j ubicacionDAONeo4J) {
+    public UbicacionRepositoryImpl(UbicacionDAO ubicacionDAO, UbicacionDAONeo4j ubicacionDAONeo4J, AreaDAOMongo areaDAOMongo) {
         this.ubicacionDAO = ubicacionDAO;
         this.ubicacionDAONeo4J = ubicacionDAONeo4J;
+        this.areaDAOMongo = areaDAOMongo;
     }
 
     @Override
-    public void crear(Ubicacion ubicacion){
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon poligono){
         UbicacionNeo4J ubicacionNeo = new UbicacionNeo4J(ubicacion.getNombre(),ubicacion.getTipo(),ubicacion.getFlujoEnergia());
-        ubicacionDAO.save(ubicacion);
+        Ubicacion ubicacionGuardada = ubicacionDAO.save(ubicacion);
+        AreaMongo area = new AreaMongo(poligono, ubicacionGuardada.getId());
         ubicacionDAONeo4J.save(ubicacionNeo);
+        areaDAOMongo.save(area);
     }
 
     @Override
@@ -75,6 +80,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public void eliminarTodos() {
         ubicacionDAO.deleteAll();
         ubicacionDAONeo4J.detachDelete();
+        areaDAOMongo.deleteAll();
     }
 
     @Override
@@ -93,8 +99,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Boolean estanConectadasDirecta(String origen, String destino) {
-        return ubicacionDAONeo4J.estanConectadasDirecta(origen, destino);
+    public Boolean estanConectadasDirecta(Ubicacion origen, Ubicacion destino) {
+        return origen == null || ubicacionDAONeo4J.estanConectadasDirecta(origen.getNombre(), destino.getNombre());
     }
 
     @Override
@@ -130,4 +136,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return ubicacionDAONeo4J.closenessResult(names);
     }
 
+    @Override
+    public List<AreaMongo> recuperarPorInterseccion(GeoJsonPolygon area) {
+        return areaDAOMongo.recuperarPorInterseccion(area);
+    }
+
+    @Override
+    public AreaMongo recuperarPorCoordenada(GeoJsonPoint coordenada) {
+        GeoJsonPoint geoJsonPoint = new GeoJsonPoint(coordenada.getX(), coordenada.getY());
+        return areaDAOMongo.recuperarPorCoordenada(geoJsonPoint)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ubicación no encontrada"));
+    }
 }

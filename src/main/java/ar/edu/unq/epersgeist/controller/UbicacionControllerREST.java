@@ -2,18 +2,11 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.*;
 import ar.edu.unq.epersgeist.modelo.*;
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
-import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
-import ar.edu.unq.epersgeist.controller.dto.ActualizarUbicacionRequestDTO;
-import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -30,7 +23,7 @@ public class UbicacionControllerREST {
 
     @PostMapping
     public ResponseEntity<Void> crearUbicacion(@RequestBody @Valid UbicacionDTO ubicacion) {
-        ubicacionService.crear(ubicacion.aModelo());
+        ubicacionService.crear(ubicacion.aModelo(), ubicacion.getArea());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

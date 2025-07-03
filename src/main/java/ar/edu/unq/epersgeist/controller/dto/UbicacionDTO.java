@@ -2,26 +2,29 @@ package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoUbicacion;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.*;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import java.util.List;
 
 public record UbicacionDTO(
         Long id,
         List<String> nombresDestino,
+        GeoJsonPolygon area,
         @NotBlank String nombre,
         @NotNull TipoUbicacion tipoDeUbicacion,
         @Min(0) @Max(100) Integer flujoDeEnergia)
+
 {
 
+    public GeoJsonPolygon getArea(){
+        return this.area;
+    }
 
     public static UbicacionDTO desdeModelo(Ubicacion ubicacion) {
         return new UbicacionDTO(
                 ubicacion.getId(),
                 List.of(),
+                null,
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()
@@ -37,6 +40,7 @@ public record UbicacionDTO(
         return new UbicacionDTO(
                 ubicacion.getId(),
                 conexiones,
+                null,
                 ubicacion.getNombre(),
                 ubicacion.getTipo(),
                 ubicacion.getFlujoEnergia()

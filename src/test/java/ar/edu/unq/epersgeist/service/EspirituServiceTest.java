@@ -3,7 +3,10 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.enums.TipoEspiritu;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.impl.MediumRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
 import ar.edu.unq.epersgeist.servicios.enums.Direccion;
@@ -14,9 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+import org.springframework.data.geo.Point;
+
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -32,6 +38,10 @@ public class EspirituServiceTest {
     private DataService dataService;
     @Autowired
     private EspirituDAO espirituDAO;
+
+    @Autowired
+    private CoordenadaRepository coordenadaRepository;
+
     private Angel Casper;
     private Demonio Jinn;
     private Demonio Oni;
@@ -41,14 +51,35 @@ public class EspirituServiceTest {
     private Medium  medium2;
     private Ubicacion Bernal;
     private Ubicacion Quilmes;
+    private GeoJsonPolygon areaBernal;
+    private GeoJsonPolygon areaQuilmes;
+    @Autowired
+    private MediumRepositoryImpl mediumRepositoryImpl;
 
     @BeforeEach
     void setUp(){
+        List<Point> area1 = List.of(
+                new Point(-59.0, -35.0),
+                new Point(-57.0, -35.0),
+                new Point(-57.0, -33.0),
+                new Point(-57.0, -33.0),
+                new Point(-59.0, -35.0)
+        );
+        areaBernal = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-48.2630, -34.7070),
+                new Point(-48.2600, -34.7090),
+                new Point(-48.2580, -34.7060),
+                new Point(-48.2630, -34.7070)
+        );
+        areaQuilmes = new GeoJsonPolygon(area2);
+
 
         Bernal = new Cementerio("Bernal", 100);
         Quilmes = new Cementerio("Quilmes", 100);
-        ubicacionService.crear(Bernal);
-        ubicacionService.crear(Quilmes);
+        ubicacionService.crear(Bernal, areaBernal);
+        ubicacionService.crear(Quilmes, areaQuilmes);
 
         Casper = new Angel("Casper");
         Oni = new Demonio("Otakemaru");
@@ -62,7 +93,6 @@ public class EspirituServiceTest {
 
         medium = new Medium("Lala", 100, 50);
         medium2 = new Medium("Lalo",100,100);
-
     }
 
     @Test
@@ -120,7 +150,6 @@ public class EspirituServiceTest {
             espirituService.recuperar(Casper.getId());
         });
     }
-
 
     @Test
     void recuperarEspirituEliminado() {
@@ -285,8 +314,6 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Quilmes.getId());
-//
 
         assertEquals(0, medium.getEspiritus().size());
         assertThrows(NoSePuedenConectarException.class, () -> {
@@ -306,11 +333,32 @@ public class EspirituServiceTest {
         mediumService.actualizar(medium2);
         Casper.setUbicacion(Bernal);
         espirituService.actualizar(Casper);
-//        mediumService.mover(medium.getId(),Bernal.getId());
-//        mediumService.mover(medium2.getId(),Bernal.getId());
 
         espirituService.conectar(Casper.getId(), medium2.getId());
         assertEquals(0, medium.getEspiritus().size());
+        assertThrows(NoSePuedenConectarException.class, () -> {
+            espirituService.conectar(Casper.getId(), medium.getId());
+        });
+    }
+
+    @Test
+    void conexionFallidaPorEspirituYaDominado() {
+        mediumService.crear(medium);
+        medium.setUbicacion(Bernal);
+        mediumService.actualizar(medium);
+
+        espirituService.crear(Casper);
+        Casper.setUbicacion(Bernal);
+        espirituService.actualizar(Casper);
+        espirituService.crear(Jinn);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaCasper = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Casper.getTipo().toString(), Casper.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaCasper);
+
+        espirituService.dominar(Jinn.getId(), Casper.getId());
         assertThrows(NoSePuedenConectarException.class, () -> {
             espirituService.conectar(Casper.getId(), medium.getId());
         });
@@ -504,12 +552,201 @@ public class EspirituServiceTest {
         return Optional.of(espiritu);
     }
 
+    @Test
+    void unEspirituSiendoDominadoPorOtroSinCoordenadas() {
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+
+    }
+
+    @Test
+    void unEspirituSiendoDominadoPorOtroConCoordenadas() {
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        Jinn.setMedium(medium);
+        Anabelle.setMedium(medium2);
+        espirituService.actualizar(Jinn);
+        espirituService.actualizar(Anabelle);
+
+        mediumService.mover(medium.getId(), -33.7210,-57.2730);
+        mediumService.mover(medium2.getId(), -33.7210,-57.2420);
+
+        Anabelle.setMedium(null);
+        espirituService.actualizar(Anabelle);
+
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroEstaLejos() {
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-34.7210,-58.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-34.7070, -48.2630), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        assertThrows(FueraDeRangoDistanciaException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroEstaMuyCerca() {
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-34.7210,-58.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-34.7210, -58.2700), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        assertThrows(FueraDeRangoDistanciaException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroDominadoTieneMedium() {
+        mediumService.crear(medium);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        medium.setUbicacion(Bernal);
+        Jinn.setUbicacion(Bernal);
+        Anabelle.setUbicacion(Bernal);
+
+        espirituService.actualizar(Jinn);
+        espirituService.actualizar(Anabelle);
+        mediumService.actualizar(medium);
+
+        espirituService.conectar(Anabelle.getId(), medium.getId());
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        assertThrows(EspirituNoLibreException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroDominadoYaEstaDominado() {
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        espirituService.crear(Oni);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+        CoordenadaMongo coordenadaOni = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Oni.getTipo().toString(), Oni.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+        coordenadaRepository.actualizarCoordenada(coordenadaOni);
+
+        espirituService.dominar(Jinn.getId(), Anabelle.getId());
+
+        Espiritu dominador = espirituService.recuperar(Jinn.getId()).get();
+        Espiritu dominado = espirituService.recuperar(Anabelle.getId()).get();
+        assertEquals(dominado.getDominante().getNombre(), dominador.getNombre());
+        assertThrows(EspirituNoLibreException.class, () -> {
+            espirituService.dominar(Oni.getId(), Anabelle.getId());
+        });
+    }
+
+    @Test
+    void unEspirituQueriendoDominarPeroDominadoEnergiaMayorA50() {
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+        Anabelle.setNivelConexion(60);
+        espirituService.actualizar(Anabelle);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        assertThrows(EspirituMuyPoderosoException.class, () -> {
+            espirituService.dominar(Jinn.getId(), Anabelle.getId());
+        });
+    }
+
+    @Test
+    void unEspirituQueriendoDominarASuDominador() {
+        Jinn.setNivelConexion(0);
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        Jinn.setMedium(medium);
+        Anabelle.setMedium(medium2);
+        espirituService.actualizar(Jinn);
+        espirituService.actualizar(Anabelle);
+
+        mediumService.mover(medium.getId(), -33.7210,-57.2730);
+        mediumService.mover(medium2.getId(), -33.7210,-57.2420);
+
+        Anabelle.setMedium(null);
+        Jinn.setMedium(null);
+        espirituService.actualizar(Anabelle);
+        espirituService.actualizar(Jinn);
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        espirituService.dominar(Jinn.getId(), Anabelle.getId());
+
+        Espiritu dominador = espirituService.recuperar(Jinn.getId()).get();
+        Espiritu dominado = espirituService.recuperar(Anabelle.getId()).get();
+        assertEquals(dominado.getDominante().getNombre(), dominador.getNombre());
+        assertThrows(NoSePuedeDominarException.class, () -> {
+            espirituService.dominar(Anabelle.getId(), Jinn.getId());
+        });
+    }
+
+    @Test
+    void dominioExitoso() {
+        espirituService.crear(Jinn);
+        espirituService.crear(Anabelle);
+
+        CoordenadaMongo coordenadaJinn = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), Jinn.getTipo().toString(), Jinn.getId());
+        CoordenadaMongo coordenadaAnabelle = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), Anabelle.getTipo().toString(), Anabelle.getId());
+
+        coordenadaRepository.actualizarCoordenada(coordenadaJinn);
+        coordenadaRepository.actualizarCoordenada(coordenadaAnabelle);
+
+        espirituService.dominar(Jinn.getId(), Anabelle.getId());
+
+        Espiritu espirituDominado = espirituService.recuperar(Anabelle.getId()).get();
+        assertEquals(espirituDominado.getDominante().getId(), Jinn.getId());
+    }
 
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
-
-
     }
 
 }

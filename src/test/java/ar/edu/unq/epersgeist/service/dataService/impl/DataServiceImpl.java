@@ -1,7 +1,10 @@
 package ar.edu.unq.epersgeist.service.dataService.impl;
 
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.impl.SnapShotMongoRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.SnapShotMongoRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.exception.IdNoValidoException;
@@ -13,18 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataServiceImpl implements DataService {
 
     private final MediumDAO mediumDAO;
-    private final EspirituDAO espirituDAO;
+    private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
+    private final CoordenadaDAOMongo coordenadaDAOMongo;
+    private final SnapShotMongoRepository snapShotMongoRepository;
 
-    public DataServiceImpl (EspirituDAO espirituDAO, MediumDAO mediumDao, UbicacionRepository ubicacionRepository) {
-        this.espirituDAO = espirituDAO;
-        this.mediumDAO = mediumDao;
+    public DataServiceImpl (EspirituRepository espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository, CoordenadaDAOMongo coordenadaDAOMongo, SnapShotMongoRepository snapShotMongoRepository) {
+        this.espirituRepository = espirituRepository;
+        this.mediumDAO = mediumDAO;
         this.ubicacionRepository = ubicacionRepository;
+        this.coordenadaDAOMongo = coordenadaDAOMongo;
+        this.snapShotMongoRepository = snapShotMongoRepository;
     }
+
     public void eliminarTodo(){
-            espirituDAO.deleteAll();
+            espirituRepository.eliminarTodos();
             mediumDAO.deleteAll();
             ubicacionRepository.eliminarTodos();
+            coordenadaDAOMongo.deleteAll();
+            snapShotMongoRepository.eliminarTodo();
+
     }
 
     public void revisarId(Long id) {

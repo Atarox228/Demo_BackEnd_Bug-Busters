@@ -12,7 +12,7 @@ import java.util.*;
 
 @Entity
 @Check(constraints = "mana <= manaMax")
-public class Medium implements Serializable {
+public class Medium implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -140,5 +140,4 @@ public class Medium implements Serializable {
     public void desconectarse(Espiritu espiritu) {
         getEspiritus().remove(espiritu);
     }
-
 }

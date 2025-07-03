@@ -10,9 +10,12 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepos
 import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.servicios.helpers.validacionesGenerales;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+import java.util.List;
 
 @Service
 public class UbicacionServiceImpl implements UbicacionService {
@@ -28,11 +31,16 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void crear(Ubicacion ubicacion) {
+    public void crear(Ubicacion ubicacion, GeoJsonPolygon area) {
         if(ubicacionRepository.existeUbicacionConNombre(ubicacion.getNombre()) != null){
             throw new UbicacionYaCreadaException(ubicacion.getNombre());
         }
-        ubicacionRepository.crear(ubicacion);
+
+        List<AreaMongo> ubicacionesEnArea = ubicacionRepository.recuperarPorInterseccion(area);
+        if (!ubicacionesEnArea.isEmpty()) {
+            throw new UbicacionAreaSolapadaException("El área ya está ocupada por otra ubicación");
+        }
+        ubicacionRepository.crear(ubicacion, area);
     }
 
     @Override
@@ -69,7 +77,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         validacionesGenerales.revisarEntidadEliminado(ubicacion.getDeleted(),ubicacion);
         ubicacionRepository.actualizarNeo4J(ubicacion,nombreViejo);
         ubicacionRepository.actualizar(ubicacion);
-
     }
 
     @Override
@@ -117,7 +124,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         validacionesGenerales.revisarId(idDestino);
         Ubicacion ubi1 = ubicacionRepository.recuperar(idOrigen);
         Ubicacion ubi2 = ubicacionRepository.recuperar(idDestino);
-        return ubicacionRepository.estanConectadasDirecta(ubi1.getNombre(), ubi2.getNombre());
+        return ubicacionRepository.estanConectadasDirecta(ubi1, ubi2);
     }
 
     @Override
@@ -154,4 +161,8 @@ public class UbicacionServiceImpl implements UbicacionService {
         return result;
     }
 
+    @Override
+    public AreaMongo recuperarPorCoordenada(GeoJsonPoint coordenada) {
+        return ubicacionRepository.recuperarPorCoordenada(coordenada);
+    }
 }

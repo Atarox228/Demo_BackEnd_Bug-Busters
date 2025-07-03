@@ -3,7 +3,11 @@ package ar.edu.unq.epersgeist.service;
 import ar.edu.unq.epersgeist.controller.excepciones.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.modelo.*;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.CoordenadaDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.CoordenadaRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.servicios.exception.*;
 import ar.edu.unq.epersgeist.service.dataService.DataService;
 import ar.edu.unq.epersgeist.servicios.*;
@@ -14,12 +18,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +43,9 @@ public class MediumServiceTest {
     @Autowired
     private EspirituService espirituService;
     @Autowired
-    private MediumDAO mediumDAO;
+    private MediumRepository repository;
+    @Autowired
+    private CoordenadaRepository coordenadaRepository;
     private Medium medium;
     private Medium medium2;
     private GeneradorNumeros dado;
@@ -49,40 +55,82 @@ public class MediumServiceTest {
     private Ubicacion santuario;
     private Ubicacion cementerio;
     private Medium medium3;
+    private GeoJsonPolygon areaSantuario;
+    private GeoJsonPolygon areaBernal;
+    private GeoJsonPolygon areaCementerio;
+    private CoordenadaMongo coordenadaMedium;
+    private CoordenadaMongo coordenadaMedium2;
+    private CoordenadaMongo coordenadaMedium3;
+    private CoordenadaMongo coordenadaEspiritu;
+    private CoordenadaMongo coordenadaEspiritu2;
 
     @BeforeEach
     void setUp() {
+        List<Point> area1 = List.of(
+                new Point(-58.2730, -34.7210),
+                new Point(-58.2700, -34.7230),
+                new Point(-58.2680, -34.7200),
+                new Point(-58.2730, -34.7210)
+        );
+        areaBernal = new GeoJsonPolygon(area1);
+
+        List<Point> area2 = List.of(
+                new Point(-58.2630, -34.7070),
+                new Point(-58.2600, -34.7090),
+                new Point(-58.2580, -34.7060),
+                new Point(-58.2630, -34.7070)
+        );
+        areaSantuario = new GeoJsonPolygon(area2);
+
+        List<Point> area3 = List.of(
+                new Point(-58.3610, -34.6600),
+                new Point(-58.3590, -34.6620),
+                new Point(-58.3570, -34.6590),
+                new Point(-58.3610, -34.6600)
+        );
+        areaCementerio = new GeoJsonPolygon(area3);
+
         bernal = new Cementerio("Bernal", 50);
-        ubicacionService.crear(bernal);
+        ubicacionService.crear(bernal, areaBernal);
 
         santuario = new Santuario("Abadía de St. Carta", 30);
-        ubicacionService.crear(santuario);
+        ubicacionService.crear(santuario, areaSantuario);
 
         cementerio = new Cementerio("Cementerio de Derry", 50);
-        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio, areaCementerio);
 
         medium = new Medium("Lizzie",150,0);
         medium.setUbicacion(bernal);
         mediumService.crear(medium);
+        coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "MEDIUM", medium.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
 
         medium2 = new Medium("Lala", 100, 0);
         medium2.setUbicacion(bernal);
         mediumService.crear(medium2);
+        coordenadaMedium2 = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "MEDIUM", medium2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium2);
 
         medium3 = new Medium("Lorraine", 100, 50);
         medium3.setUbicacion(bernal);
         mediumService.crear(medium3);
+        coordenadaMedium3 = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "MEDIUM", medium3.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium3);
 
         espiritu = new Angel("Casper");
         espiritu.setNivelConexion(5);
         espiritu.setUbicacion(bernal);
         espirituService.crear(espiritu);
+        coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "ESPIRITU", espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
 
         espiritu2 = new Demonio("Ghosty");
         espiritu2.setNivelConexion(40);
         espiritu2.setUbicacion(bernal);
         espirituService.crear(espiritu2);
-        
+        coordenadaEspiritu2 = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), "ESPIRITU", espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu2);
+
         this.dado = Dado.getInstance();
     }
 
@@ -100,7 +148,7 @@ public class MediumServiceTest {
 
     @Test
     void recuperarMedium() {
-        Medium mediumperado = mediumService.recuperar(medium.getId()).get();
+        Medium mediumperado = mediumService.recuperar(medium.getId());
         assertNotNull(mediumperado);
         assertEquals(medium.getId(), mediumperado.getId());
     }
@@ -118,6 +166,14 @@ public class MediumServiceTest {
             mediumService.recuperar(null);
         });
     }
+
+//    @Test
+//    void recuperarMediumMongo() {
+//        MediumMongo medium = mediumService.recuperarMongo(medium2.getId());
+//        assertEquals(medium2.getId(), medium.getMediumIdSQL());
+//        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(medium.getCoordenada());
+//        assertEquals(medium2.getUbicacion().getId(), ubicacionMongo.getIdUbicacion());
+//    }
 
     @Test
     void recuperarTodos() {
@@ -137,7 +193,7 @@ public class MediumServiceTest {
     @Test
     void eliminarMedium() {
         Long mediumId = medium.getId();
-        assertTrue(mediumService.recuperar(mediumId).isPresent());
+        assertDoesNotThrow(() -> mediumService.recuperar(mediumId));
         mediumService.eliminar(medium);
         assertThrows(EntidadEliminadaException.class, () -> {
             mediumService.recuperar(mediumId);
@@ -157,26 +213,25 @@ public class MediumServiceTest {
         Long mediumId = medium.getId();
         Long mediumId2 = medium2.getId();
 
-        assertTrue(mediumService.recuperar(mediumId).isPresent());
-        assertTrue(mediumService.recuperar(mediumId2).isPresent());
+        assertDoesNotThrow(() -> mediumService.recuperar(mediumId));
+        assertDoesNotThrow(() -> mediumService.recuperar(mediumId2));
 
         mediumService.eliminarTodo();
         assertThrows(RecursoNoEncontradoException.class, () -> {
             mediumService.recuperar(mediumId);
         });
         assertThrows(RecursoNoEncontradoException.class, () -> {
-            mediumService.recuperar(mediumId2).isPresent();
-
+            mediumService.recuperar(mediumId2);
         });
 
     }
 
     @Test
     void actualizarMedium(){
-        Medium sinActualizar = mediumService.recuperar(medium.getId()).get();
+        Medium sinActualizar = mediumService.recuperar(medium.getId());
         medium.setNombre("Juan");
         mediumService.actualizar(medium);
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+        Medium actualizado = mediumService.recuperar(medium.getId());
         assertEquals(sinActualizar.getId(), medium.getId());
         assertEquals("Lizzie", sinActualizar.getNombre());
         assertEquals("Juan", actualizado.getNombre());
@@ -701,9 +756,9 @@ public class MediumServiceTest {
 
     @Test
     void descansarMedium(){
-        Medium sinDescansar = mediumService.recuperar(medium.getId()).get();
+        Medium sinDescansar = mediumService.recuperar(medium.getId());
         mediumService.descansar(medium.getId());
-        Medium descansado = mediumService.recuperar(medium.getId()).get();
+        Medium descansado = mediumService.recuperar(medium.getId());
         assertEquals(sinDescansar.getId(), descansado.getId());
         assertNotEquals(sinDescansar.getMana(), descansado.getMana());
     }
@@ -713,7 +768,7 @@ public class MediumServiceTest {
         espirituService.conectar(espiritu2.getId(), medium3.getId());
         mediumService.descansar(medium3.getId());
 
-        Medium descansadomedium = mediumService.recuperar(medium3.getId()).get();
+        Medium descansadomedium = mediumService.recuperar(medium3.getId());
         Espiritu descansadoEspiritu = espirituService.recuperar(espiritu2.getId()).get();
 
         assertEquals(medium3.getId(), descansadomedium.getId());
@@ -728,11 +783,11 @@ public class MediumServiceTest {
         espirituService.conectar(espiritu.getId(), medium3.getId());
 
         Espiritu espirituNoDescansado = espirituService.recuperar(espiritu.getId()).get();
-        Medium mediumNoDescansado = mediumService.recuperar(medium3.getId()).get();
+        Medium mediumNoDescansado = mediumService.recuperar(medium3.getId());
         assertEquals(50, mediumNoDescansado.getMana());
 
         mediumService.descansar(medium3.getId());
-        Medium mediumDescansado = mediumService.recuperar(medium3.getId()).get();
+        Medium mediumDescansado = mediumService.recuperar(medium3.getId());
         Espiritu espirituDescansado = espirituService.recuperar(espiritu.getId()).get();
 
         assertEquals(espirituDescansado.getMedium().getId(), mediumDescansado.getId());
@@ -751,7 +806,7 @@ public class MediumServiceTest {
 
         mediumService.descansar(medium3.getId());
 
-        Medium descansadomedium = mediumService.recuperar(medium3.getId()).get();
+        Medium descansadomedium = mediumService.recuperar(medium3.getId());
         Espiritu descansadoEspiritu = espirituService.recuperar(espiritu.getId()).get();
 
         assertEquals(medium3.getId(), descansadomedium.getId());
@@ -772,11 +827,11 @@ public class MediumServiceTest {
         espirituService.conectar(espiritu2.getId(), medium3.getId());
 
         Espiritu espirituNoDescansado = espirituService.recuperar(espiritu2.getId()).get();
-        Medium mediumNoDescansado = mediumService.recuperar(medium3.getId()).get();
+        Medium mediumNoDescansado = mediumService.recuperar(medium3.getId());
         assertEquals(50, mediumNoDescansado.getMana());
 
         mediumService.descansar(medium3.getId());
-        Medium mediumDescansado = mediumService.recuperar(medium3.getId()).get();
+        Medium mediumDescansado = mediumService.recuperar(medium3.getId());
         Espiritu espirituDescansado = espirituService.recuperar(espiritu2.getId()).get();
 
         assertEquals(espirituDescansado.getMedium().getId(), mediumDescansado.getId());
@@ -805,8 +860,13 @@ public class MediumServiceTest {
         espiritu2.setUbicacion(cementerio);
         espirituService.actualizar(espiritu2);
 
-        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId()).get();
-        medium3 = mediumService.recuperar(medium3.getId()).get();
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId());
+        medium3 = mediumService.recuperar(medium3.getId());
 
         assertEquals(medium3.getMana(), 40);
         assertEquals(espirituInvocado.getUbicacion(), medium3.getUbicacion());
@@ -814,8 +874,13 @@ public class MediumServiceTest {
 
     @Test
     void invocarEspirituLibreEnMismaUbicacion() {
-        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId()).get();
-        medium3 = mediumService.recuperar(medium3.getId()).get();
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId());
+        medium3 = mediumService.recuperar(medium3.getId());
 
         assertEquals(medium3.getMana(), 40);
         assertEquals(espirituInvocado.getUbicacion().getId(), espiritu2.getUbicacion().getId());
@@ -826,8 +891,13 @@ public class MediumServiceTest {
         medium3.setUbicacion(cementerio);
         mediumService.actualizar(medium3);
 
-        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId()).get();
-        medium3 = mediumService.recuperar(medium3.getId()).get();
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu2.getId());
+        medium3 = mediumService.recuperar(medium3.getId());
 
         assertEquals(medium3.getMana(), 40);
         assertEquals(medium3.getUbicacion().getId(), espirituInvocado.getUbicacion().getId());
@@ -837,6 +907,11 @@ public class MediumServiceTest {
     void invocacacionFallidaAngelEnCementerio() {
         medium3.setUbicacion(cementerio);
         mediumService.actualizar(medium3);
+
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
 
         assertThrows(InvocacionFallidaPorUbicacionException.class, () -> {
             mediumService.invocar(medium3.getId(), espiritu.getId());
@@ -848,8 +923,13 @@ public class MediumServiceTest {
         medium3.setUbicacion(santuario);
         mediumService.actualizar(medium3);
 
-        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId()).get();
-        medium3 = mediumService.recuperar(medium3.getId()).get();
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium3.getId(), espiritu.getId());
+        medium3 = mediumService.recuperar(medium3.getId());
 
         assertEquals(medium3.getMana(), 40);
         assertEquals(medium3.getUbicacion().getId(), espirituInvocado.getUbicacion().getId());
@@ -860,6 +940,11 @@ public class MediumServiceTest {
         medium3.setUbicacion(santuario);
         mediumService.actualizar(medium3);
 
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
         assertThrows(InvocacionFallidaPorUbicacionException.class, () -> {
             mediumService.invocar(medium3.getId(), espiritu2.getId());
         });
@@ -868,13 +953,25 @@ public class MediumServiceTest {
     @Test
     void invocarEspirituNoLibre() {
         espirituService.conectar(espiritu2.getId(), medium.getId());
+
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
         assertThrows(EspirituNoLibreException.class, () -> mediumService.invocar(medium3.getId(), espiritu2.getId()));
     }
 
     @Test
     void invocarEspirituSinMana() {
         Espiritu espirituAntes = espirituService.recuperar(espiritu.getId()).get();
-        Espiritu espirituNoInvocado = mediumService.invocar(medium.getId(), espiritu.getId()).get();
+
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium.getClass().toString(), medium.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        Espiritu espirituNoInvocado = mediumService.invocar(medium.getId(), espiritu.getId());
 
         assertEquals(espirituNoInvocado.getMedium(), espirituAntes.getMedium());
         assertEquals(espirituNoInvocado.getUbicacion(), espirituAntes.getUbicacion());
@@ -889,6 +986,9 @@ public class MediumServiceTest {
 
     @Test
     void invocarEspirituConIdMediumInvalido() {
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
         assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.invocar(2025L, espiritu2.getId());
         });
@@ -903,10 +1003,60 @@ public class MediumServiceTest {
 
     @Test
     void invocarEspirituConIdEspirituInvalido() {
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());;
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+
         assertThrows(RecursoNoEncontradoException.class,()->{
             mediumService.invocar(medium3.getId(), 2025L);
         });
     }
+
+    @Test
+    void invocarEspirituConCoordenadaEspirituInvalida() {
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2730), medium3.getClass().toString(), medium3.getId());;
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+
+        assertThrows(RecursoNoEncontradoException.class,()->{
+            mediumService.invocar(medium3.getId(), espiritu.getId());
+        });
+    }
+
+    @Test
+    void invocarEspirituConCoordenadaMediumInvalida() {
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-33.7210,-57.2420), espiritu2.getTipo().toString(), espiritu2.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        assertThrows(RecursoNoEncontradoException.class,()->{
+            mediumService.invocar(medium3.getId(), espiritu2.getId());
+        });
+    }
+
+
+    @Test
+    void invocarExitosaPorMenosDe50Km() {
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-58.2730, -34.7210), medium.getClass().toString(), medium.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-58.2680, -34.7200), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+        Espiritu espirituInvocado =  mediumService.invocar(medium.getId(),espiritu.getId());
+        assertEquals(medium.getUbicacion().getId(), espirituInvocado.getUbicacion().getId());
+        CoordenadaMongo coordenadaNuevaEspiritu = coordenadaRepository.findByEntityIdAndEntityType( espiritu.getTipo().toString(), espiritu.getId());
+        assertEquals(coordenadaMedium.getPunto(), coordenadaNuevaEspiritu.getPunto());
+    }
+
+    @Test
+    void invocarFallidaPorMasDe50Km() {
+        CoordenadaMongo coordenadaMedium = new CoordenadaMongo(new GeoJsonPoint(-33.7210, -57.2730), medium.getClass().toString(), medium.getId());
+        CoordenadaMongo coordenadaEspiritu = new CoordenadaMongo(new GeoJsonPoint(-32.8230, -57.2730), espiritu.getTipo().toString(), espiritu.getId());
+        coordenadaRepository.actualizarCoordenada(coordenadaMedium);
+        coordenadaRepository.actualizarCoordenada(coordenadaEspiritu);
+
+        assertThrows(FueraDeRangoDistanciaException.class,()->{
+            mediumService.invocar(medium.getId(), espiritu.getId());
+        });
+    }
+
+
 
     @Test
     void espiritusDeMedium(){
@@ -947,13 +1097,16 @@ public class MediumServiceTest {
 
         ubicacionService.conectar(bernal.getId(),santuario.getId());
 
-        mediumService.mover(medium.getId(), santuario.getId());
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
 
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+        Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
 
         Espiritu demonio = espiritus.get(1);
         Espiritu angel = espiritus.get(0);
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.2630, -34.7070));
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(2, espiritus.size());
         assertEquals(santuario.getNombre(), actualizado.getUbicacion().getNombre());
@@ -974,13 +1127,16 @@ public class MediumServiceTest {
 
         ubicacionService.conectar(bernal.getId(),cementerio.getId());
 
-        mediumService.mover(medium.getId(), cementerio.getId());
+        mediumService.mover(medium.getId(), -34.6600, -58.3610);
 
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+        Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritus = mediumService.espiritus(actualizado.getId());
 
         Espiritu demonio = espiritus.get(1);
         Espiritu angel = espiritus.get(0);
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.3610, -34.6600));
+        assertEquals(cementerio.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(2, espiritus.size());
         assertEquals(cementerio.getId(), actualizado.getUbicacion().getId());
@@ -1004,10 +1160,13 @@ public class MediumServiceTest {
 
         ubicacionService.conectar(bernal.getId(),santuario.getId());
 
-        mediumService.mover(medium.getId(), santuario.getId());
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
 
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+        Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.2630, -34.7070));
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(0, espiritusDespues.size());
 
@@ -1031,10 +1190,13 @@ public class MediumServiceTest {
 
         ubicacionService.conectar(bernal.getId(),cementerio.getId());
 
-        mediumService.mover(medium.getId(), cementerio.getId());
+        mediumService.mover(medium.getId(), -34.6600, -58.3610);
 
-        Medium actualizado = mediumService.recuperar(medium.getId()).get();
+        Medium actualizado = mediumService.recuperar(medium.getId());
         List<Espiritu> espiritusDespues = mediumService.espiritus(actualizado.getId());
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.3610, -34.6600));
+        assertEquals(cementerio.getId(), ubicacionMongo.getIdUbicacion());
 
         assertEquals(0, espiritusDespues.size());
 
@@ -1049,35 +1211,86 @@ public class MediumServiceTest {
     @Test
     void movimientoDeMediumAMismaUbicacion() {
         assertThrows(MovimientoInvalidoException.class, () -> {
-            mediumService.mover(medium2.getId(), bernal.getId());
+            mediumService.mover(medium2.getId() , -34.7230,-58.2700);
         });
     }
 
     @Test
     void movimientoDeMediumConIdInexistente() {
         assertThrows(RecursoNoEncontradoException.class,() -> {
-            mediumService.mover(25L, santuario.getId());;
+            mediumService.mover(25L, -34.7070, -58.2630);;
         });
     }
 
     @Test
-    void movimientoDeMediumAUbicacionConIdInexistente() {
-        assertThrows(RecursoNoEncontradoException.class,() -> {
-            mediumService.mover(medium2.getId(), 21L);;
+    void movimientoDeMediumAUbicacionConCoordenadasInvalidas() {
+        assertThrows(UncategorizedMongoDbException.class,() -> {
+            mediumService.mover(medium2.getId(), -34.7070, -358.0);;
         });
     }
 
     @Test
     void movimientoDeMediumConIdNulo() {
         assertThrows(IdNoValidoException.class,() -> {
-            mediumService.mover(null, santuario.getId());;
+            mediumService.mover(null,-34.7070, -58.2630);;
         });
     }
 
     @Test
-    void movimientoDeMediumAUbicacionConIdNulo() {
-        assertThrows(InvalidDataAccessApiUsageException.class,() -> {
-            mediumService.mover(medium2.getId(), null);
+    void movimientoDeMediumAUbicacionCercana() {
+        medium = espirituService.conectar(espiritu.getId(), medium.getId()).get();
+        ubicacionService.conectar(bernal.getId(), santuario.getId());
+
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.2630, -34.7070));
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
+
+        CoordenadaMongo coordenadaActualizadaMedium = coordenadaRepository.findByEntityIdAndEntityType("MEDIUM", medium.getId());
+        CoordenadaMongo coordenadaActualizadaEspiritu = coordenadaRepository.findByEntityIdAndEntityType("ESPIRITU",  espiritu.getId());
+        assertEquals(-58.2630, coordenadaActualizadaMedium.getLongitud());
+        assertEquals(-34.7070, coordenadaActualizadaMedium.getLatitud());
+        assertEquals(-58.2630, coordenadaActualizadaEspiritu.getLongitud());
+        assertEquals(-34.7070, coordenadaActualizadaEspiritu.getLatitud());
+    }
+
+    @Test
+    void movimientoDeMediumSinUbicacionPrevia() {
+        medium.setUbicacion(null);
+        mediumService.actualizar(medium);
+        coordenadaRepository.eliminar(coordenadaMedium);
+
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
+
+        AreaMongo ubicacionMongo = ubicacionService.recuperarPorCoordenada(new GeoJsonPoint(-58.2630, -34.7070));
+        assertEquals(santuario.getId(), ubicacionMongo.getIdUbicacion());
+
+        CoordenadaMongo coordenadaActualizadaMedium = coordenadaRepository.findByEntityIdAndEntityType("MEDIUM", medium.getId());
+        assertEquals(-58.2630, coordenadaActualizadaMedium.getLongitud());
+        assertEquals(-34.7070, coordenadaActualizadaMedium.getLatitud());
+    }
+
+    @Test
+    void movimientoDeMediumAUbicacionConCoordenadasQueNoPertencenANingunaUbicacion() {
+        assertThrows(RecursoNoEncontradoException.class,() -> {
+            mediumService.mover(medium2.getId(),55.5,152.5);
+        });
+    }
+
+    @Test
+    void movimientoDeMediumAUbicacionLejana() {
+        List<Point> area2 = List.of(
+                new Point(-59.1042, -34.5700),
+                new Point(-59.1012, -34.5720),
+                new Point(-59.0992, -34.5690),
+                new Point(-59.1042, -34.5700)
+        );
+        GeoJsonPolygon areaLujan = new GeoJsonPolygon(area2);
+        Ubicacion lujan = new Cementerio("Lujan", 50);
+        ubicacionService.crear(lujan, areaLujan);
+
+        assertThrows(UbicacionLejanaException.class,() -> {
+            mediumService.mover(medium2.getId(), -34.5700, -59.1042);
         });
     }
 
@@ -1117,7 +1330,7 @@ public class MediumServiceTest {
 
         mediumService.crear(medium);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         assertNotNull(mediumAct.getCreatedAt());
         assertNotNull(mediumAct.getUpdatedAt());
@@ -1132,13 +1345,13 @@ public class MediumServiceTest {
 
         mediumService.crear(medium);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         Thread.sleep(1000);
 
         mediumAct.setNombre("juancho");
         mediumService.actualizar(mediumAct);
-        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+        mediumAct = mediumService.recuperar(mediumAct.getId());
 
         int comparison = mediumAct.getUpdatedAt().compareTo(mediumAct.getCreatedAt());
 
@@ -1152,20 +1365,20 @@ public class MediumServiceTest {
 
         mediumService.crear(medium);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         Thread.sleep(1000);
 
         mediumAct.setNombre("juancho");
         mediumService.actualizar(mediumAct);
-        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+        mediumAct = mediumService.recuperar(mediumAct.getId());
         Date lastUpdate = mediumAct.getUpdatedAt();
 
         Thread.sleep(1000);
 
         mediumAct.setNombre("pedritos");
         mediumService.actualizar(mediumAct);
-        mediumAct = mediumService.recuperar(mediumAct.getId()).get();
+        mediumAct = mediumService.recuperar(mediumAct.getId());
 
         int comparison = mediumAct.getUpdatedAt().compareTo(lastUpdate);
 
@@ -1180,7 +1393,7 @@ public class MediumServiceTest {
 
         mediumService.crear(medium);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         mediumService.eliminar(mediumAct);
 
@@ -1201,7 +1414,7 @@ public class MediumServiceTest {
         mediumService.crear(medium);
         mediumService.crear(medium2);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         mediumService.eliminar(mediumAct);
 
@@ -1215,7 +1428,6 @@ public class MediumServiceTest {
         });
         assertTrue(mediumBorrado.getDeleted());
         assertEquals(todos.size(),1);
-
     }
 
     @Test
@@ -1239,18 +1451,16 @@ public class MediumServiceTest {
 
     public Optional<Medium> recuperarAunConSoftDelete(Long mediumId) {
         dataService.revisarId(mediumId);
-        Medium medium = mediumDAO.findById(mediumId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium con ID " + mediumId + " no encontrado"));
+        Medium medium = repository.recuperar(mediumId);
         return Optional.of(medium);
     }
-
 
     @Test
     void moverNuevo(){
         ubicacionService.conectar(bernal.getId(),santuario.getId());
-        mediumService.mover(medium.getId(), santuario.getId());
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
     }
@@ -1259,7 +1469,7 @@ public class MediumServiceTest {
     void moverNuevoException(){
 
         assertThrows(UbicacionLejanaException.class, () -> {
-            mediumService.mover(medium.getId(), santuario.getId());
+            mediumService.mover(medium.getId(), -34.7070, -58.2630);
         });
     }
 
@@ -1268,7 +1478,7 @@ public class MediumServiceTest {
         ubicacionService.conectar(santuario.getId(),bernal.getId());
 
         assertThrows(UbicacionLejanaException.class, () -> {
-            mediumService.mover(medium.getId(), santuario.getId());
+            mediumService.mover(medium.getId(), -34.7070, -58.2630);
         });
     }
 
@@ -1276,20 +1486,17 @@ public class MediumServiceTest {
     void moverNuevoBidireccional(){
         ubicacionService.conectar(bernal.getId(),santuario.getId());
         ubicacionService.conectar(santuario.getId(),bernal.getId());
-        mediumService.mover(medium.getId(), santuario.getId());
+        mediumService.mover(medium.getId(), -34.7070, -58.2630);
 
-        Medium mediumAct = mediumService.recuperar(medium.getId()).get();
+        Medium mediumAct = mediumService.recuperar(medium.getId());
 
         assertEquals(mediumAct.getUbicacion().getId(), santuario.getId());
     }
 
-
     @AfterEach
     void cleanUp() {
         dataService.eliminarTodo();
+        coordenadaRepository.eliminarTodos();
         dado.setModo(new ModoRandom());
     }
-
-
 }
-

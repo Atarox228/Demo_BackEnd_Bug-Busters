@@ -20,7 +20,7 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
 - [Entrega 2 - ORM - Hibernate](enunciado/entrega2/entrega2.md)
 - [Entrega 3 - ORM - Spring](/enunciado/entrega3/enunciado_tp3.md)
 - [Entrega 4 - NoSQL - Neo4j - Spring](enunciado/entrega4/enunciado_tp4.md)
-- Entrega 5 - NoSQL - MongoDB - Spring
+- [Entrega 5 - NoSQL - MongoDB - Spring](/enunciado/entrega5/enunciado_tp5.md)
 
 ## Consideraciones
 - Se entregará utilizando git. El grupo deberá subir el código del TP a github, hacer un tag y notificarnos de dicho tag para que podamos corregirlo. [Acá](https://sites.google.com/site/estrategiasdepersistencia/material/entregando-con-git) tienen un breve tutorial sobre como hacerlo.
@@ -37,7 +37,7 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
   - spring.web.resources.add-mappings=false
 
   - Sirven para el control preciso de rutas inexistentes, esto permite hacer un Handleo de error en vez de tirar un 404 cuando la ruta esta equivocada. Lo usamos para tener mayor precision de los errores pero esto hace que los archivos estaticos manejados de manera automatica por Spring sea desactivado. Se eligio usar debido a que por el momento no estamos usando frontend y, por lo tanto, no necesitamos rutas para archivos estáticos.
-    
+  
 -En build.gradle:
 -
   - implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
