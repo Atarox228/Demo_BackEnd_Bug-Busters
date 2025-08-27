@@ -1,3 +1,19 @@
+## 📖 Propósito del proyecto
+Este repositorio corresponde a un **proyecto académico institucional** desarrollado en el marco de la carrera de Tecnico en Programacion Universitaria/Licenciatura en Informatioca de la Universidad Nacional de Quilmes (UNQ).  
+El objetivo principal fue aplicar en un caso práctico los conocimientos adquiridos en la materia [Estrategias de Persistencia], trabajando en equipo para resolver un problema propuesto por el cuerpo docente.
+
+## 🛠️ Aptitudes desarrolladas
+Durante el desarrollo del proyecto se trabajó en:
+- **Colaboración en equipo** mediante Git y GitHub.
+- **Diseño y desarrollo backend** en bases de datos SQL y NoSQL.
+- **Buenas prácticas de programación** (patrones, testing, clean code).
+- **Gestión de versiones y ramas** en un flujo de trabajo compartido, gitflow.
+- **Resolución de problemas** en un entorno simulado de proyecto real.
+
+## 🤝 Aclaración
+Este proyecto fue realizado en **conjunto con compañeros estudiantes**, como parte de un trabajo práctico institucional.  
+Su finalidad principal es **educativa** y **demostrativa**, para exponer las habilidades técnicas y de colaboración desarrolladas durante el cursado.
+
 
 > _Otro viernes en la facu, nada raro, no?_
 > _Seis pibes de informatica y un ritual sin razon._
@@ -22,13 +38,13 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
 - [Entrega 4 - NoSQL - Neo4j - Spring](enunciado/entrega4/enunciado_tp4.md)
 - [Entrega 5 - NoSQL - MongoDB - Spring](/enunciado/entrega5/enunciado_tp5.md)
 
-## Consideraciones
-- Se entregará utilizando git. El grupo deberá subir el código del TP a github, hacer un tag y notificarnos de dicho tag para que podamos corregirlo. [Acá](https://sites.google.com/site/estrategiasdepersistencia/material/entregando-con-git) tienen un breve tutorial sobre como hacerlo.
-- Se considerará a un TP como entregado solo cuando tenga implementada toda la funcionalidad que se pide para la entrega.
-- Se evaluará no solo que el TP cumpla con todos los requisitos, sino la calidad del mismo (buen diseño, simplicidad, buena distribución de responsabilidades, prolijidad del código, código no repetido, formalidad en la entrega, etc)
-- Tambien se evaluará la debida implementacion de GitFlow.
-- Se espera que trabajen en el TP durante las dos primeras horas de clase todos los viernes, pero eso no resta que para llegar a cumplir con los tiempos de entrega tengan que trabajar en casa. ¡Planeen conforme a ello! Un TP no entregado a tiempo es un TP reentregado. **Solo cuentan con 3 reentregas durante la cursada.**
-- Si algo no les funciona o algo no entienden, avisen antes! En el día de la entrega o el anterior ya es demasiado tarde.
+## Bases de datos usadas
+- SQL
+  - PostgreSQL (SQL)
+- NoSQL
+  - Neo4J 
+  - MongoDB 
+  - Redis (Standalone)
 
 ## Implementaciones Agregadas
 -En applicacition.properties: 
