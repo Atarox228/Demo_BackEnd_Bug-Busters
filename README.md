@@ -1,6 +1,6 @@
 ## 📖 Propósito del proyecto
 Este repositorio corresponde a un **proyecto académico institucional** desarrollado en el marco de la carrera de Tecnico en Programacion Universitaria/Licenciatura en Informatioca de la Universidad Nacional de Quilmes (UNQ).  
-El objetivo principal fue aplicar en un caso práctico los conocimientos adquiridos en la materia [Estrategias de Persistencia], trabajando en equipo para resolver un problema propuesto por el cuerpo docente.
+El objetivo principal fue aplicar en un caso práctico los conocimientos adquiridos en la materia Estrategias de Persistencia, trabajando en equipo para resolver un problema propuesto por el cuerpo docente.
 
 ## 🛠️ Aptitudes desarrolladas
 Durante el desarrollo del proyecto se trabajó en:
@@ -14,6 +14,8 @@ Durante el desarrollo del proyecto se trabajó en:
 Este proyecto fue realizado en **conjunto con compañeros estudiantes**, como parte de un trabajo práctico institucional.  
 Su finalidad principal es **educativa** y **demostrativa**, para exponer las habilidades técnicas y de colaboración desarrolladas durante el cursado.
 
+
+## Inicio del trasfondo del proyecto
 
 > _Otro viernes en la facu, nada raro, no?_
 > _Seis pibes de informatica y un ritual sin razon._
