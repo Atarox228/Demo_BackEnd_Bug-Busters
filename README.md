@@ -49,15 +49,15 @@ Miradas desconcertadas volaron entre ellos durante unos minutos, pero todos comp
   - Redis (Standalone)
 
 ## Implementaciones Agregadas
--En applicacition.properties: 
--
+### En applicacition.properties: 
+
   - spring.mvc.throw-exception-if-no-handler-found=true
   - spring.web.resources.add-mappings=false
 
   - Sirven para el control preciso de rutas inexistentes, esto permite hacer un Handleo de error en vez de tirar un 404 cuando la ruta esta equivocada. Lo usamos para tener mayor precision de los errores pero esto hace que los archivos estaticos manejados de manera automatica por Spring sea desactivado. Se eligio usar debido a que por el momento no estamos usando frontend y, por lo tanto, no necesitamos rutas para archivos estáticos.
   
--En build.gradle:
--
+### En build.gradle:
+
   - implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
   - implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
